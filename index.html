@@ -1052,7 +1052,27 @@ async function armarLista() {
 }
 
 // ---------- Canciones (repositorio + subir PDF) ----------
-const tituloDeArchivo = (n) => n.replace(/\.pdf$/i, "").replace(/[_-]+/g, " ").replace(/\s+/g, " ").trim();
+const tituloDeArchivo = (n) => leerNombrePdf(n).titulo;
+// "GOODNESS OF GOD - CECE WINANS.pdf" → { titulo: "Goodness of God", artista: "Cece Winans" }
+const PALABRAS_MENORES = new Set("de del la las el los y e o u a al en con por para mi tu su of the to and in on for at by an as".split(" "));
+function capitalizar(t, menores) {
+  const letras = t.replace(/[^A-Za-zÀ-ÿ]/g, "");
+  if (!letras || letras !== letras.toUpperCase()) return t; // ya tiene mayúsculas y minúsculas: se respeta
+  return t.toLowerCase().split(" ").map((w, i) => {
+    if (/\d/.test(w)) return w.toUpperCase();          // G12
+    if (i > 0 && menores && PALABRAS_MENORES.has(w)) return w;
+    return w.charAt(0).toUpperCase() + w.slice(1);
+  }).join(" ").replace(/\bgod\b/g, "God");
+}
+function leerNombrePdf(n) {
+  let base = n.replace(/\.pdf$/i, "").replace(/_/g, " ").replace(/\s+/g, " ").trim();
+  let titulo = base, artista = "";
+  const m = base.match(/^(.*\S)\s*-\s+(.+)$/) || base.match(/^(.*\S)\s+-\s*(.+)$/);
+  if (m) { titulo = m[1]; artista = m[2]; }
+  titulo = titulo.replace(/\s*:\s*/g, " / ").replace(/\s+/g, " ").trim();
+  return { titulo: capitalizar(titulo, true), artista: capitalizar(artista.trim(), false) };
+}
+const claveCancion = (t) => unaccent(t).replace(/[^a-z0-9]/g, "");
 const rutaPdf = (n) => `${Date.now()}-${Math.random().toString(36).slice(2, 7)}-${unaccent(n).replace(/[^a-z0-9.]+/g, "-")}`;
 function pintarCanciones(edit) {
   const lider = esLiderWorship(), q = unaccent(ws.busca);
@@ -1070,16 +1090,20 @@ function pintarCanciones(edit) {
   hookPdf($("ws-body"));
   if (!$("sc-files")) return;
   $("sc-files").addEventListener("change", async (ev) => {
-    const files = [...ev.target.files], out = $("sc-up"); let ok = 0, fallas = [];
+    const files = [...ev.target.files].filter((f) => /\.pdf$/i.test(f.name)), out = $("sc-up"); let ok = 0, fallas = [], repetidas = [];
+    const yaEstan = new Set(ws.canciones.map((c) => claveCancion(c.titulo)));
     for (const [i, f] of files.entries()) {
       out.textContent = `Subiendo ${i + 1} de ${files.length}…`;
+      const { titulo, artista } = leerNombrePdf(f.name);
+      if (yaEstan.has(claveCancion(titulo))) { repetidas.push(titulo); continue; }
       const path = rutaPdf(f.name);
       const up = await sb.storage.from("canciones").upload(path, f, { contentType: "application/pdf" });
       if (up.error) { fallas.push(f.name); continue; }
-      const ins = await sb.from("canciones").insert({ titulo: tituloDeArchivo(f.name), pdf_path: path });
-      ins.error ? fallas.push(f.name) : ok++;
+      const ins = await sb.from("canciones").insert({ titulo, artista: artista || null, pdf_path: path });
+      if (ins.error) { fallas.push(f.name); continue; }
+      ok++; yaEstan.add(claveCancion(titulo));
     }
-    out.textContent = `✓ ${ok} canción(es) agregadas` + (fallas.length ? ` · no se pudieron subir: ${fallas.join(", ")}` : "");
+    out.textContent = `✓ ${ok} canción(es) agregadas` + (repetidas.length ? ` · ${repetidas.length} ya estaban: ${repetidas.join(", ")}` : "") + (fallas.length ? ` · no se pudieron subir: ${fallas.join(", ")}` : "");
     const { data } = await sb.from("canciones").select("*").order("titulo"); ws.canciones = data || ws.canciones;
     const msg = out.textContent; pintarCanciones(); $("sc-up").textContent = msg;
   });
@@ -1183,10 +1207,18 @@ function pintarEquipos(editId) {
 function editarMiembroWorship(pid) {
   const m = ws.miembros.find((x) => x.persona_id === pid);
   const st = { persona: m ? { id: m.persona_id, nombre: m.nombre } : null, fun: new Set(m?.funciones || []), eq: new Set(m?.equipos || []) };
+  // Instrumentos normales + los que ya se crearon para otros miembros (ej. Violín)
+  const todas = [...new Set([...FUNCIONES, ...ws.miembros.flatMap((x) => x.funciones || []), ...st.fun])];
   $("ws-body").innerHTML = `<div class="panel"><h4>${m ? esc(m.nombre) : "Agregar miembro"}</h4>
-    ${m ? "" : `<input id="wm-q" placeholder="Buscar a la persona" autocomplete="off"><div id="wm-res"></div>`}
+    ${m ? "" : `<input id="wm-q" placeholder="Buscar a la persona" autocomplete="off"><div id="wm-res"></div>
+      <button type="button" class="btn-sec" style="width:100%;margin-top:8px" id="wm-nueva-btn">+ Persona nueva (no está en la base)</button>
+      <div id="wm-nueva" class="hidden" style="margin-top:8px">
+        <input id="wm-nn" placeholder="Nombres" autocomplete="off"><input id="wm-na" placeholder="Apellidos" autocomplete="off">
+        <input id="wm-nt" placeholder="Celular (09…), opcional" inputmode="tel" autocomplete="off">
+        <button type="button" class="btn-sec" style="width:100%" id="wm-nueva-ok">Agregar persona</button><div class="ok err" id="wm-nueva-msg"></div></div>`}
     <label>¿Qué toca? (puede ser más de una)</label>
-    <div class="pick">${FUNCIONES.map((f) => `<button type="button" data-f="${f}" class="${st.fun.has(f) ? "on" : ""}">${f}</button>`).join("")}</div>
+    <div class="pick" id="wm-funs">${todas.map((f) => `<button type="button" data-f="${esc(f)}" class="${st.fun.has(f) ? "on" : ""}">${esc(f)}</button>`).join("")}<button type="button" id="wm-otro">+ Otro</button></div>
+    <div id="wm-otro-box" style="display:none;gap:8px;margin-bottom:10px"><input id="wm-otro-t" placeholder="Ej.: Violín" autocomplete="off" style="flex:1"><button type="button" class="btn-sec mini" id="wm-otro-ok">Añadir</button></div>
     <div class="hint">La primera que elijas será la que se sugiere al armar la lista.</div>
     <label>Equipo(s)</label>
     ${ws.equipos.map((e) => `<label class="check" style="margin-bottom:10px"><input type="checkbox" data-e="${e.id}" ${st.eq.has(e.id) ? "checked" : ""}> ${esc(e.nombre)}</label>`).join("")}
@@ -1195,10 +1227,39 @@ function editarMiembroWorship(pid) {
     <button class="btn-sec" id="wm-cancel" style="width:100%">Cancelar</button>
     ${m ? `<button class="btn-sec danger" id="wm-del" style="width:100%">Quitar de Worship</button>` : ""}<div class="ok" id="wm-msg"></div></div>`;
   const orden = [...st.fun];
-  $("ws-body").querySelectorAll("[data-f]").forEach((b) => b.addEventListener("click", () => {
+  const conectarF = (b) => b.addEventListener("click", () => {
     const f = b.dataset.f; if (st.fun.has(f)) { st.fun.delete(f); orden.splice(orden.indexOf(f), 1); } else { st.fun.add(f); orden.push(f); }
     b.classList.toggle("on", st.fun.has(f));
-  }));
+  });
+  $("ws-body").querySelectorAll("[data-f]").forEach(conectarF);
+  $("wm-otro-box").style.display = "none";
+  $("wm-otro").addEventListener("click", () => { $("wm-otro-box").style.display = "flex"; $("wm-otro-t").focus(); });
+  const anadirOtro = () => {
+    let f = $("wm-otro-t").value.trim().replace(/\s+/g, " "); if (!f) return;
+    f = f.charAt(0).toUpperCase() + f.slice(1);
+    const ya = [...$("wm-funs").querySelectorAll("[data-f]")].find((b) => unaccent(b.dataset.f) === unaccent(f));
+    if (ya) { if (!st.fun.has(ya.dataset.f)) ya.click(); }
+    else { const b = document.createElement("button"); b.type = "button"; b.dataset.f = f; b.textContent = f; $("wm-funs").insertBefore(b, $("wm-otro")); conectarF(b); b.click(); }
+    $("wm-otro-t").value = ""; $("wm-otro-box").style.display = "none";
+  };
+  $("wm-otro-ok").addEventListener("click", anadirOtro);
+  $("wm-otro-t").addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); anadirOtro(); } });
+  if ($("wm-nueva-btn")) {
+    $("wm-nueva-btn").addEventListener("click", () => { $("wm-nueva").classList.toggle("hidden"); $("wm-nn").value ||= $("wm-q").value.trim(); });
+    $("wm-nueva-ok").addEventListener("click", async () => {
+      const n = $("wm-nn").value.trim(), a = $("wm-na").value.trim(), tel = normalizarTelefono($("wm-nt").value), mm = $("wm-nueva-msg");
+      mm.textContent = "";
+      if (!n) return (mm.textContent = "Escribe el nombre.");
+      if ($("wm-nt").value.trim() && tel.length !== 10) return (mm.textContent = "El celular debe tener 10 dígitos (09…).");
+      $("wm-nueva-ok").disabled = true;
+      const { data: id, error } = await sb.rpc("crear_persona", { p_nombres: n, p_apellidos: a, p_telefono: tel });
+      $("wm-nueva-ok").disabled = false;
+      if (error) return (mm.textContent = error.message);
+      st.persona = { id, nombre: (n + " " + a).trim() };
+      $("wm-nueva").classList.add("hidden"); $("wm-nueva-btn").classList.add("hidden"); $("wm-q").classList.add("hidden");
+      $("wm-res").innerHTML = `<div class="li"><b>${esc(st.persona.nombre)}</b><span class="st yes">Agregado</span></div>`;
+    });
+  }
   $("ws-body").querySelectorAll("[data-e]").forEach((x) => x.addEventListener("change", () => (x.checked ? st.eq.add(+x.dataset.e) : st.eq.delete(+x.dataset.e))));
   $("wm-cancel").addEventListener("click", () => pintarEquipos());
   if ($("wm-del")) $("wm-del").addEventListener("click", async () => { if (!confirm(`¿Quitar a ${m.nombre} de Worship?`)) return; await sb.from("worship_miembros").delete().eq("persona_id", pid); abrirWorship("equipos"); });
