@@ -193,6 +193,10 @@
   .sts { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0; }
   .st { background: var(--surface-2); color: var(--ink-2); border-radius: 999px; padding: 4px 10px; font-size: 12px; }
   .st.yes { background: rgba(203,217,138,.18); color: var(--green); }
+  .st.no { background: rgba(255,107,107,.16); color: #ff8a8a; }
+  .aus-row { padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,.06); }
+  .aus-row:last-child { border-bottom: 0; }
+  .aus-motivo { color: #ff8a8a; font-size: 14px; margin-top: 2px; }
   label.check { display: flex; align-items: center; gap: 10px; margin: 0; font-size: 14px; font-weight: 400; color: var(--ink); }
   label.check input { width: 22px; height: 22px; margin: 0; accent-color: var(--orange); }
   .att { display: flex; align-items: center; gap: 12px; width: 100%; background: var(--bg); color: var(--ink); border-radius: 16px; padding: 12px 14px; margin-bottom: 8px; font-size: 16px; text-align: left; }
@@ -965,9 +969,18 @@ async function verDomingoWorship() {
     sb.from("worship_equipo").select("*").eq("fecha", ws.fecha),
     ctx.personaId ? sb.from("worship_equipo").select("fecha, funcion").eq("persona_id", ctx.personaId).gte("fecha", ymd(new Date())).order("fecha") : Promise.resolve({ data: [] }),
   ]);
+  const aus = (await sb.from("worship_ausencias").select("*").gte("fecha", ymd(new Date())).order("fecha")).data || [];
+  const ausDe = (pid, f) => aus.find((a) => a.persona_id === pid && a.fecha === f);
+  const avisosOtros = esLiderWorship() ? aus.filter((a) => a.persona_id !== ctx.personaId) : [];
   const serie = ws.series.find((x) => x.id === d.data?.serie_id), equipo = ws.equipos.find((x) => x.id === d.data?.equipo_id);
   $("ws-body").innerHTML = `
-    ${mios.data?.length ? `<div class="obs"><b>Te toca servir</b>${mios.data.map((m) => `${fmtCorta.format(fromYmd(m.fecha))} · ${esc(m.funcion)}`).join("<br>")}</div>` : ""}
+    ${avisosOtros.length ? `<div class="obs" style="border-left-color:#ff8a8a"><b>Avisos: no pueden servir</b>${avisosOtros.map((a) => `<div class="aus-row"><div><b style="display:inline;text-transform:none;font-size:15px;color:var(--ink)">${esc(a.nombre || "")}</b> · ${fmtCorta.format(fromYmd(a.fecha))}</div><div class="aus-motivo">${esc(a.motivo)}</div></div>`).join("")}</div>` : ""}
+    ${mios.data?.length ? `<div class="obs"><b>Te toca servir</b>${mios.data.map((m) => { const a = ausDe(ctx.personaId, m.fecha); return `<div class="aus-row">
+        <div>${fmtCorta.format(fromYmd(m.fecha))} · ${esc(m.funcion)} ${a ? `<span class="st no">Avisaste que no puedes</span>` : ""}</div>
+        ${a ? `<div class="aus-motivo">${esc(a.motivo)}</div><button class="link" data-retirar="${m.fecha}">Sí puedo · retirar aviso</button>`
+            : `<button class="link" data-nopuedo="${m.fecha}">No puedo ese domingo</button>
+               <div class="hidden" data-caja="${m.fecha}" style="margin-top:8px"><textarea placeholder="¿Por qué no puedes? Ej.: estaré de viaje"></textarea>
+                 <button class="btn-sec mini" data-enviar="${m.fecha}">Enviar aviso</button><div class="ok err"></div></div>`}</div>`; }).join("")}</div>` : ""}
     <div class="hero"><div class="hero-date">${esc(fmtTitulo(ws.fecha))}</div>
       <div class="chips">${serie ? `<div class="chip"><span>Serie</span><b>${esc(serie.nombre)}</b></div>` : ""}${equipo ? `<div class="chip"><span>Equipo</span><b>${esc(equipo.nombre)}</b></div>` : ""}</div></div>
     <div class="panel"><h4>Canciones</h4>
@@ -976,11 +989,28 @@ async function verDomingoWorship() {
         <div class="key">${esc(x.tono || c.tono || "—")}</div><div></div></div>`; }).join("") || `<div class="muted">Todavía no hay lista para este domingo.</div>`}
     </div>
     <div class="panel"><h4>Quién toca qué</h4>
-      ${(e.data || []).map((m) => `<div class="li"><b>${esc(m.nombre)}</b><span class="st yes">${esc(m.funcion)}</span></div>`).join("") || `<div class="muted">Todavía no se ha asignado el equipo.</div>`}
+      ${(e.data || []).map((m) => { const a = ausDe(m.persona_id, ws.fecha); return `<div class="li"><div><b>${esc(m.nombre)}</b>${a && esLiderWorship() ? `<div class="aus-motivo">${esc(a.motivo)}</div>` : ""}</div>${a ? `<span class="st no">No puede</span>` : `<span class="st yes">${esc(m.funcion)}</span>`}</div>`; }).join("") || `<div class="muted">Todavía no se ha asignado el equipo.</div>`}
     </div>
     ${esLiderWorship() ? `<button class="btn-primary" id="ws-ir-armar">${s.data?.length ? "Editar esta lista" : "Armar la lista"}</button>` : ""}`;
   hookPdf($("ws-body"));
   if ($("ws-ir-armar")) $("ws-ir-armar").addEventListener("click", () => abrirWorship("armar", ws.fecha));
+  $("ws-body").querySelectorAll("[data-nopuedo]").forEach((b) => b.addEventListener("click", () => {
+    const caja = $("ws-body").querySelector(`[data-caja="${b.dataset.nopuedo}"]`); caja.classList.toggle("hidden"); caja.querySelector("textarea").focus();
+  }));
+  $("ws-body").querySelectorAll("[data-enviar]").forEach((b) => b.addEventListener("click", async () => {
+    const caja = b.parentElement, motivo = caja.querySelector("textarea").value.trim(), msg = caja.querySelector(".ok");
+    if (!motivo) return (msg.textContent = "Escribe el motivo.");
+    b.disabled = true;
+    const { error } = await sb.from("worship_ausencias").upsert({ fecha: b.dataset.enviar, persona_id: ctx.personaId, nombre: ctx.nombreCompleto, motivo }, { onConflict: "fecha,persona_id" });
+    b.disabled = false;
+    if (error) return (msg.textContent = "No se pudo enviar: " + error.message);
+    verDomingoWorship();
+  }));
+  $("ws-body").querySelectorAll("[data-retirar]").forEach((b) => b.addEventListener("click", async () => {
+    const { error } = await sb.from("worship_ausencias").delete().eq("fecha", b.dataset.retirar).eq("persona_id", ctx.personaId);
+    if (error) return alert(error.message);
+    verDomingoWorship();
+  }));
 }
 
 // ---------- Armar lista (líder) ----------
@@ -990,6 +1020,7 @@ async function armarLista() {
     sb.from("worship_canciones").select("*").eq("fecha", ws.fecha).order("orden"),
     sb.from("worship_equipo").select("*").eq("fecha", ws.fecha),
   ]);
+  const ausHoy = new Map(((await sb.from("worship_ausencias").select("persona_id, motivo").eq("fecha", ws.fecha)).data || []).map((a) => [a.persona_id, a.motivo]));
   const st = {
     serie: d.data?.serie_id || serieDeFecha(ws.fecha)?.id || ws.series[0]?.id || null,
     equipo: d.data?.equipo_id || ws.equipos[0]?.id || null,
@@ -1016,6 +1047,7 @@ async function armarLista() {
         <div class="hint">Marca quién toca y en qué. Puedes agregar a alguien de otro equipo.</div>
         ${delEquipo.map((m) => `<div class="mrow ${st.gente.has(m.persona_id) ? "on" : ""}">
           <button class="att ${st.gente.has(m.persona_id) ? "on" : ""}" data-toggle="${m.persona_id}"><span class="dot2">${st.gente.has(m.persona_id) ? "✓" : ""}</span>${esc(m.nombre)}</button>
+          ${ausHoy.has(m.persona_id) ? `<div class="aus-motivo" style="grid-column:1 / -1;margin:-4px 0 8px">⚠ No puede: ${esc(ausHoy.get(m.persona_id))}</div>` : ""}
           ${st.gente.has(m.persona_id) ? `<select data-fun="${m.persona_id}">${opciones([...new Set([...(m.funciones.length ? m.funciones : FUNCIONES)])].map((f) => [f, f]), st.gente.get(m.persona_id))}</select>` : ""}</div>`).join("") || `<div class="muted">Este equipo no tiene miembros. Agrégalos en la pestaña Equipos.</div>`}
         ${otros.length ? `<select id="ar-otro"><option value="">+ Agregar de otro equipo…</option>${opciones(otros.map((m) => [m.persona_id, m.nombre]))}</select>` : ""}</div>
       <button class="btn-primary" id="ar-save">Guardar lista</button><div class="ok" id="ar-msg"></div>`;
