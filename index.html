@@ -1568,14 +1568,35 @@ function pintarDarAcceso() {
   const body = $("ad-body");
   ad.sel = null;
   body.innerHTML = `<div class="panel"><h4>1. Buscar a la persona</h4>
-      <input id="ad-q" placeholder="Nombre o apellido" autocomplete="off"><div id="ad-res"></div></div>
+      <input id="ad-q" placeholder="Nombre o apellido" autocomplete="off"><div id="ad-res"></div>
+      <button class="btn-sec" style="width:100%;margin-top:10px" id="ad-nueva-btn">+ Persona nueva (no está en la base)</button>
+      <div id="ad-nueva" class="hidden" style="margin-top:10px">
+        <input id="ad-nn" placeholder="Nombres" autocomplete="off">
+        <input id="ad-na" placeholder="Apellidos" autocomplete="off">
+        <input id="ad-nt" placeholder="Celular (09…)" inputmode="tel" autocomplete="off">
+        <button class="btn-primary" id="ad-nueva-ok">Agregar y continuar</button>
+        <div class="ok err" id="ad-nueva-msg"></div>
+      </div></div>
     <div id="ad-form"></div>`;
+  $("ad-nueva-btn").addEventListener("click", () => { $("ad-nueva").classList.toggle("hidden"); $("ad-nn").value ||= $("ad-q").value.trim(); });
+  $("ad-nueva-ok").addEventListener("click", async () => {
+    const n = $("ad-nn").value.trim(), a = $("ad-na").value.trim(), tel = normalizarTelefono($("ad-nt").value), m = $("ad-nueva-msg");
+    m.textContent = "";
+    if (!n) { m.textContent = "Escribe el nombre."; return; }
+    if ($("ad-nt").value.trim() && tel.length !== 10) { m.textContent = "El celular debe tener 10 dígitos (09…)."; return; }
+    $("ad-nueva-ok").disabled = true;
+    const { data: id, error } = await sb.rpc("crear_persona", { p_nombres: n, p_apellidos: a, p_telefono: tel });
+    $("ad-nueva-ok").disabled = false;
+    if (error) { m.textContent = error.message; return; }
+    $("ad-nueva").classList.add("hidden"); $("ad-nueva-btn").classList.add("hidden");
+    elegirPersona(id, (n + " " + a).trim());
+  });
   let t;
   $("ad-q").addEventListener("input", (e) => { clearTimeout(t); t = setTimeout(async () => {
     const q = e.target.value.trim(); if (q.length < 2) { $("ad-res").innerHTML = ""; return; }
     const { data } = await sb.rpc("buscar_personas", { q });
     $("ad-res").innerHTML = (data || []).map((p) => `<div class="li"><div><b>${esc(p.nombre)}</b><div class="muted">${p.igho ? "IGHO " + esc(p.igho) : "Sin IGHO"}${p.tel ? " · Tel. " + esc(p.tel) : ""}</div></div>
-      <button class="btn-sec mini" data-p="${p.id}" data-n="${esc(p.nombre)}">Elegir</button></div>`).join("") || `<div class="muted" style="margin-top:8px">No se encontró. Primero agrégala desde Mi IGHO o Bienvenida.</div>`;
+      <button class="btn-sec mini" data-p="${p.id}" data-n="${esc(p.nombre)}">Elegir</button></div>`).join("") || `<div class="muted" style="margin-top:8px">No se encontró. Usa «+ Persona nueva» abajo.</div>`;
     $("ad-res").querySelectorAll("[data-p]").forEach((b) => b.addEventListener("click", () => elegirPersona(b.dataset.p, b.dataset.n)));
   }, 300); });
 }
