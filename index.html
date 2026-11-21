@@ -282,6 +282,109 @@
   .pk { display: block; width: 100%; text-align: left; background: var(--surface-2); color: var(--ink); border-radius: 14px; padding: 12px 14px; margin-top: 6px; font-size: 16px; }
   .pk.on { background: var(--green); color: var(--ink-dark); font-weight: 600; }
 
+  /* ---------- Familias (árbol) ---------- */
+  .ft { display: flex; flex-direction: column; gap: 8px; }
+  .ft-box { background: var(--bg); border-radius: 20px; padding: 14px 14px 10px; }
+  .ft-box[data-hog] { cursor: pointer; }
+  .ft-mini { padding: 10px 14px; opacity: .9; }
+  .ft-h { font-size: 12px; font-weight: 700; letter-spacing: .6px; text-transform: uppercase; color: var(--ink-2); margin-bottom: 8px; }
+  .ft-row { display: grid; grid-template-columns: 34px 1fr auto auto; gap: 10px; align-items: center; padding: 5px 0; }
+  .ft-av { width: 34px; height: 34px; border-radius: 50%; background: var(--orange); color: var(--ink-dark); display: grid; place-items: center; font-size: 13px; font-weight: 700; }
+  .ft-av.y { background: var(--yellow); }
+  .ft-n { font-size: 15px; } .ft-r { color: var(--ink-2); font-size: 13px; }
+  .ft-kids { margin-left: 16px; padding-left: 14px; border-left: 2px solid var(--surface-2); }
+  .ft-link { color: var(--ink-2); font-size: 13px; text-align: center; }
+  .ft-sm .ft-row { grid-template-columns: 30px 1fr auto; } .ft-sm .ft-av { width: 30px; height: 30px; font-size: 12px; }
+  .dlg { position: fixed; inset: 0; z-index: 60; background: rgba(0,0,0,.6); display: grid; place-items: center; padding: 18px; }
+  .dlg-in { background: var(--surface); border-radius: var(--radius); padding: 22px; width: min(420px, 100%); }
+  .dlg-in h4 { margin-bottom: 12px; } .dlg-in select { background: var(--bg); }
+  .ig-acc { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  .ig-acc .btn-sec { margin: 0; }
+  .ig-mk { width: 20px; height: 20px; margin: 0 6px 0 0; padding: 0; vertical-align: middle; accent-color: var(--orange); }
+
+  /* ---------- Tablero del Consejo (computadora) ---------- */
+  body.modo-tablero .app, body.modo-tablero .nav { display: none !important; }
+  .tb { display: grid; grid-template-columns: 250px 1fr; min-height: 100vh; }
+  .tb-side { background: #151517; padding: 26px 18px; display: flex; flex-direction: column; gap: 6px; position: sticky; top: 0; height: 100vh; }
+  .tb-brand { display: flex; align-items: center; gap: 12px; font-size: 21px; font-weight: 600; margin: 0 0 22px 4px; }
+  .tb-logo { width: 46px; height: 46px; border-radius: 50%; background: var(--orange); display: grid; place-items: center; }
+  .tb-logo img { height: 24px; }
+  #tb-menu { display: flex; flex-direction: column; gap: 4px; }
+  .tb-side button { text-align: left; background: none; color: var(--ink-2); font-size: 16px; padding: 12px 18px; border-radius: 999px; display: flex; justify-content: space-between; align-items: center; }
+  .tb-side button:hover { background: var(--surface); color: var(--ink); }
+  .tb-side button.on { background: var(--orange); color: var(--ink-dark); font-weight: 600; }
+  .tb-lock { font-size: 12px; opacity: .8; }
+  .tb-side-foot { margin-top: auto; display: flex; flex-direction: column; gap: 2px; }
+  .tb-wrap { padding: 28px 32px 40px; min-width: 0; }
+  .tb-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; flex-wrap: wrap; margin-bottom: 22px; }
+  .tb-head h1 { font-size: 40px; font-weight: 700; line-height: 1.05; }
+  .tb-sub { color: var(--ink-2); font-size: 16px; margin-top: 6px; }
+  .tb-filtros { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; justify-content: flex-end; }
+  .tb-pill { background: var(--surface); color: var(--ink-2); border-radius: 999px; padding: 11px 18px; font-size: 15px; width: auto; margin: 0; border: 0; }
+  select.tb-pill { padding-right: 18px; }
+  .tb-pill.on { background: var(--ink); color: var(--ink-dark); font-weight: 600; }
+  .tb-print { background: var(--orange); color: var(--ink-dark); font-weight: 600; }
+  #tb-fechas input { width: 150px; display: inline-block; margin: 0; padding: 9px 14px; font-size: 14px; }
+  .tb-cards { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 14px; margin-bottom: 16px; }
+  .tb-card { background: var(--surface); border-radius: 26px; padding: 18px 20px; min-height: 172px; display: flex; flex-direction: column; }
+  .tb-click { cursor: pointer; } .tb-click:hover { background: #313135; }
+  .tb-t { font-size: 17px; font-weight: 600; } .tb-s { color: var(--ink-2); font-size: 13px; margin-top: 2px; }
+  .tb-row { display: flex; align-items: flex-end; gap: 10px; margin-top: auto; padding-top: 10px; }
+  .tb-n { font-size: 46px; font-weight: 700; line-height: 1; letter-spacing: -1px; font-variant-numeric: tabular-nums; }
+  .tb-spark { width: 110px; height: 34px; flex: 1; max-width: 120px; }
+  .tb-f { color: var(--ink-2); font-size: 14px; margin-top: 8px; }
+  .tb-f.bad { color: #ff8a7a; } .tb-f.warn { color: var(--yellow); } .tb-f.good { color: var(--green); }
+  .tb-g2 { display: grid; grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr); gap: 16px; margin-bottom: 16px; }
+  .tb-g2-in { grid-template-columns: minmax(0,1fr); margin: 0; gap: 22px; }
+  .tb-mems { columns: 2; column-gap: 18px; } .tb-mems .tb-mem { break-inside: avoid; }
+  .tb-g3 { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr) minmax(0, .85fr); gap: 16px; }
+  .tb-panel { background: var(--surface); border-radius: 28px; padding: 22px 24px; min-width: 0; }
+  .tb-panel h3 { font-size: 22px; font-weight: 600; } .tb-panel h4 { font-size: 15px; margin-bottom: 6px; }
+  .tb-ph { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+  .tb-leg { display: flex; gap: 16px; color: var(--ink-2); font-size: 14px; }
+  .tb-leg i { display: inline-block; width: 18px; height: 3px; border-radius: 2px; vertical-align: middle; margin-right: 6px; }
+  .tb-leg i.o { background: var(--orange); } .tb-leg i.w { background: var(--ink); } .tb-leg i.y { background: var(--yellow); }
+  .tb-chart { width: 100%; height: auto; display: block; }
+  .tb-grid { stroke: #3a3a3e; stroke-width: 1; } .tb-ax { fill: #8d8d89; font-size: 13px; font-family: inherit; }
+  .tb-pt:hover circle:last-of-type { r: 6; }
+  .tb-hero { font-size: 44px; font-weight: 700; margin: 0 0 14px; } .tb-hero small { font-size: 15px; color: var(--ink-2); font-weight: 400; }
+  .tb-bh { display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; padding: 7px 0; font-size: 15px; border-bottom: 1px solid #333337; }
+  .tb-bh-v { font-variant-numeric: tabular-nums; font-weight: 600; } .tb-bh-v small { color: var(--ink-2); font-weight: 400; }
+  .tb-bh-t { grid-column: 1 / -1; height: 8px; } .tb-bh-t div { height: 8px; background: var(--orange); border-radius: 0 4px 4px 0; min-width: 2px; }
+  .tb-scroll { max-height: 460px; overflow: auto; }
+  .tb-tab { font-size: 14px; margin: 0; } .tb-tab th { color: var(--ink-2); font-weight: 500; position: sticky; top: 0; background: var(--surface); }
+  .tb-tab td, .tb-tab th { text-align: left; padding: 10px 8px; border-bottom: 1px solid #36363a; }
+  .tb-tab tr[data-igho] { cursor: pointer; } .tb-tab tr[data-igho]:hover, .tb-tab tr.on { background: #333338; }
+  .tb-tab input[type=checkbox] { width: 18px; height: 18px; margin: 0; accent-color: var(--orange); }
+  .tb-mini { display: flex; align-items: center; gap: 8px; } .tb-mt { width: 70px; height: 7px; background: #3c3c40; border-radius: 4px; }
+  .tb-mt div { height: 7px; background: var(--orange); border-radius: 4px; }
+  .tb-badge { display: inline-block; border-radius: 999px; padding: 3px 10px; font-size: 13px; font-weight: 600; }
+  .tb-badge.g { background: rgba(203,217,138,.2); color: var(--green); } .tb-badge.y { background: rgba(246,198,78,.2); color: var(--yellow); } .tb-badge.r { background: rgba(236,91,79,.2); color: #ff8a7a; }
+  .tb-seg { display: flex; justify-content: space-between; gap: 10px; align-items: center; padding: 10px 0; border-bottom: 1px solid #36363a; font-size: 15px; }
+  .tb-tag { background: var(--surface-2); color: var(--ink-2); border-radius: 999px; padding: 4px 12px; font-size: 13px; white-space: nowrap; }
+  .tb-tree { text-align: center; margin: 10px 0 16px; }
+  .tb-tn { display: inline-flex; flex-direction: column; align-items: center; gap: 4px; margin: 0 6px; vertical-align: top; }
+  .tb-node { display: inline-block; border: 1.5px solid #55555a; border-radius: 999px; padding: 8px 14px; font-size: 13px; cursor: pointer; }
+  .tb-node.nuevo { border-color: var(--orange); background: rgba(244,123,32,.15); }
+  .tb-nl { color: var(--ink-2); font-size: 11px; }
+  .tb-kids { display: flex; justify-content: center; margin-top: 10px; padding-top: 10px; border-top: 1.5px solid #55555a; }
+  .tb-btn { width: auto; padding: 12px 20px; font-size: 15px; margin: 0; }
+  .tb-mem { margin-bottom: 8px; } .tb-mem input { width: 18px; height: 18px; }
+  .tb-narrow { max-width: 620px; }
+  .tb .panel { background: var(--surface); }
+  @media (max-width: 1500px) { .tb-cards { grid-template-columns: repeat(4, minmax(0, 1fr)); } .tb-g3 { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 1100px) { .tb { grid-template-columns: 1fr; } .tb-side { position: static; height: auto; } #tb-menu { flex-direction: row; flex-wrap: wrap; }
+    .tb-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } .tb-g2, .tb-g3, .tb-g2-in { grid-template-columns: 1fr; } .tb-wrap { padding: 18px; } }
+  @media print {
+    @page { size: landscape; margin: 10mm; }
+    html, body { background: #fff !important; color: #1b1b1d; }
+    .tb { display: block; } .tb-side, .tb-filtros, .link, .btn-sec, .btn-primary { display: none !important; }
+    .tb-wrap { padding: 0; } .tb-head h1 { font-size: 26px; } .tb-sub, .muted, .tb-s, .tb-f, .tb-ax, .tb-leg { color: #555 !important; }
+    .tb-card, .tb-panel { background: #fff !important; border: 1px solid #ccc; break-inside: avoid; color: #1b1b1d; }
+    .tb-cards { grid-template-columns: repeat(6, 1fr); } .tb-n { font-size: 30px; } .tb-card { min-height: 0; }
+    .tb-scroll { max-height: none; overflow: visible; } .tb-tab th { background: #fff; } .tb-grid { stroke: #ddd; }
+    .tb-tab td, .tb-tab th, .tb-bh, .tb-seg { border-color: #ddd; } .tb-g3 { grid-template-columns: 1.3fr 1fr; } .tb-g3 > :last-child { display: none; }
+  }
 </style>
 </head>
 <body>
@@ -418,8 +521,8 @@
     <div class="msg" id="nc-msg"></div>
   </section>
   <section id="v-admin" class="hidden"><div class="top"><button class="back" data-go="home" aria-label="Volver"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button></div>
-    <div class="page-title">Administración</div><div class="hello-sub">Acceso a la app y roles</div>
-    <div class="tabs" id="ad-tabs"><button data-tab="usuarios" class="on">Con acceso</button><button data-tab="dar">Dar acceso</button></div>
+    <div class="page-title">Administración</div><div class="hello-sub" id="ad-sub">Acceso a la app, roles y familias</div>
+    <div class="tabs" id="ad-tabs"><button data-tab="usuarios" class="on">Con acceso</button><button data-tab="dar">Dar acceso</button><button data-tab="familias">Familias</button></div>
     <div id="ad-body"></div></section>
 
   <!-- ================= PRÓXIMAMENTE ================= -->
@@ -429,6 +532,22 @@
     <div class="soon" id="soon-text"></div>
   </section>
 </div>
+
+<section id="v-tablero" class="tb hidden">
+  <aside class="tb-side">
+    <div class="tb-brand"><span class="tb-logo" id="tb-logo"></span>Arco Ríos</div>
+    <nav id="tb-menu"></nav>
+    <div class="tb-side-foot">
+      <button data-go="home">📱 App del celular</button>
+      <button data-go="admin" id="tb-admin">Administración</button>
+      <button id="tb-salir">Cerrar sesión</button>
+    </div>
+  </aside>
+  <main class="tb-wrap">
+    <header class="tb-head"><div><h1 id="tb-h1">Tablero del Consejo</h1><div class="tb-sub" id="tb-sub"></div></div><div class="tb-filtros" id="tb-filtros"></div></header>
+    <div id="tb-main"></div>
+  </main>
+</section>
 
 <div id="scan" class="scan hidden">
   <video id="scan-video" playsinline muted></video>
@@ -491,8 +610,10 @@ const SECCIONES = [
     ve: (r) => r.esAncianoOAdmin || r.roles.has("lider_igho") },
   { id: "resumen", titulo: "Resumen", desc: "Estadísticas de toda la iglesia.", color: "c-sand", tag: "Consejo",
     ve: (r) => r.esAncianoOAdmin },
-  { id: "admin", titulo: "Administración", desc: "Dar acceso a la app y asignar roles.", color: "c-white", tag: "Admin",
-    ve: (r) => r.roles.has("admin") },
+  { id: "tablero", titulo: "Tablero del Consejo", desc: "Para la computadora: gráficos, filtros, multiplicar IGHO e imprimir.", color: "c-orange", tag: "Computadora",
+    ve: (r) => r.esAncianoOAdmin },
+  { id: "admin", titulo: "Administración", desc: "Dar acceso a la app, asignar roles y armar las familias.", color: "c-white", tag: "Admin",
+    ve: (r) => r.roles.has("admin") || r.roles.has("secretaria") },
   { id: "finanzas", titulo: "Finanzas", desc: "Informe mensual de ingresos y gastos.", color: "c-peach", tag: "Consejo",
     ve: (r) => r.esAncianoOAdmin || r.roles.has("finanzas") },
 ];
@@ -501,7 +622,8 @@ let ctx = null; // { user, nombre, roles:Set, ministerios:Set, esAncianoOAdmin }
 
 // ---------------- Navegación ----------------
 function show(view) {
-  for (const v of ["login", "home", "resumen", "soon", "anfitriones", "kidz", "padres", "domingo", "worship", "bienvenida", "igho", "clave", "admin"]) $("v-" + v).classList.toggle("hidden", v !== view);
+  for (const v of ["login", "home", "resumen", "soon", "anfitriones", "kidz", "padres", "domingo", "worship", "bienvenida", "igho", "clave", "admin", "tablero"]) $("v-" + v).classList.toggle("hidden", v !== view);
+  document.body.classList.toggle("modo-tablero", view === "tablero");
   $("nav").classList.toggle("hidden", view === "login" || view === "clave");
   document.querySelectorAll(".nav [data-go]").forEach((b) => b.classList.toggle("on", b.dataset.go === view));
   window.scrollTo(0, 0);
@@ -516,7 +638,8 @@ function abrir(id) {
   if (id === "worship") { show("worship"); return abrirWorship("domingo"); }
   if (id === "bienvenida") { show("bienvenida"); return abrirBienvenida(); }
   if (id === "igho") { show("igho"); return abrirIgho(); }
-  if (id === "admin") { show("admin"); return abrirAdmin("usuarios"); }
+  if (id === "admin") { show("admin"); return abrirAdmin(ctx.roles.has("admin") ? "usuarios" : "familias"); }
+  if (id === "tablero") { show("tablero"); return abrirTablero(); }
   const s = SECCIONES.find((x) => x.id === id);
   $("soon-title").textContent = s.titulo;
   $("soon-text").textContent = "Esta sección se construirá en las próximas etapas. Ya tienes acceso a ella según tu rol.";
@@ -537,6 +660,8 @@ $("login-form").addEventListener("submit", async (e) => {
   await iniciar();
 });
 $("logout").addEventListener("click", async () => { await sb.auth.signOut(); ctx = null; show("login"); });
+$("tb-salir").addEventListener("click", async () => { await sb.auth.signOut(); ctx = null; tb.d = null; tb.desde = null; show("login"); });
+{ const img = document.querySelector(".brand-mark img"); if (img) $("tb-logo").appendChild(img.cloneNode()); }
 
 // ---------------- Cargar usuario y roles ----------------
 async function iniciar() {
@@ -569,6 +694,8 @@ async function iniciar() {
 
   ctx = { user, nombre, nombreCompleto, personaId: perfil?.persona_id || null, ...r };
   pintarHome();
+  // En la computadora, el Consejo entra directo a su tablero
+  if (ctx.esAncianoOAdmin && window.matchMedia("(min-width: 1100px)").matches) return abrir("tablero");
   show("home");
 }
 
@@ -1452,13 +1579,16 @@ async function cargarIgho() {
   const { data, error } = await sb.from("personas").select("id, nombres, apellidos, telefono").eq("igho_id", ig.sel).eq("activo", true).order("nombres");
   if (error) { $("ig-body").innerHTML = `<div class="soon">${esc(error.message)}</div>`; return; }
   ig.miembros = data;
+  ig.cubre = ctx.esAncianoOAdmin ? await cubroIgho(ig.sel).catch(() => false) : false;
+  ig.marcados = new Set();
   if (ig.tab === "miembros") pintarMiembros(); else if (ig.tab === "asistencia") pintarAsistencia(); else pintarCensoIgho();
 }
 function pintarMiembros() {
   $("ig-body").innerHTML = `
     <div class="panel">
-      <h4>Miembros (${ig.miembros.length})</h4><div class="hint">Toca un nombre para editar su ficha</div>
-      ${ig.miembros.map((p) => `<div class="li"><div><button class="link name-btn" data-editar="${p.id}">${esc(p.nombres)} ${esc(p.apellidos || "")}</button><div>${telHtml(p.telefono)}</div></div><div class="row-btns"><button class="btn-sec mini" data-editar="${p.id}">Editar</button><button class="x" data-quitar="${p.id}" aria-label="Quitar del IGHO">×</button></div></div>`).join("") || `<div class="muted">Este IGHO no tiene miembros todavía.</div>`}
+      <h4>Miembros (${ig.miembros.length})</h4><div class="hint">Toca un nombre para editar su ficha${ig.cubre ? ". Marca personas para moverlas a otro IGHO." : ""}</div>
+      ${ig.miembros.map((p) => `<div class="li"><div>${ig.cubre ? `<input type="checkbox" class="ig-mk" data-mk="${p.id}" aria-label="Marcar"> ` : ""}<button class="link name-btn" data-editar="${p.id}">${esc(p.nombres)} ${esc(p.apellidos || "")}</button><div>${telHtml(p.telefono)}</div></div><div class="row-btns"><button class="btn-sec mini" data-editar="${p.id}">Editar</button><button class="x" data-quitar="${p.id}" aria-label="Quitar del IGHO">×</button></div></div>`).join("") || `<div class="muted">Este IGHO no tiene miembros todavía.</div>`}
+      ${ig.cubre ? `<div class="ig-acc"><button class="btn-sec" id="ig-mover">Mover marcados a otro IGHO</button><button class="btn-primary" id="ig-mult" style="width:auto;margin:0;padding:12px 18px;font-size:15px">Multiplicar este IGHO</button></div>` : ""}
     </div>
     <div class="panel">
       <h4>Agregar desde la base de datos</h4>
@@ -1473,6 +1603,9 @@ function pintarMiembros() {
       <div class="ok" id="ig-msg"></div>
     </div>`;
   $("ig-body").querySelectorAll("[data-editar]").forEach((b) => b.addEventListener("click", () => editarMiembro(b.dataset.editar)));
+  $("ig-body").querySelectorAll("[data-mk]").forEach((x) => x.addEventListener("change", () => (x.checked ? ig.marcados.add(x.dataset.mk) : ig.marcados.delete(x.dataset.mk))));
+  $("ig-mover")?.addEventListener("click", () => moverSeleccion([...ig.marcados], () => cargarIgho()));
+  $("ig-mult")?.addEventListener("click", () => { $("ig-tabs").classList.add("hidden"); abrirMultiplicar(ig.sel, "ig-body", () => { $("ig-tabs").classList.remove("hidden"); abrirIgho(); }); });
   $("ig-body").querySelectorAll("[data-quitar]").forEach((b) => b.addEventListener("click", async () => {
     const p = ig.miembros.find((x) => x.id === b.dataset.quitar);
     if (!confirm(`¿Quitar a ${p.nombres} de este IGHO?`)) return;
@@ -1652,7 +1785,11 @@ function hookCopiar(cont) {
 const ad = { tab: "usuarios", sel: null };
 async function abrirAdmin(tab) {
   ad.tab = tab || ad.tab;
-  document.querySelectorAll("#ad-tabs button").forEach((b) => b.classList.toggle("on", b.dataset.tab === ad.tab));
+  const esAdmin = ctx.roles.has("admin");
+  if (!esAdmin) ad.tab = "familias";   // la secretaría solo arma familias
+  document.querySelectorAll("#ad-tabs button").forEach((b) => { b.classList.toggle("on", b.dataset.tab === ad.tab); b.classList.toggle("hidden", !esAdmin && b.dataset.tab !== "familias"); });
+  $("ad-sub").textContent = esAdmin ? "Acceso a la app, roles y familias" : "Hogares y árbol familiar";
+  if (ad.tab === "familias") return abrirFamilias("ad-body");
   if (!ighosAdmin.length) { const { data } = await sb.from("igho").select("id, nombre").eq("activo", true).order("nombre"); ighosAdmin = data || []; }
   if (ad.tab === "usuarios") return pintarUsuarios();
   return pintarDarAcceso();
@@ -2465,6 +2602,796 @@ $("reg-form").addEventListener("submit", async (e) => {
 });
 
 $("scan-close").addEventListener("click", cerrarEscaner);
+
+
+// ===================================================================
+// FAMILIAS (Administración → Familias): hogares y árbol familiar
+// Solo admin y secretaría. Todo cambio pasa por funciones fam_* en Supabase.
+// ===================================================================
+const ROL_HOGAR = [["cabeza", "Cabeza"], ["conyuge", "Cónyuge"], ["hijo", "Hijo/a"], ["otro", "Otro"]];
+const ROL_HOGAR_N = Object.fromEntries(ROL_HOGAR);
+const fm = { cont: null, hogar: null, q: "" };
+const puedeFamilias = () => !!ctx && (ctx.roles.has("admin") || ctx.roles.has("secretaria"));
+const edadTxt = (e) => (e || e === 0 ? ` · ${e}` : "");
+// "Carlos Pérez Vintimilla" → "Pérez" (primer apellido aproximado)
+const apellidoDe = (n) => { const t = String(n || "").trim().split(/\s+/); return t.length >= 3 ? t[t.length - 2] : t[t.length - 1] || ""; };
+
+async function abrirFamilias(contId, hogarId) {
+  fm.cont = contId;
+  if (hogarId) return verHogar(hogarId);
+  const c = $(contId);
+  c.innerHTML = `
+    <div class="panel"><h4>Buscar</h4><div class="hint">Una persona o un hogar. Toca una persona para ver o crear su hogar.</div>
+      <input id="fm-q" placeholder="Nombre o apellido" autocomplete="off" value="${esc(fm.q)}"><div id="fm-res"></div>
+      <button class="btn-primary" id="fm-nuevo">+ Nuevo hogar</button></div>
+    <div class="panel"><h4>Sugerencias del censo</h4><div class="hint">El censo nombra cónyuges e hijos. Nada se une hasta que tocas «Sí».</div>
+      <div id="fm-sug" class="muted">Cargando…</div></div>
+    <div class="panel"><h4>Hogares recientes</h4><div id="fm-rec" class="muted">Cargando…</div></div>`;
+  $("fm-nuevo").addEventListener("click", async () => {
+    const n = prompt("Nombre del hogar (ej.: Hogar Pérez Vintimilla)", fm.q ? "Hogar " + fm.q : "Hogar ");
+    if (!n || !n.trim() || n.trim() === "Hogar") return;
+    const { data, error } = await sb.rpc("fam_guardar_hogar", { p_id: null, p_nombre: n.trim() });
+    if (error) return alert(error.message);
+    verHogar(data);
+  });
+  let t;
+  const buscar = async () => {
+    const q = fm.q.trim(); if (q.length < 2) return ($("fm-res").innerHTML = "");
+    const [p, h] = await Promise.all([sb.rpc("fam_buscar", { q }), sb.rpc("fam_buscar_hogares", { q })]);
+    if (p.error) return ($("fm-res").innerHTML = `<div class="muted err">${esc(p.error.message)}</div>`);
+    $("fm-res").innerHTML = (h.data || []).map((x) => `<div class="li"><div><b>🏠 ${esc(x.nombre)}</b><div class="muted">${esc(x.miembros || "sin miembros")}</div></div><button class="btn-sec mini" data-hog="${x.id}">Abrir</button></div>`).join("") +
+      (p.data || []).map((x) => `<div class="li"><div><b>${esc(x.nombre)}</b><div class="muted">${x.edad ?? "?"} años${x.igho ? " · IGHO " + esc(x.igho) : ""}${x.hogar ? ` · ${esc(x.hogar)} (${esc(ROL_HOGAR_N[x.rol] || "")})` : " · sin hogar"}</div></div>
+        ${x.hogar_id ? `<button class="btn-sec mini" data-hog="${x.hogar_id}">Ver hogar</button>` : `<button class="btn-sec mini" data-crea="${x.id}" data-n="${esc(x.nombre)}">Crear hogar</button>`}</div>`).join("") || `<div class="muted" style="margin-top:8px">No se encontró.</div>`;
+    $("fm-res").querySelectorAll("[data-hog]").forEach((b) => b.addEventListener("click", () => verHogar(b.dataset.hog)));
+    $("fm-res").querySelectorAll("[data-crea]").forEach((b) => b.addEventListener("click", async () => {
+      const n = prompt("Nombre del hogar", "Hogar " + apellidoDe(b.dataset.n)); if (!n) return;
+      const r = await sb.rpc("fam_guardar_hogar", { p_id: null, p_nombre: n.trim() }); if (r.error) return alert(r.error.message);
+      const r2 = await sb.rpc("fam_poner", { p_persona: b.dataset.crea, p_hogar: r.data, p_rol: "cabeza" }); if (r2.error) return alert(r2.error.message);
+      verHogar(r.data);
+    }));
+  };
+  $("fm-q").addEventListener("input", (e) => { fm.q = e.target.value; clearTimeout(t); t = setTimeout(buscar, 300); });
+  if (fm.q) buscar();
+  pintarSugerencias();
+  sb.rpc("fam_buscar_hogares", { q: "" }).then(({ data, error }) => {
+    if (!$("fm-rec")) return;
+    if (error) return ($("fm-rec").innerHTML = `<span class="err">${esc(error.message)}</span>`);
+    $("fm-rec").innerHTML = (data || []).slice(0, 12).map((x) => `<div class="li"><div><b>${esc(x.nombre)}</b><div class="muted">${x.n} persona(s) · ${esc(x.miembros || "")}</div></div><button class="btn-sec mini" data-hog="${x.id}">Abrir</button></div>`).join("") || "Todavía no hay hogares. Busca a una persona y toca «Crear hogar», o acepta una sugerencia del censo.";
+    $("fm-rec").querySelectorAll("[data-hog]").forEach((b) => b.addEventListener("click", () => verHogar(b.dataset.hog)));
+  });
+}
+
+async function pintarSugerencias() {
+  const cont = $("fm-sug"); if (!cont) return;
+  const { data, error } = await sb.rpc("fam_sugerencias", { p_limite: 40 });
+  if (error) return (cont.innerHTML = `<span class="err">${esc(error.message)}</span>`);
+  if (!data.length) return (cont.innerHTML = "No hay sugerencias pendientes.");
+  const ico = { conyuge: "💍", hijo: "👶", kidz: "🧒" };
+  cont.classList.remove("muted");
+  cont.innerHTML = data.map((s, i) => `<div class="nuevo"><div>${ico[s.tipo] || ""} ${esc(s.texto)}</div>
+    <div class="row-btns" style="margin-top:8px"><button class="btn-sec mini" data-si="${i}">Sí, unir</button><button class="btn-sec mini" data-no="${i}">No</button></div></div>`).join("");
+  cont.querySelectorAll("[data-no]").forEach((b) => b.addEventListener("click", async () => {
+    const { error } = await sb.rpc("fam_descartar", { p_clave: data[+b.dataset.no].clave }); if (error) return alert(error.message);
+    b.closest(".nuevo").remove();
+  }));
+  cont.querySelectorAll("[data-si]").forEach((b) => b.addEventListener("click", async () => {
+    b.disabled = true;
+    try { const h = await aceptarSugerencia(data[+b.dataset.si]); if (h) verHogar(h); else b.closest(".nuevo").remove(); }
+    catch (e) { alert(e.message); b.disabled = false; }
+  }));
+}
+// Acepta una sugerencia y, si hace falta, pone a las personas en el mismo hogar. Devuelve el hogar a abrir.
+async function aceptarSugerencia(s) {
+  const rpc = async (f, args) => { const { data, error } = await sb.rpc(f, args); if (error) throw error; return data; };
+  if (s.tipo === "kidz") { await rpc("fam_vincular_kidz", { p_familia: s.b, p_hogar: s.hogar_a }); return s.hogar_a; }
+  if (s.tipo === "conyuge") {
+    await rpc("fam_parentesco", { p_a: s.a, p_b: s.b, p_tipo: "conyuge" });
+    if (s.hogar_a && !s.hogar_b) { await rpc("fam_poner", { p_persona: s.b, p_hogar: s.hogar_a, p_rol: "conyuge" }); return s.hogar_a; }
+    if (s.hogar_b && !s.hogar_a) { await rpc("fam_poner", { p_persona: s.a, p_hogar: s.hogar_b, p_rol: "conyuge" }); return s.hogar_b; }
+    if (!s.hogar_a && !s.hogar_b) {
+      const n = prompt("Se creará su hogar. Nombre:", `Hogar ${apellidoDe(s.a_nombre)} ${apellidoDe(s.b_nombre)}`.trim()); if (!n) return null;
+      const h = await rpc("fam_guardar_hogar", { p_id: null, p_nombre: n.trim() });
+      await rpc("fam_poner", { p_persona: s.a, p_hogar: h, p_rol: "cabeza" });
+      await rpc("fam_poner", { p_persona: s.b, p_hogar: h, p_rol: "conyuge" });
+      return h;
+    }
+    return s.hogar_a;
+  }
+  if (s.tipo === "hijo") {
+    await rpc("fam_parentesco", { p_a: s.a, p_b: s.b, p_tipo: "padre_madre" });
+    if (s.hogar_a && !s.hogar_b) { await rpc("fam_poner", { p_persona: s.b, p_hogar: s.hogar_a, p_rol: "hijo" }); return s.hogar_a; }
+    return s.hogar_a || s.hogar_b || null;
+  }
+  return null;
+}
+
+// Dibujo del árbol de un hogar (lo usan Familias y el Tablero)
+function arbolHogarHtml(d, opts = {}) {
+  const ms = d.miembros || [], kids = (d.kidz || []).flatMap((f) => f.ninos || []);
+  const padres = ms.filter((m) => m.rol === "cabeza" || m.rol === "conyuge"), hijos = ms.filter((m) => m.rol === "hijo"), otros = ms.filter((m) => m.rol === "otro");
+  const fila = (m, clase) => `<div class="ft-row ${clase || ""}"><span class="ft-av ${clase === "hijo" ? "y" : ""}">${esc(iniciales(m.nombre))}</span>
+    <span class="ft-n">${esc(m.nombre)}${edadTxt(m.edad)}</span><span class="ft-r">${esc(m.etq || ROL_HOGAR_N[m.rol] || "")}</span>
+    ${opts.editar && m.id ? `<button class="x" data-quita-m="${m.id}" aria-label="Sacar del hogar">×</button>` : ""}</div>`;
+  const hijosHtml = [...hijos.map((m) => fila(m, "hijo")), ...kids.map((k) => fila({ nombre: k.nombre, edad: k.edad, etq: "Kidz " + (k.clase || "") }, "hijo"))].join("");
+  return `
+    ${(d.padres || []).map((p) => `<div class="ft-box ft-mini" ${opts.nav ? `data-hog="${p.hogar_id}"` : ""}><div class="ft-h">${esc(p.hogar)}</div><div class="muted">${esc(p.padres || "")}</div></div>
+      <div class="ft-link">↓ ${esc(p.hijo.split(" ")[0])} es hijo/a de este hogar</div>`).join("")}
+    <div class="ft-box"><div class="ft-h">${esc(d.hogar?.nombre || "")}</div>
+      ${padres.map((m) => fila(m)).join("")}
+      ${hijosHtml ? `<div class="ft-kids">${hijosHtml}</div>` : ""}
+      ${otros.map((m) => fila(m)).join("")}
+      ${!ms.length && !kids.length ? `<div class="muted">Sin miembros todavía.</div>` : ""}</div>
+    ${(d.hijos_fuera || []).length ? `<div class="ft-link">Hijos con su propio hogar</div>${d.hijos_fuera.map((h) => `<div class="ft-box ft-mini" ${opts.nav && h.hogar_id ? `data-hog="${h.hogar_id}"` : ""}><div class="ft-h">${esc(h.nombre)}</div><div class="muted">${h.hogar ? esc(h.hogar) : "sin hogar registrado"}</div></div>`).join("")}` : ""}`;
+}
+
+async function verHogar(id) {
+  fm.hogar = id;
+  const c = $(fm.cont);
+  c.innerHTML = '<div class="loading">Cargando…</div>';
+  const { data: d, error } = await sb.rpc("fam_ver_hogar", { p_hogar: id });
+  if (error || !d?.hogar) { c.innerHTML = `<div class="soon">${esc(error?.message || "No se encontró el hogar.")}</div>`; return; }
+  const h = d.hogar, ms = d.miembros || [];
+  c.innerHTML = `
+    <button class="btn-sec" style="width:100%;margin-top:0" id="fh-back">← Buscar otro hogar</button>
+    <div class="panel"><div class="ft">${arbolHogarHtml(d, { editar: true, nav: true })}</div></div>
+    <div class="panel"><h4>Miembros</h4><div class="hint">Cambia el rol o saca a alguien. Sus lazos (cónyuge, hijo de) se mantienen.</div>
+      ${ms.map((m) => `<div class="rol-row"><span>${esc(m.nombre)}<span class="muted">${edadTxt(m.edad)}</span></span>
+        <select data-rol-m="${m.id}" style="margin:0 0 8px">${opciones(ROL_HOGAR, m.rol)}</select></div>`).join("") || '<div class="muted">Agrega personas abajo.</div>'}</div>
+    <div class="panel"><h4>Agregar persona</h4>
+      <div class="seg small" id="fh-rol">${ROL_HOGAR.map(([v, t]) => `<button type="button" data-v="${v}" class="${v === (ms.length ? "hijo" : "cabeza") ? "on" : ""}">${t}</button>`).join("")}</div>
+      <input id="fh-q" placeholder="Buscar persona" autocomplete="off"><div id="fh-res"></div></div>
+    <div class="panel"><h4>Hogar de los padres</h4><div class="hint">Para un hijo adulto que ya tiene su propio hogar: elige a la persona y el hogar de sus padres.</div>
+      <select id="fh-hijo">${opciones(ms.map((m) => [m.id, m.nombre]))}</select>
+      <input id="fh-pq" placeholder="Buscar el hogar de sus padres" autocomplete="off"><div id="fh-pres"></div></div>
+    <div class="panel"><h4>Familia de Kidz</h4><div class="hint">Así sus niños de Kidz aparecen en este árbol.</div>
+      ${(d.kidz || []).map((f) => `<div class="li"><div><b>${esc(f.tutores)}</b><div class="muted">${(f.ninos || []).map((n) => esc(n.nombre.split(" ")[0])).join(", ") || "sin niños"}</div></div><button class="btn-sec mini" data-kq="${f.id}">Quitar enlace</button></div>`).join("")}
+      <input id="fh-kq" placeholder="Buscar familia de Kidz (padres, niño o celular)" autocomplete="off"><div id="fh-kres"></div></div>
+    <div class="panel"><h4>Lazos</h4>
+      ${(d.lazos || []).map((l) => `<div class="li"><span>${l.tipo === "conyuge" ? `${esc(l.na)} 💍 ${esc(l.nb)}` : `${esc(l.na)} → padre/madre de ${esc(l.nb)}`}</span><button class="x" data-lazo="${l.id}" aria-label="Quitar lazo">×</button></div>`).join("") || '<div class="muted">Sin lazos todavía.</div>'}</div>
+    <div class="panel"><h4>Datos del hogar</h4>
+      <label>Nombre</label><input id="fh-n" value="${esc(h.nombre)}">
+      <label>Dirección (opcional)</label><input id="fh-d" value="${esc(h.direccion || "")}">
+      <label>Notas</label><textarea id="fh-notas">${esc(h.notas || "")}</textarea>
+      <button class="btn-primary" id="fh-save">Guardar</button><div class="ok" id="fh-msg"></div>
+      <button class="btn-sec danger" style="width:100%" id="fh-del">Borrar hogar</button></div>`;
+  const rpc = async (f, args) => { const { error } = await sb.rpc(f, args); if (error) { alert(error.message); return false; } return true; };
+  $("fh-back").addEventListener("click", () => abrirFamilias(fm.cont));
+  c.querySelectorAll("[data-hog]").forEach((b) => b.addEventListener("click", () => verHogar(b.dataset.hog)));
+  c.querySelectorAll("[data-quita-m]").forEach((b) => b.addEventListener("click", async () => { if (confirm("¿Sacar a esta persona del hogar?") && await rpc("fam_quitar", { p_persona: b.dataset.quitaM })) verHogar(id); }));
+  c.querySelectorAll("[data-rol-m]").forEach((s) => s.addEventListener("change", async () => { if (await rpc("fam_poner", { p_persona: s.dataset.rolM, p_hogar: id, p_rol: s.value })) verHogar(id); }));
+  c.querySelectorAll("[data-lazo]").forEach((b) => b.addEventListener("click", async () => { if (confirm("¿Quitar este lazo?") && await rpc("fam_quitar_parentesco", { p_id: +b.dataset.lazo })) verHogar(id); }));
+  c.querySelectorAll("[data-kq]").forEach((b) => b.addEventListener("click", async () => { if (await rpc("fam_vincular_kidz", { p_familia: b.dataset.kq, p_hogar: null })) verHogar(id); }));
+  $("fh-rol").querySelectorAll("button").forEach((b) => b.addEventListener("click", () => $("fh-rol").querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === b))));
+  const buscador = (inputId, resId, f, pintar) => { let t; $(inputId).addEventListener("input", (e) => { clearTimeout(t); t = setTimeout(async () => {
+    const q = e.target.value.trim(); if (q.length < 2) return ($(resId).innerHTML = "");
+    const { data, error } = await sb.rpc(f, { q }); if (error) return ($(resId).innerHTML = `<div class="muted err">${esc(error.message)}</div>`);
+    $(resId).innerHTML = pintar(data || []) || `<div class="muted" style="margin-top:8px">No se encontró.</div>`;
+  }, 300); }); };
+  buscador("fh-q", "fh-res", "fam_buscar", (data) => data.map((p) => `<div class="li"><div><b>${esc(p.nombre)}</b><div class="muted">${p.edad ?? "?"} años${p.hogar ? " · ahora en " + esc(p.hogar) : ""}</div></div>
+    ${p.hogar_id === id ? '<span class="muted">Ya está</span>' : `<button class="btn-sec mini" data-pon="${p.id}" data-otro="${esc(p.hogar || "")}">Agregar</button>`}</div>`).join(""));
+  $("fh-res").addEventListener("click", async (e) => {
+    const b = e.target.closest("[data-pon]"); if (!b) return;
+    if (b.dataset.otro && !confirm(`Esta persona está en ${b.dataset.otro}. ¿Pasarla a este hogar? (Sus lazos se mantienen.)`)) return;
+    const rol = $("fh-rol").querySelector("button.on")?.dataset.v || "otro";
+    if (await rpc("fam_poner", { p_persona: b.dataset.pon, p_hogar: id, p_rol: rol })) verHogar(id);
+  });
+  buscador("fh-pq", "fh-pres", "fam_buscar_hogares", (data) => data.filter((x) => x.id !== id).map((x) => `<div class="li"><div><b>${esc(x.nombre)}</b><div class="muted">${esc(x.miembros || "")}</div></div><button class="btn-sec mini" data-ph="${x.id}">Es su hogar</button></div>`).join(""));
+  $("fh-pres").addEventListener("click", async (e) => {
+    const b = e.target.closest("[data-ph]"); if (!b || !$("fh-hijo").value) return;
+    if (await rpc("fam_enlazar_padres", { p_persona: $("fh-hijo").value, p_hogar_padres: b.dataset.ph })) verHogar(id);
+  });
+  buscador("fh-kq", "fh-kres", "fam_buscar_kidz", (data) => data.map((f) => `<div class="li"><div><b>${esc(f.tutores)}</b><div class="muted">${esc(f.telefono || "")} · ${esc(f.ninos || "sin niños")}${f.hogar_id && f.hogar_id !== id ? " · ya está en otro hogar" : ""}</div></div>
+    ${f.hogar_id === id ? '<span class="muted">Ya está</span>' : `<button class="btn-sec mini" data-kf="${f.id}">Enlazar</button>`}</div>`).join(""));
+  $("fh-kres").addEventListener("click", async (e) => { const b = e.target.closest("[data-kf]"); if (b && await rpc("fam_vincular_kidz", { p_familia: b.dataset.kf, p_hogar: id })) verHogar(id); });
+  $("fh-save").addEventListener("click", async () => {
+    const { error } = await sb.rpc("fam_guardar_hogar", { p_id: id, p_nombre: $("fh-n").value, p_direccion: $("fh-d").value, p_notas: $("fh-notas").value });
+    $("fh-msg").classList.toggle("err", !!error); $("fh-msg").textContent = error ? error.message : "✓ Guardado";
+  });
+  $("fh-del").addEventListener("click", async () => {
+    if (!confirm(`¿Borrar «${h.nombre}»? Las personas quedan sin hogar, pero sus lazos se mantienen.`)) return;
+    if (await rpc("fam_borrar_hogar", { p_id: id })) abrirFamilias(fm.cont);
+  });
+}
+
+// ===================================================================
+// MULTIPLICAR IGHO · mover personas · acceso del nuevo líder
+// ===================================================================
+let consejoCache = null;
+async function listaConsejo() {
+  if (consejoCache) return consejoCache;
+  const { data, error } = await sb.rpc("consejo_lista"); if (error) throw error;
+  return (consejoCache = data || []);
+}
+let coberturaCache = null;
+async function coberturaTodos(forzar) {
+  if (coberturaCache && !forzar) return coberturaCache;
+  const { data, error } = await sb.rpc("tablero_cobertura"); if (error) throw error;
+  return (coberturaCache = data || []);
+}
+// ¿Puedo manejar este IGHO? (admin o el miembro del Consejo que lo cubre)
+async function cubroIgho(ighoId) {
+  if (ctx.roles.has("admin")) return true;
+  if (!ctx.roles.has("anciano")) return false;
+  const cob = await coberturaTodos();
+  return cob.some((c) => c.igho_id === ighoId && c.user_id === ctx.user.id);
+}
+
+async function abrirMultiplicar(ighoId, contId, volver) {
+  const c = $(contId);
+  c.innerHTML = '<div class="loading">Cargando…</div>';
+  const [ig, mi, consejo, cob] = await Promise.all([
+    sb.from("igho").select("id, nombre").eq("id", ighoId).single(),
+    sb.from("personas").select("id, nombres, apellidos").eq("igho_id", ighoId).eq("activo", true).order("nombres"),
+    listaConsejo().catch(() => []), coberturaTodos().catch(() => []),
+  ]);
+  if (ig.error || mi.error) { c.innerHTML = `<div class="soon">${esc((ig.error || mi.error).message)}</div>`; return; }
+  const miembros = mi.data || [];
+  const hog = await sb.rpc("hogares_de", { p_personas: miembros.map((m) => m.id) });
+  const hogarDe = new Map((hog.data || []).map((x) => [x.persona_id, x.hogar_id]));
+  const cubreMadre = cob.find((x) => x.igho_id === ighoId)?.user_id;
+  const st = { nombre: "", nombreTocado: false, lider: null, pasan: new Set(), cubre: ctx.roles.has("anciano") ? ctx.user.id : cubreMadre || consejo[0]?.user_id || "", fecha: ymd(new Date()), ubic: "" };
+  const nom = (p) => `${p.nombres} ${p.apellidos || ""}`.trim();
+  c.innerHTML = `
+    <div class="obs" style="margin-top:0"><b>Multiplicar</b>${esc(ig.data.nombre)} · ${miembros.length} miembros</div>
+    <div class="panel"><h4>1. Nuevo líder</h4>
+      <input id="mu-q" placeholder="Buscar a la persona" autocomplete="off"><div id="mu-res"></div>
+      <button type="button" class="btn-sec" style="width:100%" id="mu-nueva-btn">+ Persona nueva (no está en la base)</button>
+      <div id="mu-nueva" class="hidden" style="margin-top:8px"><input id="mu-nn" placeholder="Nombres" autocomplete="off"><input id="mu-na" placeholder="Apellidos" autocomplete="off">
+        <input id="mu-nt" placeholder="Celular (09…)" inputmode="tel" autocomplete="off"><button type="button" class="btn-sec" style="width:100%" id="mu-nueva-ok">Agregar persona</button><div class="ok err" id="mu-nueva-msg"></div></div></div>
+    <div class="panel"><h4>2. Nuevo IGHO</h4>
+      <label>Nombre</label><input id="mu-n" placeholder="Normalmente el nombre del líder">
+      <div class="two"><div><label>Desde</label><input type="date" id="mu-f" value="${st.fecha}"></div><div><label>Lugar (opcional)</label><input id="mu-u"></div></div></div>
+    <div class="panel"><h4>3. ¿Quiénes pasan al nuevo IGHO?</h4><div class="hint">Al marcar a alguien pasa también su hogar. Puedes desmarcar a cualquiera.</div>
+      <div id="mu-lista"></div><div class="muted" id="mu-cuenta"></div></div>
+    <div class="panel"><h4>4. ¿Quién del Consejo lo cubre?</h4>
+      <select id="mu-cubre">${opciones(consejo.map((x) => [x.user_id, x.nombre]), st.cubre)}</select></div>
+    <div class="panel"><h4>5. Confirmar</h4><div id="mu-resumen" class="muted"></div>
+      <button class="btn-primary" id="mu-ok">Multiplicar</button><div class="ok err" id="mu-msg"></div></div>
+    ${volver ? `<button class="btn-sec" style="width:100%" id="mu-back">← Cancelar</button>` : ""}`;
+  $("mu-back")?.addEventListener("click", volver);
+  const pintarLista = () => {
+    $("mu-lista").innerHTML = miembros.filter((m) => m.id !== st.lider?.id).map((m) => `<button class="att ${st.pasan.has(m.id) ? "on" : ""}" data-m="${m.id}"><span class="dot2">${st.pasan.has(m.id) ? "✓" : ""}</span>${esc(nom(m))}${hogarDe.has(m.id) ? ' <span class="muted">🏠</span>' : ""}</button>`).join("") || '<div class="muted">Este IGHO no tiene más miembros.</div>';
+    $("mu-cuenta").textContent = `${st.pasan.size} pasan · ${miembros.filter((m) => m.id !== st.lider?.id).length - st.pasan.size} se quedan en ${ig.data.nombre}`;
+    resumen();
+  };
+  const resumen = () => {
+    const cubre = consejo.find((x) => x.user_id === $("mu-cubre").value);
+    $("mu-resumen").innerHTML = `Se creará el IGHO <b style="color:var(--ink)">${esc(st.nombre || "—")}</b> con <b style="color:var(--ink)">${esc(st.lider?.nombre || "— (elige líder)")}</b> como líder.<br>
+      Pasan ${st.pasan.size} persona(s)${st.lider ? " + el líder" : ""}. Lo cubre <b style="color:var(--ink)">${esc(cubre?.nombre || "—")}</b>. Queda registrado que nació de ${esc(ig.data.nombre)}.`;
+  };
+  $("mu-lista").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-m]"); if (!b) return;
+    const id = b.dataset.m, h = hogarDe.get(id), marcar = !st.pasan.has(id);
+    const grupo = marcar && h ? miembros.filter((m) => hogarDe.get(m.id) === h && m.id !== st.lider?.id).map((m) => m.id) : [id];
+    grupo.forEach((x) => (marcar ? st.pasan.add(x) : st.pasan.delete(x)));
+    pintarLista();
+  });
+  const elegirLider = (id, nombre) => {
+    st.lider = { id, nombre }; st.pasan.delete(id);
+    if (!st.nombreTocado) { st.nombre = nombre; $("mu-n").value = nombre; }
+    $("mu-res").innerHTML = `<div class="li"><b>${esc(nombre)}</b><span class="st yes">Nuevo líder</span></div>`;
+    pintarLista();
+  };
+  $("mu-n").addEventListener("input", (e) => { st.nombre = e.target.value; st.nombreTocado = true; resumen(); });
+  $("mu-cubre").addEventListener("change", resumen);
+  let t;
+  $("mu-q").addEventListener("input", (e) => { clearTimeout(t); t = setTimeout(async () => {
+    const q = e.target.value.trim(); if (q.length < 2) return ($("mu-res").innerHTML = "");
+    const { data } = await sb.rpc("buscar_personas", { q });
+    $("mu-res").innerHTML = (data || []).map((p) => `<div class="li"><div><b>${esc(p.nombre)}</b><div class="muted">${p.igho ? "IGHO " + esc(p.igho) : "Sin IGHO"}</div></div><button class="btn-sec mini" data-p="${p.id}" data-n="${esc(p.nombre)}">Elegir</button></div>`).join("") || `<div class="muted">No se encontró.</div>`;
+    $("mu-res").querySelectorAll("[data-p]").forEach((b) => b.addEventListener("click", () => elegirLider(b.dataset.p, b.dataset.n.trim())));
+  }, 300); });
+  $("mu-nueva-btn").addEventListener("click", () => { $("mu-nueva").classList.toggle("hidden"); $("mu-nn").value ||= $("mu-q").value.trim(); });
+  $("mu-nueva-ok").addEventListener("click", async () => {
+    const n = $("mu-nn").value.trim(), a = $("mu-na").value.trim(), tel = normalizarTelefono($("mu-nt").value), m = $("mu-nueva-msg");
+    m.textContent = "";
+    if (!n) return (m.textContent = "Escribe el nombre.");
+    if ($("mu-nt").value.trim() && tel.length !== 10) return (m.textContent = "El celular debe tener 10 dígitos (09…).");
+    const { data: id, error } = await sb.rpc("crear_persona", { p_nombres: n, p_apellidos: a, p_telefono: tel });
+    if (error) return (m.textContent = error.message);
+    $("mu-nueva").classList.add("hidden"); elegirLider(id, `${n} ${a}`.trim());
+  });
+  pintarLista();
+  $("mu-ok").addEventListener("click", async () => {
+    const msg = $("mu-msg"); msg.textContent = "";
+    if (!st.lider) return (msg.textContent = "Elige al nuevo líder.");
+    if (!st.nombre.trim()) return (msg.textContent = "Escribe el nombre del nuevo IGHO.");
+    if (!$("mu-cubre").value) return (msg.textContent = "Elige quién del Consejo lo cubre.");
+    if (!confirm(`¿Multiplicar ${ig.data.nombre}? Se crea «${st.nombre.trim()}» y pasan ${st.pasan.size + 1} personas.`)) return;
+    $("mu-ok").disabled = true;
+    const { data: nuevo, error } = await sb.rpc("multiplicar_igho", { p_madre: ighoId, p_nombre: st.nombre.trim(), p_lider: st.lider.id, p_personas: [...st.pasan],
+      p_cubre: $("mu-cubre").value, p_fecha: $("mu-f").value || ymd(new Date()), p_ubicacion: $("mu-u").value.trim() || null });
+    $("mu-ok").disabled = false;
+    if (error) return (msg.textContent = error.message);
+    coberturaCache = null; ighosAdmin = [];
+    multiplicadoListo(nuevo, st, contId, volver);
+  });
+}
+
+// Último paso: el nuevo líder y su acceso a la app
+async function multiplicadoListo(ighoId, st, contId, volver) {
+  const c = $(contId);
+  const { data: tiene } = await sb.rpc("persona_tiene_cuenta", { p_persona: st.lider.id });
+  const { data: per } = await sb.from("personas").select("telefono").eq("id", st.lider.id).maybeSingle();
+  c.innerHTML = `<div class="total-card"><div class="l">✓ IGHO multiplicado</div><div class="n" style="font-size:30px">${esc(st.nombre.trim())}</div>
+      <div class="det">Líder: ${esc(st.lider.nombre)} · pasaron ${st.pasan.size + 1} personas.</div></div>
+    <div class="panel"><h4>Acceso del nuevo líder</h4>
+      ${tiene ? `<div class="ig-foot">✓ ${esc(st.lider.nombre)} ya tiene cuenta. Al abrir la app verá su nuevo IGHO en «Mi IGHO».</div>`
+      : `<div class="hint">${esc(st.lider.nombre)} todavía no tiene cuenta en la app. Puedes darle acceso solo como líder de este IGHO.</div>
+        <label>Usuario (celular o correo)</label><input id="ml-u" value="${esc(normalizarTelefono(per?.telefono || ""))}" placeholder="09…" autocomplete="off">
+        <button class="btn-primary" id="ml-ok">Dar acceso al nuevo líder</button><div class="ok err" id="ml-msg"></div><div id="ml-clave"></div>`}</div>
+    <button class="btn-sec" style="width:100%" id="ml-fin">Listo</button>`;
+  $("ml-fin").addEventListener("click", () => (volver ? volver() : abrir("home")));
+  $("ml-ok")?.addEventListener("click", async () => {
+    const u = $("ml-u").value.trim(), msg = $("ml-msg"); msg.textContent = "";
+    if (!u.includes("@") && normalizarTelefono(u).length !== 10) return (msg.textContent = "Escribe un celular de 10 dígitos (09…) o un correo.");
+    $("ml-ok").disabled = true;
+    try {
+      const r = await llamarAdmin({ accion: "crear_lider_igho", igho_id: ighoId, email: aEmail(u) });
+      $("ml-ok").classList.add("hidden");
+      if (r.ya_tenia) { $("ml-clave").innerHTML = `<div class="ig-foot">✓ Ya tenía cuenta; se le dio el rol de líder de este IGHO.</div>`; return; }
+      $("ml-clave").innerHTML = tarjetaClave(st.lider.nombre, u.includes("@") ? u.toLowerCase() : normalizarTelefono(u), r.clave, per?.telefono || (u.includes("@") ? "" : u));
+      hookCopiar($("ml-clave"));
+    } catch (e) { msg.textContent = e.message; $("ml-ok").disabled = false; }
+  });
+}
+
+// Mover varias personas a otro IGHO (selección en una lista)
+async function moverSeleccion(ids, despues) {
+  if (!ids.length) return alert("Marca al menos a una persona.");
+  const { data: ighos } = await sb.from("igho").select("id, nombre").eq("activo", true).order("nombre");
+  let destinos = ighos || [];
+  if (!ctx.roles.has("admin")) { const cob = await coberturaTodos(); destinos = destinos.filter((g) => cob.some((c) => c.igho_id === g.id && c.user_id === ctx.user.id)); }
+  const dlg = document.createElement("div"); dlg.className = "dlg";
+  dlg.innerHTML = `<div class="dlg-in"><h4>Mover ${ids.length} persona(s) a…</h4><select id="mv-sel">${opciones(destinos.map((g) => [g.id, g.nombre]))}</select>
+    <button class="btn-primary" id="mv-ok">Mover</button><button class="btn-sec" style="width:100%" id="mv-x">Cancelar</button><div class="ok err" id="mv-msg"></div></div>`;
+  document.body.appendChild(dlg);
+  $("mv-x").addEventListener("click", () => dlg.remove());
+  $("mv-ok").addEventListener("click", async () => {
+    const { error } = await sb.rpc("mover_a_igho", { p_personas: ids, p_igho: $("mv-sel").value });
+    if (error) return ($("mv-msg").textContent = error.message);
+    dlg.remove(); despues && despues();
+  });
+}
+async function cambiarCoberturaSeleccion(ighoIds, despues) {
+  if (!ighoIds.length) return alert("Marca al menos un IGHO.");
+  const consejo = await listaConsejo();
+  const dlg = document.createElement("div"); dlg.className = "dlg";
+  dlg.innerHTML = `<div class="dlg-in"><h4>¿Quién del Consejo cubre ${ighoIds.length} IGHO?</h4><select id="cc-sel">${opciones(consejo.map((x) => [x.user_id, x.nombre]))}</select>
+    <button class="btn-primary" id="cc-ok">Cambiar cobertura</button><button class="btn-sec" style="width:100%" id="cc-x">Cancelar</button><div class="ok err" id="cc-msg"></div></div>`;
+  document.body.appendChild(dlg);
+  $("cc-x").addEventListener("click", () => dlg.remove());
+  $("cc-ok").addEventListener("click", async () => {
+    const { error } = await sb.rpc("cambiar_cobertura", { p_ighos: ighoIds, p_cubre: $("cc-sel").value });
+    if (error) return ($("cc-msg").textContent = error.message);
+    coberturaCache = null; dlg.remove(); despues && despues();
+  });
+}
+
+
+// ===================================================================
+// TABLERO DEL CONSEJO (computadora): números, gráficos, filtros e imprimir
+// ===================================================================
+const tb = { seccion: "tablero", preset: "anio", desde: null, hasta: null, cob: "todos", d: null, sel: new Set(), igho: null };
+const fmtMesCorto = new Intl.DateTimeFormat("es-EC", { month: "short" });
+const fmtMesAnio = new Intl.DateTimeFormat("es-EC", { month: "short", year: "numeric" });
+const fmtDiaLargo = new Intl.DateTimeFormat("es-EC", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+const sumar = (a) => a.reduce((x, y) => x + y, 0);
+const prom = (a) => (a.length ? sumar(a) / a.length : null);
+const pct = (n, d) => (d ? Math.round((n / d) * 100) : 0);
+const diasEntre = (a, b) => Math.round((fromYmd(b) - fromYmd(a)) / 864e5);
+const sumarDias = (f, n) => { const d = fromYmd(f); d.setDate(d.getDate() + n); return ymd(d); };
+const nombreP = (p) => `${p.nombres} ${(p.apellidos || "").split(" ")[0]}`.trim();
+
+function rangoPreset(p) {
+  const hoy = new Date(), h = ymd(hoy);
+  if (p === "mes") return [ymd(new Date(hoy.getFullYear(), hoy.getMonth(), 1)), h];
+  if (p === "3m") return [sumarDias(h, -91), h];
+  if (p === "anio") return [`${hoy.getFullYear()}-01-01`, h];
+  return [tb.desde, tb.hasta];
+}
+
+// Lee todas las filas aunque pasen de 1000 (límite de Supabase por consulta)
+async function todas(qf) {
+  const out = [];
+  for (let i = 0; ; i += 1000) {
+    const { data, error } = await qf().range(i, i + 999);
+    if (error) throw error;
+    out.push(...data);
+    if (data.length < 1000) return out;
+  }
+}
+
+const TB_MENU = [
+  ["tablero", "Tablero del Consejo"], ["asistencia", "Asistencia"], ["ighos", "IGHO y cobertura"], ["familias", "Personas y familias"],
+  ["nuevos", "Nuevos"], ["kidz", "Kidz"], ["worship", "Worship"], ["pendientes", "Pendientes", "pronto"], ["finanzas", "Finanzas", "candado"],
+];
+
+async function abrirTablero(seccion) {
+  tb.seccion = seccion || tb.seccion;
+  if (!tb.desde) {
+    [tb.desde, tb.hasta] = rangoPreset(tb.preset);
+    // Cada miembro del Consejo empieza viendo su parte; el admin, todo
+    if (ctx.roles.has("anciano") && !ctx.roles.has("admin")) tb.cob = ctx.user.id;
+  }
+  $("tb-menu").innerHTML = TB_MENU.map(([id, t, extra]) => `<button data-tb="${id}" class="${id === tb.seccion ? "on" : ""}">${t}${extra === "candado" ? '<span class="tb-lock">🔒</span>' : extra === "pronto" ? '<span class="tb-lock">pronto</span>' : ""}</button>`).join("");
+  $("tb-menu").querySelectorAll("[data-tb]").forEach((b) => b.addEventListener("click", () => {
+    const s = b.dataset.tb;
+    if (s === "worship") return abrir("worship");
+    abrirTablero(s);
+  }));
+  $("tb-admin").classList.toggle("hidden", !(ctx.roles.has("admin") || ctx.roles.has("secretaria")));
+  pintarFiltros();
+  if (!tb.d) await cargarTablero();
+  pintarSeccion();
+}
+
+function pintarFiltros() {
+  const cons = tb.d?.consejo || [];
+  $("tb-filtros").innerHTML = `
+    ${[["mes", "Este mes"], ["3m", "3 meses"], ["anio", String(new Date().getFullYear())]].map(([k, t]) => `<button class="tb-pill ${tb.preset === k ? "on" : ""}" data-pre="${k}">${t}</button>`).join("")}
+    <button class="tb-pill ${tb.preset === "pers" ? "on" : ""}" data-pre="pers">Personalizado ▾</button>
+    <span id="tb-fechas" class="${tb.preset === "pers" ? "" : "hidden"}"><input type="date" id="tb-d" value="${tb.desde}"> – <input type="date" id="tb-h" value="${tb.hasta}"></span>
+    <select id="tb-cob" class="tb-pill">${opciones([["todos", "Cobertura: todo el Consejo"], ...cons.map((c) => [c.user_id, "Cobertura: " + c.nombre])], tb.cob)}</select>
+    <button class="tb-pill tb-print" id="tb-print">Imprimir / PDF</button>`;
+  $("tb-filtros").querySelectorAll("[data-pre]").forEach((b) => b.addEventListener("click", () => {
+    tb.preset = b.dataset.pre;
+    if (tb.preset !== "pers") { [tb.desde, tb.hasta] = rangoPreset(tb.preset); tb.d = null; abrirTablero(); }
+    else pintarFiltros();
+  }));
+  const cambiaFecha = () => { const d = $("tb-d").value, h = $("tb-h").value; if (d && h && d <= h) { tb.desde = d; tb.hasta = h; tb.d = null; abrirTablero(); } };
+  $("tb-d")?.addEventListener("change", cambiaFecha); $("tb-h")?.addEventListener("change", cambiaFecha);
+  $("tb-cob").addEventListener("change", (e) => { tb.cob = e.target.value; pintarSeccion(); });
+  $("tb-print").addEventListener("click", () => window.print());
+}
+
+// ---------- Datos ----------
+async function cargarTablero() {
+  $("tb-main").innerHTML = '<div class="loading">Cargando el tablero…</div>';
+  const hoy = ymd(new Date());
+  const desdeLargo = [tb.desde, sumarDias(tb.hasta, -400)].sort()[0];     // promedio del año y periodo anterior
+  const desdeIgho = [tb.desde, sumarDias(tb.hasta, -84)].sort()[0];       // 12 semanas para seguimiento
+  try {
+    const [dom, per, ighos, cob, consejo, reu, cursos, nuevos, kz, kzN, kzCk, vis, hog, famK] = await Promise.all([
+      todas(() => sb.from("asistencia_domingo").select("*").gte("fecha", desdeLargo).lte("fecha", tb.hasta).order("fecha")),
+      todas(() => sb.from("personas").select("id, nombres, apellidos, igho_id, bautizado").eq("activo", true)),
+      todas(() => sb.from("igho").select("id, nombre, lider_persona_id, supervisor_nombre, igho_madre_id, fecha_inicio, creado_en").eq("activo", true).order("nombre")),
+      sb.rpc("tablero_cobertura"), sb.rpc("consejo_lista"),
+      todas(() => sb.from("reuniones_igho").select("igho_id, fecha, asistencia_igho(persona_id)").gte("fecha", desdeIgho).lte("fecha", tb.hasta).order("fecha")),
+      todas(() => sb.from("persona_cursos").select("persona_id, cursos(codigo)")),
+      todas(() => sb.from("nuevos_seguimiento").select("persona_id, nombres, apellidos, primera_visita, igho_nombre").gte("primera_visita", sumarDias(tb.hasta, -400))),
+      sb.from("conteo_kidz").select("fecha, ninos, servidores").gte("fecha", tb.desde).lte("fecha", tb.hasta).order("fecha"),
+      sb.from("kidz_ninos").select("id", { count: "exact", head: true }).eq("activo", true),
+      todas(() => sb.from("kidz_checkins").select("fecha, nino_id, kidz_ninos(familia_id, kidz_familias(tutores))").gte("fecha", sumarDias(hoy, -84))),
+      sb.from("visitas_igho").select("igho_id, fecha, nombre").gte("fecha", tb.desde).lte("fecha", tb.hasta),
+      sb.from("hogares").select("id", { count: "exact", head: true }),
+      sb.from("kidz_familias").select("hogar_id").not("hogar_id", "is", null),
+    ]);
+    for (const r of [cob, consejo]) if (r.error) throw r.error;
+    tb.d = { dom, per, ighos, cob: cob.data || [], consejo: consejo.data || [], reu, cursos, nuevos, kz: kz.data || [], kzN: kzN.count || 0,
+             kzCk, vis: vis.data || [], hogares: hog.count ?? null, hogKidz: new Set((famK.data || []).map((x) => x.hogar_id)).size,
+             avisos: [kz, vis, hog].filter((r) => r.error).map((r) => r.error.message), cargado: new Date() };
+  } catch (e) {
+    $("tb-main").innerHTML = `<div class="soon">No se pudieron cargar los datos. ${esc(e.message)}<br><br>¿Ya se ejecutó <b>11_familias_multiplicar.sql</b> en Supabase?</div>`;
+    throw e;
+  }
+}
+
+// Todo lo calculado respeta el filtro de cobertura
+function calcular() {
+  const d = tb.d, hasta = tb.hasta, desde = tb.desde;
+  const cubre = new Map(); d.cob.forEach((c) => cubre.set(c.igho_id, c));
+  const ighos = tb.cob === "todos" ? d.ighos : d.ighos.filter((g) => cubre.get(g.id)?.user_id === tb.cob);
+  const ids = new Set(ighos.map((g) => g.id));
+  const personas = tb.cob === "todos" ? d.per : d.per.filter((p) => ids.has(p.igho_id));
+  const enIgho = personas.filter((p) => p.igho_id && ids.has(p.igho_id));
+  const reu = d.reu.filter((r) => ids.has(r.igho_id));
+  // semanas: 4 últimas (de lunes a domingo) que terminan en "hasta"
+  const finSemana = (k) => sumarDias(hasta, -7 * k);
+  const semanaDe = (f) => Math.floor(diasEntre(f, hasta) / 7);         // 0 = la más reciente
+  const porIgho = new Map(ighos.map((g) => [g.id, { g, miembros: 0, reu: [], visitas: 0 }]));
+  personas.forEach((p) => porIgho.get(p.igho_id) && porIgho.get(p.igho_id).miembros++);
+  reu.forEach((r) => porIgho.get(r.igho_id)?.reu.push(r));
+  d.vis.forEach((v) => porIgho.get(v.igho_id) && porIgho.get(v.igho_id).visitas++);
+  const filas = [...porIgho.values()].map((x) => {
+    const ult4 = x.reu.filter((r) => semanaDe(r.fecha) < 4);
+    const semanas = new Set(ult4.map((r) => semanaDe(r.fecha)));
+    const ultima = x.reu.length ? x.reu[x.reu.length - 1].fecha : null;
+    return { ...x, reporto: semanas.size, prom: ult4.length ? Math.round(prom(ult4.map((r) => r.asistencia_igho.length))) : null, ultima,
+             cubre: cubre.get(x.g.id)?.nombre || x.g.supervisor_nombre || "—" };
+  });
+  // Asistencia IGHO por semana (12 semanas)
+  const semanal = Array.from({ length: 12 }, (_, k) => sumar(reu.filter((r) => semanaDe(r.fecha) === k).map((r) => r.asistencia_igho.length))).reverse();
+  // Domingos
+  const dom = d.dom.filter((x) => x.total > 0);
+  const enRango = dom.filter((x) => x.fecha >= desde && x.fecha <= hasta);
+  const largo = diasEntre(desde, hasta) + 1;
+  const previo = dom.filter((x) => x.fecha >= sumarDias(desde, -largo) && x.fecha < desde);
+  const anio = hasta.slice(0, 4), delAnio = dom.filter((x) => x.fecha.startsWith(anio));
+  // Formación
+  const cursosDe = new Map(); d.cursos.forEach((c) => { if (!cursosDe.has(c.persona_id)) cursosDe.set(c.persona_id, new Set()); cursosDe.get(c.persona_id).add(c.cursos?.codigo); });
+  const tiene = (cod) => personas.filter((p) => cursosDe.get(p.id)?.has(cod)).length;
+  // Nuevos del periodo
+  const nuevos = d.nuevos.filter((n) => n.primera_visita >= desde && n.primera_visita <= hasta);
+  return { ighos, ids, personas, enIgho, filas, semanal, dom, enRango, previo, delAnio, tiene, nuevos, cubre, semanaDe };
+}
+
+// ---------- Gráficos (SVG propio, sin librerías) ----------
+function sparkline(vals, color = "var(--orange)") {
+  const v = vals.filter((x) => x != null); if (v.length < 2) return "";
+  const w = 120, h = 36, mn = Math.min(...v), mx = Math.max(...v), k = mx - mn || 1;
+  const pts = v.map((x, i) => `${(i / (v.length - 1)) * w},${h - 4 - ((x - mn) / k) * (h - 8)}`).join(" ");
+  return `<svg class="tb-spark" viewBox="0 0 ${w} ${h}" aria-hidden="true"><polyline points="${pts}" fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg>`;
+}
+function escalaBonita(mn, mx) {
+  const paso = [10, 20, 25, 50, 100, 200, 250, 500].find((p) => (mx - mn) / p <= 6) || 1000;
+  const a = Math.floor(mn / paso) * paso, b = Math.ceil(mx / paso) * paso;
+  const t = []; for (let x = a; x <= b; x += paso) t.push(x);
+  return t;
+}
+function graficoDomingos(puntos, desde, hasta, alto = 360) {
+  if (!puntos.length) return `<div class="muted" style="padding:40px 0">Todavía no hay conteos de domingo en este periodo.</div>`;
+  const W = 900, H = alto, L = 46, R = 18, T = 16, B = 34;
+  const t0 = fromYmd(desde).getTime(), t1 = Math.max(fromYmd(hasta).getTime(), t0 + 864e5);
+  const x = (f) => L + ((fromYmd(f).getTime() - t0) / (t1 - t0)) * (W - L - R);
+  const vals = puntos.map((p) => p.total), promAnio = Math.round(prom(vals));
+  const ticks = escalaBonita(Math.min(...vals) * 0.95, Math.max(...vals) * 1.03);
+  const y0 = ticks[0], y1 = ticks[ticks.length - 1], y = (v) => T + (1 - (v - y0) / (y1 - y0 || 1)) * (H - T - B);
+  // promedio por mes (escalón)
+  const meses = new Map(); puntos.forEach((p) => { const m = p.fecha.slice(0, 7); meses.set(m, [...(meses.get(m) || []), p.total]); });
+  const pm = [...meses.entries()].map(([m, v]) => { const ini = [m + "-01", desde].sort()[1]; const fin = [ymd(new Date(+m.slice(0, 4), +m.slice(5), 0)), hasta].sort()[0]; return { ini, fin, v: Math.round(prom(v)) }; });
+  const linea = puntos.map((p, i) => `${i ? "L" : "M"}${x(p.fecha).toFixed(1)},${y(p.total).toFixed(1)}`).join("");
+  const area = `${linea}L${x(puntos[puntos.length - 1].fecha).toFixed(1)},${y(y0)}L${x(puntos[0].fecha).toFixed(1)},${y(y0)}Z`;
+  const mesTicks = []; { const d = fromYmd(desde); d.setDate(1); if (ymd(d) < desde) d.setMonth(d.getMonth() + 1); const paso = diasEntre(desde, hasta) > 200 ? 1 : diasEntre(desde, hasta) > 70 ? 1 : 0;
+    if (paso) for (; ymd(d) <= hasta; d.setMonth(d.getMonth() + 1)) mesTicks.push(ymd(d)); else puntos.forEach((p) => mesTicks.push(p.fecha)); }
+  const ult = puntos[puntos.length - 1];
+  return `<svg class="tb-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Asistencia dominical">
+    <defs><linearGradient id="tbg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#f47b20" stop-opacity=".35"/><stop offset="1" stop-color="#f47b20" stop-opacity="0"/></linearGradient></defs>
+    ${ticks.map((t) => `<line x1="${L}" x2="${W - R}" y1="${y(t)}" y2="${y(t)}" class="tb-grid"/><text x="${L - 8}" y="${y(t) + 4}" class="tb-ax" text-anchor="end">${t}</text>`).join("")}
+    ${mesTicks.map((f) => `<text x="${x(f) + (mesTicks.length > 3 ? 14 : 0)}" y="${H - 10}" class="tb-ax" text-anchor="middle">${mesTicks.length > 3 ? fmtMesCorto.format(fromYmd(f)).replace(".", "") : fmtCorta.format(fromYmd(f))}</text>`).join("")}
+    <path d="${area}" fill="url(#tbg)"/>
+    <line x1="${L}" x2="${W - R}" y1="${y(promAnio)}" y2="${y(promAnio)}" stroke="#f6c64e" stroke-width="2" stroke-dasharray="6 5"/>
+    <text x="${W - R}" y="${y(promAnio) - 7}" text-anchor="end" class="tb-ax" fill="#f6c64e" style="fill:#f6c64e">promedio ${promAnio}</text>
+    ${pm.map((m) => `<line x1="${x(m.ini)}" x2="${x(m.fin)}" y1="${y(m.v)}" y2="${y(m.v)}" stroke="#f4f4f2" stroke-width="2.5" stroke-linecap="round"><title>Promedio ${fmtMesAnio.format(fromYmd(m.ini))}: ${m.v}</title></line>`).join("")}
+    <path d="${linea}" fill="none" stroke="#f47b20" stroke-width="2" stroke-linejoin="round"/>
+    ${puntos.map((p) => `<g class="tb-pt"><circle cx="${x(p.fecha)}" cy="${y(p.total)}" r="10" fill="transparent"/><circle cx="${x(p.fecha)}" cy="${y(p.total)}" r="4" fill="#f47b20" stroke="#2a2a2d" stroke-width="2"/><title>${fmtCorta.format(fromYmd(p.fecha))}: ${p.total} personas${p.nuevos ? ` · ${p.nuevos} nuevos` : ""}</title></g>`).join("")}
+    <circle cx="${x(ult.fecha)}" cy="${y(ult.total)}" r="7" fill="#f47b20" stroke="#f4f4f2" stroke-width="2"/>
+  </svg>`;
+}
+function barrasH(items, max) {
+  const m = max || Math.max(...items.map((i) => i.n), 1);
+  return items.map((i) => `<div class="tb-bh"><span class="tb-bh-n">${esc(i.nombre)}</span><span class="tb-bh-v">${i.n}${i.extra ? `<small> ${esc(i.extra)}</small>` : ""}</span>
+    <div class="tb-bh-t"><div style="width:${(i.n / m) * 100}%"></div></div></div>`).join("");
+}
+
+// ---------- Secciones ----------
+function pintarSeccion() {
+  if (!tb.d) return;
+  const c = calcular();
+  $("tb-sub").textContent = `Arco Ríos · ${fmtCorta.format(fromYmd(tb.desde))} – ${fmtCorta.format(fromYmd(tb.hasta))}${tb.cob !== "todos" ? " · cobertura de " + (tb.d.consejo.find((x) => x.user_id === tb.cob)?.nombre || "") : ""} · actualizado ${fmtHora.format(tb.d.cargado)}`;
+  const s = tb.seccion;
+  $("tb-h1").textContent = TB_MENU.find((m) => m[0] === s)?.[1] || "Tablero del Consejo";
+  const f = { tablero: secResumen, asistencia: secAsistencia, ighos: secIghos, familias: secFamilias, nuevos: secNuevos, kidz: secKidz, pendientes: secPronto, finanzas: secPronto }[s];
+  f(c);
+  $("tb-main").querySelectorAll("[data-ir]").forEach((b) => b.addEventListener("click", () => abrirTablero(b.dataset.ir)));
+  $("tb-main").querySelectorAll("[data-igho]").forEach((b) => b.addEventListener("click", (e) => { if (e.target.closest("input")) return; tb.igho = b.dataset.igho; abrirTablero("ighos"); }));
+}
+
+function tarjetas(c) {
+  const d = tb.d, ult = c.enRango[c.enRango.length - 1];
+  const pr = Math.round(prom(c.enRango.map((x) => x.total)) || 0), pp = Math.round(prom(c.previo.map((x) => x.total)) || 0);
+  const dif = pr - pp, anio = tb.hasta.slice(0, 4);
+  const multip = d.ighos.filter((g) => g.igho_madre_id && (g.fecha_inicio || "").startsWith(anio)).length;
+  const semanas4 = c.semanal.slice(-4), promSem = Math.round(prom(semanas4) || 0);
+  const reportan = c.filas.filter((f) => f.reporto > 0).length, total = c.filas.length;
+  const kz = c.enRango.length ? d.kz : d.kz;
+  const kzProm = Math.round(prom(kz.map((x) => x.ninos)) || 0), kzSv = Math.round(prom(kz.map((x) => x.servidores)) || 0);
+  const nuevosIgho = c.nuevos.filter((n) => n.igho_nombre).length;
+  const baut = c.personas.filter((p) => p.bautizado).length;
+  const visitados = c.filas.filter((f) => f.visitas > 0).length;
+  const seg = seguimiento(c).length;
+  const t = (titulo, sub, n, pie, extra = "", cls = "", ir = "") => `<div class="tb-card ${ir ? "tb-click" : ""}" ${ir ? `data-ir="${ir}"` : ""}><div class="tb-t">${titulo}</div><div class="tb-s">${sub}</div>
+    <div class="tb-row"><div class="tb-n">${n}</div>${extra}</div><div class="tb-f ${cls}">${pie}</div></div>`;
+  return `<div class="tb-cards">
+    ${t("Asistencia dominical", ult ? `Último domingo · ${fmtCorta.format(fromYmd(ult.fecha))}` : "Sin conteos", ult ? ult.total : "—", `Promedio ${anio}: ${Math.round(prom(c.delAnio.map((x) => x.total)) || 0)}`, sparkline(c.enRango.slice(-10).map((x) => x.total)), "", "asistencia")}
+    ${t("Promedio del periodo", `vs. las ${Math.round((diasEntre(tb.desde, tb.hasta) + 1) / 7)} semanas anteriores`, pr || "—", pp ? `${dif >= 0 ? "+" : ""}${dif} (${dif >= 0 ? "+" : ""}${((dif / pp) * 100).toFixed(1)}%) vs. ${pp}` : "Sin periodo anterior", "", dif < 0 ? "bad" : "good", "asistencia")}
+    ${t("IGHO activos", "Red de iglesias en hogar", total, `${multip} multiplicación${multip === 1 ? "" : "es"} en ${anio}`, "", "", "ighos")}
+    ${t("Asistencia IGHO", "Promedio semanal · 4 semanas", promSem, `de ${c.enIgho.length} miembros (${pct(promSem, c.enIgho.length)}%)`, sparkline(c.semanal, "#cbd98a"), "", "ighos")}
+    ${t("IGHO que reportan", "Asistencia, últimas 4 semanas", `${reportan}/${total}`, total - reportan ? `${total - reportan} IGHO no han reportado` : "Todos reportaron", "", total - reportan ? "bad" : "good", "ighos")}
+    ${t("Necesitan seguimiento", "Personas, familias e IGHO", seg, seg ? "Ver la lista abajo" : "Nadie por ahora", "", seg ? "warn" : "good")}
+    ${t("Kidz", "Promedio por domingo", kz.length ? kzProm : "—", `${kzSv} siervos · ${d.kzN} niños registrados`, sparkline(kz.map((x) => x.ninos), "#f6c64e"), "", "kidz")}
+    ${t("Personas nuevas", "Bienvenida · en el periodo", c.nuevos.length, `${nuevosIgho} ya en un IGHO (${pct(nuevosIgho, c.nuevos.length)}%)`, "", "", "nuevos")}
+    ${t("Bautizados", "Según la base de datos", `${pct(baut, c.personas.length)}%`, `${c.personas.length - baut} por bautizar`)}
+    ${t("Familias", "Hogares registrados", d.hogares ?? "—", d.hogares == null ? "Falta ejecutar el SQL 11" : `${d.hogKidz} con niños en Kidz`, "", "", "familias")}
+    ${t("Visitas a IGHO", "Cobertura del Consejo · periodo", `${visitados}/${total}`, total - visitados ? `${total - visitados} IGHO sin visita` : "Todos visitados", "", total - visitados ? "bad" : "good", "ighos")}
+    ${t("Formación", "Han tomado Raíces", `${pct(c.tiene("raices"), c.personas.length)}%`, `Herencia I: ${pct(c.tiene("herencia_1"), c.personas.length)}%`)}
+  </div>`;
+}
+
+function porCobertura(c) {
+  const m = new Map();
+  c.filas.forEach((f) => { const k = f.cubre; m.set(k, (m.get(k) || 0) + f.miembros); });
+  return [...m.entries()].map(([nombre, n]) => ({ nombre, n })).sort((a, b) => b.n - a.n);
+}
+
+function tablaIghos(c, conSel) {
+  const badge = (n) => `<span class="tb-badge ${n >= 4 ? "g" : n >= 2 ? "y" : "r"}">${n}/4</span>`;
+  return `<table class="tb-tab"><thead><tr>${conSel ? "<th></th>" : ""}<th>IGHO</th><th>Cobertura</th><th>Miembros</th><th>Asistencia prom.</th><th>Reportó</th><th>Visitas</th></tr></thead><tbody>
+    ${c.filas.map((f) => `<tr data-igho="${f.g.id}" class="${tb.igho === f.g.id ? "on" : ""}">${conSel ? `<td><input type="checkbox" data-selig="${f.g.id}" ${tb.sel.has(f.g.id) ? "checked" : ""}></td>` : ""}
+      <td><b>${esc(f.g.nombre)}</b>${f.g.igho_madre_id ? '<div class="muted">nuevo</div>' : ""}</td><td class="muted">${esc(f.cubre)}</td><td>${f.miembros}</td>
+      <td><div class="tb-mini"><span>${f.prom ?? "—"}</span><div class="tb-mt"><div style="width:${f.miembros && f.prom ? Math.min(100, (f.prom / f.miembros) * 100) : 0}%"></div></div></div></td>
+      <td>${badge(f.reporto)}</td><td>${f.visitas}</td></tr>`).join("") || `<tr><td colspan="7" class="muted">No hay IGHO en esta cobertura.</td></tr>`}</tbody></table>`;
+}
+
+function seguimiento(c) {
+  const out = [], hasta = tb.hasta;
+  // Hace un mes que no viene al IGHO (su IGHO sí reportó)
+  const nombreIg = new Map(c.ighos.map((g) => [g.id, g.nombre]));
+  const asist = new Map();   // persona → { reciente, antes }
+  const reportaron = new Set();
+  tb.d.reu.filter((r) => c.ids.has(r.igho_id)).forEach((r) => {
+    const s = c.semanaDe(r.fecha); if (s < 4) reportaron.add(r.igho_id);
+    r.asistencia_igho.forEach((a) => { const x = asist.get(a.persona_id) || { reciente: 0, antes: 0 }; s < 4 ? x.reciente++ : x.antes++; asist.set(a.persona_id, x); });
+  });
+  c.personas.forEach((p) => { const x = asist.get(p.id); if (x && x.antes >= 2 && !x.reciente && reportaron.has(p.igho_id))
+    out.push({ t: "Hace un mes que no viene al IGHO", s: `${nombreP(p)} · IGHO ${nombreIg.get(p.igho_id) || ""}`, tag: "IGHO" }); });
+  // Nuevos sin IGHO
+  tb.d.nuevos.filter((n) => !n.igho_nombre && diasEntre(n.primera_visita, hasta) >= 21 && diasEntre(n.primera_visita, hasta) <= 120)
+    .forEach((n) => out.push({ t: `Nuevo sin IGHO (${Math.floor(diasEntre(n.primera_visita, hasta) / 7)} semanas)`, s: `${n.nombres} ${(n.apellidos || "").split(" ")[0]} · Bienvenida ${fmtCorta.format(fromYmd(n.primera_visita))}`, tag: "Nuevos" }));
+  // Kidz: familias que no vienen hace 4 domingos
+  const ck = tb.d.kzCk, hoy = ymd(new Date()), ver = new Map();
+  ck.forEach((x) => { const v = ver.get(x.nino_id) || { n: 0, rec: false, fam: x.kidz_ninos?.kidz_familias?.tutores || "", fid: x.kidz_ninos?.familia_id }; v.n++; if (diasEntre(x.fecha, hoy) < 28) v.rec = true; ver.set(x.nino_id, v); });
+  const fams = new Map(); [...ver.values()].filter((v) => v.n >= 2 && !v.rec).forEach((v) => fams.set(v.fid, { fam: v.fam, n: (fams.get(v.fid)?.n || 0) + 1 }));
+  if (tb.cob === "todos") fams.forEach((v) => out.push({ t: "Kidz: no vienen hace 4 domingos", s: `${v.fam} · ${v.n} niño${v.n > 1 ? "s" : ""}`, tag: "Kidz" }));
+  // IGHO sin reportar
+  c.filas.filter((f) => !f.ultima || c.semanaDe(f.ultima) >= 3).forEach((f) => out.push({ t: "IGHO sin reportar asistencia", s: `${f.g.nombre} · ${f.ultima ? `${c.semanaDe(f.ultima) + 1} semanas` : "más de 12 semanas"}`, tag: "Reporte" }));
+  return out;
+}
+const seguimientoHtml = (items, max) => (items.length ? items.slice(0, max || items.length).map((x) => `<div class="tb-seg"><div><b>${esc(x.t)}</b><div class="muted">${esc(x.s)}</div></div><span class="tb-tag">${esc(x.tag)}</span></div>`).join("")
+  + (max && items.length > max ? `<button class="link" id="tb-seg-mas">Ver los ${items.length}</button>` : "") : '<div class="muted">Nadie necesita seguimiento con estos filtros. 🎉</div>');
+
+function arbolIgho(c) {
+  const hijos = new Map(); tb.d.ighos.forEach((g) => g.igho_madre_id && hijos.set(g.igho_madre_id, [...(hijos.get(g.igho_madre_id) || []), g]));
+  const miembros = new Map(); tb.d.per.forEach((p) => p.igho_id && miembros.set(p.igho_id, (miembros.get(p.igho_id) || 0) + 1));
+  const raices = tb.d.ighos.filter((g) => hijos.has(g.id) && !g.igho_madre_id && (tb.cob === "todos" || c.ids.has(g.id) || (hijos.get(g.id) || []).some((h) => c.ids.has(h.id))));
+  if (!raices.length) return '<div class="muted">Todavía no hay multiplicaciones registradas. Se hacen desde «IGHO y cobertura» o desde Mi IGHO.</div>';
+  const nodo = (g, raiz) => `<div class="tb-tn"><span class="tb-node ${raiz ? "" : g.igho_madre_id ? "nuevo" : ""}" data-igho="${g.id}">${esc(g.nombre)}</span>
+    ${!raiz ? `<div class="tb-nl">${miembros.get(g.id) || 0} personas${g.fecha_inicio ? " · " + fmtMesAnio.format(fromYmd(g.fecha_inicio)) : ""}</div>` : ""}
+    ${hijos.has(g.id) ? `<div class="tb-kids">${hijos.get(g.id).map((h) => nodo(h)).join("")}</div>` : ""}</div>`;
+  return raices.slice(0, 4).map((g) => `<div class="tb-tree">${nodo(g, true)}</div>`).join("");
+}
+
+function secResumen(c) {
+  const pc = porCobertura(c), total = sumar(pc.map((x) => x.n)), seg = seguimiento(c);
+  $("tb-main").innerHTML = `
+    ${tb.d.avisos.length ? `<div class="obs" style="margin-top:0">Algunos datos no se pudieron leer: ${esc(tb.d.avisos.join(" · "))}</div>` : ""}
+    ${tarjetas(c)}
+    <div class="tb-g2">
+      <div class="tb-panel"><div class="tb-ph"><h3>Asistencia dominical</h3><div class="tb-leg"><span><i class="o"></i>cada domingo</span><span><i class="w"></i>promedio del mes</span><span><i class="y"></i>promedio del periodo</span></div></div>
+        ${graficoDomingos(c.enRango, tb.desde, tb.hasta)}</div>
+      <div class="tb-panel"><div class="tb-ph"><h3>Personas por cobertura</h3><span class="muted">miembros de IGHO</span></div>
+        <div class="tb-hero">${total}<small> personas en IGHO</small></div>${barrasH(pc.map((x) => ({ ...x, extra: pct(x.n, total) + "%" })))}</div>
+    </div>
+    <div class="tb-g3">
+      <div class="tb-panel"><div class="tb-ph"><h3>IGHO</h3><span class="muted">últimas 4 semanas · toca un IGHO para ver su detalle</span></div><div class="tb-scroll">${tablaIghos(c)}</div></div>
+      <div class="tb-panel"><div class="tb-ph"><h3>Necesitan seguimiento</h3><span class="muted">al ${fmtCorta.format(fromYmd(tb.hasta))}</span></div><div id="tb-seg">${seguimientoHtml(seg, 6)}</div>
+        <div class="tb-ph" style="margin-top:22px"><h3>Multiplicación</h3><span class="muted">árbol de IGHO</span></div>${arbolIgho(c)}</div>
+      <div class="tb-panel"><div class="tb-ph"><h3>Familias</h3><span class="muted">${tb.d.hogares ?? 0} hogares</span></div><div id="tb-fam" class="muted">Cargando…</div></div>
+    </div>`;
+  $("tb-seg-mas")?.addEventListener("click", () => ($("tb-seg").innerHTML = seguimientoHtml(seg)));
+  panelFamiliaMini();
+}
+
+async function panelFamiliaMini() {
+  const cont = $("tb-fam"); if (!cont) return;
+  if (!puedeFamilias()) { cont.innerHTML = `${tb.d.hogKidz} hogares con niños en Kidz.<br><br>Administración y secretaría arman los hogares en «Personas y familias».`; return; }
+  const { data, error } = await sb.rpc("fam_buscar_hogares", { q: "" });
+  if (error) return (cont.innerHTML = esc(error.message));
+  if (!data?.length) return (cont.innerHTML = `Todavía no hay hogares. <button class="link" data-ir="familias">Empezar a armarlos</button>`, cont.querySelector("[data-ir]").addEventListener("click", () => abrirTablero("familias")));
+  const conHijos = data.find((x) => x.n >= 3) || data[0];
+  const { data: d } = await sb.rpc("fam_ver_hogar", { p_hogar: conHijos.id });
+  cont.classList.remove("muted");
+  cont.innerHTML = `<div class="ft ft-sm">${d ? arbolHogarHtml(d) : ""}</div><button class="link" data-ir="familias" style="margin-top:10px">Ver todas las familias</button>`;
+  cont.querySelector("[data-ir]").addEventListener("click", () => abrirTablero("familias"));
+}
+
+function secAsistencia(c) {
+  const meses = new Map(); c.enRango.forEach((p) => { const m = p.fecha.slice(0, 7); meses.set(m, [...(meses.get(m) || []), p]); });
+  $("tb-main").innerHTML = `
+    <div class="tb-panel"><div class="tb-ph"><h3>Asistencia dominical</h3><div class="tb-leg"><span><i class="o"></i>cada domingo</span><span><i class="w"></i>promedio del mes</span><span><i class="y"></i>promedio del periodo</span></div></div>
+      ${graficoDomingos(c.enRango, tb.desde, tb.hasta, 420)}</div>
+    <div class="tb-g2">
+      <div class="tb-panel"><h3>Por domingo</h3><div class="tb-scroll"><table class="tb-tab"><thead><tr><th>Domingo</th><th>Adultos</th><th>Nuevos</th><th>Niños aud.</th><th>Kidz</th><th>Siervos Kidz</th><th>Total</th></tr></thead><tbody>
+        ${[...c.enRango].reverse().map((p) => `<tr><td>${fmtCorta.format(fromYmd(p.fecha))}</td><td>${p.adultos}</td><td>${p.nuevos}</td><td>${p.ninos_auditorio}</td><td>${p.ninos_kidz}</td><td>${p.servidores_kidz}</td><td><b>${p.total}</b></td></tr>`).join("") || '<tr><td colspan="7" class="muted">Sin conteos.</td></tr>'}</tbody></table></div></div>
+      <div class="tb-panel"><h3>Promedio por mes</h3>${barrasH([...meses.entries()].map(([m, ps]) => ({ nombre: fmtMesAnio.format(fromYmd(m + "-01")), n: Math.round(prom(ps.map((p) => p.total))), extra: `${ps.length} dom.` })))}</div>
+    </div>`;
+}
+
+async function secIghos(c) {
+  $("tb-main").innerHTML = `
+    <div class="tb-g2">
+      <div class="tb-panel"><div class="tb-ph"><h3>IGHO</h3><div class="row-btns"><span class="muted" id="tb-nsel">${tb.sel.size ? tb.sel.size + " marcados" : "Marca IGHO para cambiar su cobertura"}</span>
+        <button class="btn-sec mini" id="tb-cc">Cambiar cobertura</button></div></div><div class="tb-scroll" style="max-height:640px">${tablaIghos(c, true)}</div></div>
+      <div class="tb-panel" id="tb-det"><div class="muted">Toca un IGHO para ver sus miembros, reuniones y visitas, o para multiplicarlo.</div></div>
+    </div>
+    <div class="tb-g2"><div class="tb-panel"><h3>Multiplicación</h3>${arbolIgho(c)}</div>
+      <div class="tb-panel"><h3>Personas por cobertura</h3>${barrasH(porCobertura(c))}</div></div>`;
+  $("tb-main").querySelectorAll("[data-selig]").forEach((x) => x.addEventListener("change", () => {
+    x.checked ? tb.sel.add(x.dataset.selig) : tb.sel.delete(x.dataset.selig); $("tb-nsel").textContent = `${tb.sel.size} marcados`;
+  }));
+  $("tb-cc").addEventListener("click", () => cambiarCoberturaSeleccion([...tb.sel], () => { tb.sel.clear(); tb.d = null; abrirTablero("ighos"); }));
+  if (tb.igho) detalleIgho(tb.igho);
+}
+
+async function detalleIgho(id) {
+  const cont = $("tb-det"); if (!cont) return;
+  const g = tb.d.ighos.find((x) => x.id === id); if (!g) return;
+  cont.innerHTML = '<div class="loading">Cargando…</div>';
+  const [mi, reu, vis, puede] = await Promise.all([
+    sb.from("personas").select("id, nombres, apellidos, telefono").eq("igho_id", id).eq("activo", true).order("nombres"),
+    sb.from("reuniones_igho").select("fecha, asistencia_igho(count)").eq("igho_id", id).order("fecha", { ascending: false }).limit(8),
+    sb.from("visitas_igho").select("id, fecha, nombre, notas, user_id").eq("igho_id", id).order("fecha", { ascending: false }).limit(10),
+    cubroIgho(id),
+  ]);
+  const sel = new Set();
+  cont.innerHTML = `<div class="tb-ph"><h3>${esc(g.nombre)}</h3>${puede ? `<button class="btn-primary tb-btn" id="tb-mult">Multiplicar este IGHO</button>` : ""}</div>
+    <div class="muted" style="margin-bottom:12px">Cobertura: ${esc(c_cubre(id))}${g.igho_madre_id ? ` · nació de ${esc(tb.d.ighos.find((x) => x.id === g.igho_madre_id)?.nombre || "otro IGHO")}` : ""}</div>
+    <div class="tb-g2 tb-g2-in">
+      <div><h4>Miembros (${(mi.data || []).length})</h4>
+        ${puede ? `<div class="row-btns" style="margin:6px 0 8px"><button class="btn-sec mini" id="tb-mover" style="white-space:nowrap">Mover marcados a otro IGHO</button></div>` : ""}
+        <div class="tb-mems">${(mi.data || []).map((p) => `<label class="check tb-mem">${puede ? `<input type="checkbox" data-mp="${p.id}">` : ""} ${esc(p.nombres)} ${esc(p.apellidos || "")}</label>`).join("") || '<div class="muted">Sin miembros.</div>'}</div></div>
+      <div><h4>Últimas reuniones</h4>${(reu.data || []).length ? barrasH(reu.data.map((r) => ({ nombre: fmtCorta.format(fromYmd(r.fecha)), n: r.asistencia_igho?.[0]?.count ?? 0 })), (mi.data || []).length) : '<div class="muted">Sin reuniones registradas.</div>'}
+        <h4 style="margin-top:18px">Visitas del Consejo</h4>
+        ${(vis.data || []).map((v) => `<div class="li"><span>${fmtCorta.format(fromYmd(v.fecha))} · ${esc(v.nombre || "")}${v.notas ? `<div class="muted">${esc(v.notas)}</div>` : ""}</span>${v.user_id === ctx.user.id || ctx.roles.has("admin") ? `<button class="x" data-dv="${v.id}" aria-label="Borrar visita">×</button>` : ""}</div>`).join("") || '<div class="muted">Sin visitas registradas.</div>'}
+        <div class="two" style="margin-top:10px"><input type="date" id="tb-vf" value="${ymd(new Date())}"><input id="tb-vn" placeholder="Nota (opcional)"></div>
+        <button class="btn-sec" id="tb-vis" style="width:100%">+ Registrar visita</button></div>
+    </div>`;
+  cont.querySelectorAll("[data-mp]").forEach((x) => x.addEventListener("change", () => (x.checked ? sel.add(x.dataset.mp) : sel.delete(x.dataset.mp))));
+  $("tb-mover")?.addEventListener("click", () => moverSeleccion([...sel], () => { tb.d = null; abrirTablero("ighos"); }));
+  $("tb-mult")?.addEventListener("click", () => abrirMultiplicar(id, "tb-det", () => { tb.d = null; abrirTablero("ighos"); }));
+  $("tb-vis").addEventListener("click", async () => {
+    const { error } = await sb.from("visitas_igho").insert({ igho_id: id, fecha: $("tb-vf").value || ymd(new Date()), nombre: ctx.nombreCompleto, notas: $("tb-vn").value.trim() || null, user_id: ctx.user.id });
+    if (error) return alert(error.message);
+    tb.d = null; await abrirTablero("ighos");
+  });
+  cont.querySelectorAll("[data-dv]").forEach((b) => b.addEventListener("click", async () => {
+    if (!confirm("¿Borrar esta visita?")) return;
+    const { error } = await sb.from("visitas_igho").delete().eq("id", +b.dataset.dv); if (error) return alert(error.message);
+    tb.d = null; abrirTablero("ighos");
+  }));
+}
+const c_cubre = (id) => tb.d.cob.find((x) => x.igho_id === id)?.nombre || tb.d.ighos.find((x) => x.id === id)?.supervisor_nombre || "sin asignar";
+
+function secFamilias() {
+  if (!puedeFamilias()) {
+    $("tb-main").innerHTML = `<div class="tb-panel"><h3>Personas y familias</h3><div class="tb-hero">${tb.d.hogares ?? 0}<small> hogares registrados · ${tb.d.hogKidz} con niños en Kidz</small></div>
+      <div class="muted">Administración y secretaría arman los hogares y el árbol familiar.</div></div>`;
+    return;
+  }
+  $("tb-main").innerHTML = `<div class="tb-narrow" id="tb-fam-cont"></div>`;
+  abrirFamilias("tb-fam-cont");
+}
+
+function secNuevos(c) {
+  $("tb-main").innerHTML = `<div class="tb-panel"><div class="tb-ph"><h3>Personas nuevas</h3><span class="muted">${c.nuevos.length} en el periodo</span></div>
+    <div class="tb-scroll" style="max-height:none"><table class="tb-tab"><thead><tr><th>Nombre</th><th>Primera visita</th><th>IGHO</th></tr></thead><tbody>
+    ${[...c.nuevos].sort((a, b) => b.primera_visita.localeCompare(a.primera_visita)).map((n) => `<tr><td><b>${esc(n.nombres)} ${esc(n.apellidos || "")}</b></td><td>${fmtCorta.format(fromYmd(n.primera_visita))}</td><td>${n.igho_nombre ? esc(n.igho_nombre) : '<span class="tb-badge r">Sin IGHO</span>'}</td></tr>`).join("") || '<tr><td colspan="3" class="muted">Nadie nuevo en este periodo.</td></tr>'}
+    </tbody></table></div></div>`;
+}
+
+function secKidz() {
+  const kz = tb.d.kz;
+  $("tb-main").innerHTML = `<div class="tb-panel"><div class="tb-ph"><h3>Kidz · niños por domingo</h3><span class="muted">${tb.d.kzN} niños registrados</span></div>
+    ${kz.length ? barrasH([...kz].reverse().map((x) => ({ nombre: fmtCorta.format(fromYmd(x.fecha)), n: x.ninos, extra: `${x.servidores} siervos` }))) : '<div class="muted">Sin conteos de Kidz en este periodo.</div>'}
+    <button class="btn-sec" data-abrir-kidz>Abrir Kidz (datos por clase y frecuencia)</button></div>`;
+  $("tb-main").querySelector("[data-abrir-kidz]").addEventListener("click", () => { kd.tab = "datos"; abrir("kidz"); });
+}
+
+function secPronto() {
+  const fin = tb.seccion === "finanzas";
+  $("tb-main").innerHTML = `<div class="soon">${fin ? "Finanzas (informe mensual por semana y gastos por categoría) se construirá en una próxima etapa. Solo lo verá el Consejo."
+    : "Las tareas del Consejo («Cosas por cumplir») todavía están en la hoja Counsel Dashboard. Falta decidir si pasan a la app."}</div>`;
+}
 
 iniciar();
 </script>
