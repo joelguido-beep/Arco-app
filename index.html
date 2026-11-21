@@ -385,6 +385,18 @@
     .tb-scroll { max-height: none; overflow: visible; } .tb-tab th { background: #fff; } .tb-grid { stroke: #ddd; }
     .tb-tab td, .tb-tab th, .tb-bh, .tb-seg { border-color: #ddd; } .tb-g3 { grid-template-columns: 1.3fr 1fr; } .tb-g3 > :last-child { display: none; }
   }
+  /* ---------- Logos, anuncios, formación ---------- */
+  .card-logo { height: 58px; display: block; margin: -4px 0 10px; }
+  .title-logo { height: 86px; display: block; margin: 0 0 8px; }
+  .title-logo.ws { height: 54px; display: inline-block; vertical-align: middle; margin: 0 12px 0 0; }
+  .anun-item { display: grid; grid-template-columns: auto 1fr; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--surface-2); }
+  .anun-item:last-of-type { border-bottom: 0; }
+  .anun-txt { color: var(--ink-2); font-size: 15px; line-height: 1.5; margin-top: 4px; }
+  .anun.mio { border: 2px solid var(--orange); }
+  .anun-mio { background: var(--orange); color: var(--ink-dark); border-radius: 999px; padding: 10px 16px; font-weight: 600; margin: 10px 0 4px; }
+  .anun-ed { padding: 10px 0; border-bottom: 1px solid var(--surface-2); } .anun-ed textarea { margin-top: 8px; }
+  .fc-card { background: var(--sand); } .fc-card.cerrada { opacity: .6; }
+  .fc-card .st { background: rgba(27,27,29,.12); color: var(--ink-dark); } .fc-card .st.yes { background: var(--ink-dark); color: var(--green); }
 </style>
 </head>
 <body>
@@ -455,6 +467,11 @@
       <div class="hint">Lo registra el equipo de Kidz</div>
       <div id="anf-kidz" class="muted">Cargando…</div>
     </div>
+    <div class="panel">
+      <h4>Manteles</h4>
+      <div class="hint">Los que se enviaron a lavar este domingo (no suman al total)</div>
+      <div id="anf-manteles"></div>
+    </div>
     <div class="total-card">
       <div class="l">Total del domingo</div>
       <div class="n" id="anf-total">0</div>
@@ -481,7 +498,7 @@
   <!-- ================= KIDZ ================= -->
   <section id="v-kidz" class="hidden">
     <div class="top"><button class="back" data-go="home" aria-label="Volver"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button></div>
-    <div class="page-title">Kidz</div>
+    <img class="title-logo" data-logo="kidz" alt="Kidz">
     <div class="tabs scroll" id="kz-tabs"></div>
     <div id="kz-body"></div>
   </section>
@@ -489,7 +506,7 @@
   <!-- ================= MIS NIÑOS (padres) ================= -->
   <section id="v-padres" class="hidden">
     <div class="top"><button class="back" data-go="home" aria-label="Volver"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button></div>
-    <div class="page-title">Mis niños</div><div class="hello-sub">Arco Kidz</div>
+    <img class="title-logo" data-logo="kidz" alt="Arco Kidz"><div class="page-title">Mis niños</div>
     <div id="pd-body"></div>
   </section>
 
@@ -498,7 +515,7 @@
     <div class="page-title">Este domingo</div><div class="hello-sub">Procedimiento dominical · Arco Ríos</div>
     <div class="dates" id="dom-dates"></div><div id="dom-body"></div></section>
   <section id="v-worship" class="hidden"><div class="top"><button class="back" data-go="home" aria-label="Volver"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button></div>
-    <div class="page-title">Arco Worship</div>
+    <div class="page-title"><img class="title-logo ws" data-logo="ws" alt="">Arco Worship</div>
     <div class="tabs scroll" id="ws-tabs"></div>
     <div class="dates" id="ws-dates"></div><div id="ws-body"></div></section>
   <section id="v-bienvenida" class="hidden"><div class="top"><button class="back" data-go="home" aria-label="Volver"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button></div>
@@ -524,6 +541,11 @@
     <div class="page-title">Administración</div><div class="hello-sub" id="ad-sub">Acceso a la app, roles y familias</div>
     <div class="tabs" id="ad-tabs"><button data-tab="usuarios" class="on">Con acceso</button><button data-tab="dar">Dar acceso</button><button data-tab="familias">Familias</button></div>
     <div id="ad-body"></div></section>
+
+  <section id="v-formacion" class="hidden"><div class="top"><button class="back" data-go="home" aria-label="Volver"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button></div>
+    <div class="page-title">Formación Cristiana</div><div class="hello-sub">Clases, eventos e inscritos</div><div id="fc-body"></div></section>
+  <section id="v-stand" class="hidden"><div class="top"><button class="back" data-go="home" aria-label="Volver"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button></div>
+    <div class="page-title">Stand de información</div><div class="hello-sub">Inscribe personas a una clase o evento</div><div id="st-body"></div></section>
 
   <!-- ================= PRÓXIMAMENTE ================= -->
   <section id="v-soon" class="hidden">
@@ -587,6 +609,10 @@ const SUPABASE_KEY = "sb_publishable_hCMTSR9Rnacl85NXiQpn5Q_L9JlmJ3m";
 const ANIO_CENSO = 2026;
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const LOGO_KIDZ = "data:image/png;base64,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";
+const LOGO_WS = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKAAAACgCAMAAAC8EZcfAAABgFBMVEV9VJ0AAACDWKV/P39/f3//AP99VJ2qVap9VJ19VJ19VJx9VJx9VJ0AAP9VVap7Vpl7VaR/AH94TJh+VaB9VaCCVqBVVVWHVaR/P79/f/+AVqF+VKD///+AVqGAVqCAVqFoZpmTZpeBVJ1pNJmEVZyAVp5+VaCKTZp+VaCAVp+BVqF+VaCRSLaOabR/VX9/VqF/f7+AVp+OYLKZZsz/AAAAAH9VVX9/AP9/T59/ZrKAVZ//f38AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMWCnPAAAAgHRSTlP+AP4EAgHNA41wsC5QAQMUEgIP+ywmAxIEAtJPAW6TsgUHLgUXUWoMjfVOzwcJBrQEof8FAQIGAiAKYwIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGwDPNcAAA1QSURBVHjazV3peqs4EpUEAmwssI0TZ3G2m+1uvc307O//XiMJkEogUOFgp/nT/d3YcChVnVolE3r8FV+l9f/s8y+rxddsuUz0tVxm2WKV77b1X6Mo/sBDyJHfE2mk/rMpVwsJi1SsdxGSJNndal2DLMQ5AYpUi+7i7o+EaDAV8VwNzh/337+oT6fpuQBeqyetb7MfRMspcCnZfru5/64kecxak8nC45Q+ff+jwoCDwiRf1WrH6WkBcqV4u3s2CZ3BeHOfq6UWJwPI5euvXx+OQGcw/vYqTVstwgkAKum93N0ci67FeHNXSmU8AUApvfJr9TF4jRjf9vp2swIsKN3esY/DayDebSmPZwQolW/zdjMPvGahX7HWQnCru5oRXg3xIdfrMgNAKb7yfl54NcSvJUaIBKF9t/PD0xBvVtItfRRgRLf3p8GnhbgNMs44QGlqUvvIyS52k9NAnDMKUDLBgp0QnxLim37McQDl8j6cFJ6GeP/PUWsmY/jym5PjU8s8qohkDB87A75aEaPpACO6Og8+pYirYYRkEN/iTPAahI/TAJ4Vn4K4oFdTAJ4bn0YY4QGeH9+wDH0Arz4Bn0TotxTiw7f6BHwyP/UiJF5+qT4BoLTlnF6GAV6fi599CLd9v0x68UF580n4JMJky0MAN78sPw2fBPif4BLzMvlEgB4yJB4T+TR8pKTBJRb856eJkGWefJ78FbxICzD3BNc9gGKz/SQRsqUv+Cf0LyNC6UlSlKvjnyNClhQc54s/IMJuGX2GgMsXzRwtQpYsMnMtpt2EkS01GTLnowDTY0TIlupLa3CbaYQqOSZCB6yHI0TI3rh6SvEc1dfz43rSTQDHcFqWQvQAArEeIULlBTL5pfJIVZYcc2kfv7SU3QCMxS4DLBTvp4pQrpAonbCY0xeCvwm7NZA43ZNvpYgdgAVdsrWtyk43ZLlCT/IeLOEHK4iM4c0rPsCHW69HmigwZ9ATCr4mbKoXKORNINuqm6K//19rIjxSy7duREjaVWekysXRItRLG9OEQV26pNjYkgHzr+MpY9SkftcX5gYTQmyniJAlT7y5NbDGgu7YdI6pX0tB5gZg1GjL7lgRtl5ARrvwNWOBtDX5VhuTE9Vv1d5SARS01jh4bz5FCxXHxOat9ibqxEa/Ui+Krmmx5NEssb3PkVrYPmBDS9enIp0m2xmAkqQbwTTmRrQKNsrsirBEi5B9aR6gXp8lv/Npbym5yfONxtyIpgOT3ZfHcCFL2kW9bJjGkjVGURyZp63Mld4cNEBQioHWxDnWkAEitRgwMsaQtTJYYT5vtbbGLQGK2CoKFCHWI6tXtQ941UxzaQDvqikcEwPqrF+U6FqHN7HCitAJlMTfXaZBkHVVGo4pXOfzIv9AXF2rvk33yE4y1mWaIujvpKBS+22oEXqNiQQJqQCKQxz2GBVfwpqUkKGIo/UHGmAa+X5pj2PsGpNYcReQN9mKzSQRdpKxmmlKTj1q76cAMcRKKgvgpMv2blAT5kKZjDnNti7TyFb9qAjhR/mz+1H17iTqEgHb8s0EQ+4lY9c6LKRITYa5Uk/YUlhXhB4SNlgh4cGgpl/wSZuYpkCRNXy/uGvx6j2J/LrLVNU3a/ZhEXqSMX6tw8ICQ9ZVE2a0td2+eElfh10RBnyVp+Cj15TZB49F1pBjPC8i7076IlKGjOVCX8GH03dXssUwWQ9zTKsAxPNlefMC6U68rQNld9DBDkfWUslGOU0iIXGfBBgrBc7dy6q3J+/fqPDI1f4BpoEcyn/3IEko8ekY1MLNGBcOFHwKzTSWH4fIWhK6sBxz6wFC9iT3cwdKhJVcx40VXLY3X3ETUMr9ZZBRjqkfkBPvuzmZz3B2AslEeRADacM101yPmxrkmAFTZyviNVKp4jCoGRIhoGMl6L8ZvNp/VpaBBN36NSlElmxB/A93REi3VRWywY3yF4YUNSB4D+9LOu7GTxYsI36KktrJg1ooCz6Ry84GUr2ma+MFfSsIOXSIbiXAIQJw8m+/fsCaqMrZQQUj7oaFHrJ24phHPw62HAToitAnZ+gsmqDNQqrDwidOB8ka/nUwaGQJGbRQx1ddsNF6RRuW2ypazTS3Y6EKkO+/hpyhAlgNxlE2tPZ5U0gjJvOwvrWbgPYCY6kO4XCCITtnqU/HV/DvbW3CJCh1WHgBvPqTo01BGw8DlCLkwzzPkhT8dfut6oZfYp10mMZNOHKzAEMcQwaXFyNCqEKRrzZR/+MWkDX0SGE/gwAIRbjpiNAN9W08wcg7iO+c13DoFBTNqXhMjgLoGHI6kvw5+t9hGllrFsDZAI4BScztSEoQEuHGxgwJG3DDTrgna2kxMG3IxoBOg3EMMJIKJ0KXJiCBdKobFnqdgJa8/0GoIKPNADZuyYy8WHcSX0E5rQa9GAMxza0rQm+lNBCykwTLhVCEKhS2T+3GvLtWuqoaCdvARtucxtxo2hwCCONCYcNil2MyNqAYdYgDI+t6FTBxjAkWxst3rhbaW9lQWPQyZ2VbwmaSbnlN3wJi/vMqGQc4XqJ1RMgfCeuF+p5Wg40RoqYDalfhXd6CJc/Y4peMByeUNowIIcfwfrPGVtR0BbinD1iOqUP+VbA4ZIpdokniWXIY4pgu09QJaAocUunUtK8D3TKZNOUTKtCtCi0CZQ2rAqkCAN1aIXMrLMfo1hIpw/U102bhQn1ahfo0wLIm1uOdBFR9YQeb/6GIikShZlXP37syzdio2NsOqC1jp4sNemxAlT6CbYKeCKsvIIR692eLss4vLAt5p8bGciVYPAq3gqQIU6Pj/8ZFctbB1TKGs58xfhZQl9+CHVMQF+rCGmDZTTyUFJr2XayCrIEiUxxaPl3A3OGbfaoJwpJIIFi2yzRbbxEsZ8Eunuw0JWERrrkwOySAMP4nn53ku91F98rzi7UDwzvZFuQYtQ4kwvQjG1A6+4WR3E79KbjTXM1agDIORXJM04bAzJ2rwJ3XsuhFcmUcxb6rMxbrGeIO97GUqZEYoYSNCLU25S7LZohtpH9u3b4EaIyGezDE5+19vCb+of3o0q16Vzli/2Nb6tp0/vU13Aet27EZrmuvR5ZWbvd+SRGbXLlmmq6s47CLqNuxBWaCSRkyfU9kqO9uelqh9jLXCeh7h2PCUz9KndTUx2OCEmGHY5QEkgi1G1yHFB2yDk8zyLByo2cWcGssvdVSaS2YEBrZieRxGe4QbRzkmObuhOLWWH58zXqdtW1c8JHr4IwgOWSN6ZXn9VCFUmLMGieaYwrT6S8xJG0o5TlhrkUFB0ibjxP08ERVsWTjdu+T8WspNxAXMAG1kWqKiFFqAyTo+SCVrYnIDguoonnoSorY1t4qwDQIjmnidjJhmBMEhilurs2qXW2JLVlfhtUejudhhzlBbD0YCA6NrMT0C2CasESqtiNOpgxzmgdE9DvDzsXFdgSJJb9gZ86MOhDkfJDxJxynQr3qU9owTYSzShOUEKzSQi2cMJxqw8dDnLTjKhzDMZedOWqkCPcqMEzR473AwdVMo/ooaTCOkarRGfQeG3zoPU/aVIWfD7buek3qsHAT5hjbqCV0oghlUXzKiHmXaaQIn4MKIl2WqakRUDRBivBJlFOG9I2Dq0dwM7oNxzEgdjQA48Mes4dGJSHTptRlO+wSJKAyyQ6Xg36JeX8/CXacMaOThtSBOIomLETkSqlvw0uB8g5SCydutdGTnqZpy5IQx7j5FXE37qIkMnGvCWQa9W5ZeJtx7N8yFE2xzik7EX4VbUxTDw5gQ5IuQFFcnWRHHWSasI9bunkY6SY3J0Bok+lNuNrB1iIe3hWWnmbbpG1eB7WoV2Ui/cm6U+7LDUWq/YHO7r66ovwxP8LKpqvjYRNb9k6vI2c5JAB2uUdYlN2UvVIK6ZcpTnCMC0t+IurmMK0NHAQxvwhv3VkL/LwpOc9RJHby+zCYj/gLKcRbz5vflO22paG7DxR6yFC5bH6yLkaZZtL2XWnLcyOsbPbk7z8O1ZL9AHkxO8JxphmS3+CZR2L2VVbZjDmwLenPWRUTT40Ss7tl2L5zb80GDzwKHAw2L2NbphH0ydkZJKFfHXm02rwIcy/TqIPLro49nG7Ww3Es08BZIPZQjnYKyHj74NdZT0fct4tsJzal+Y63gkigOj+nIlouaecllfoFzjsNHzG5m+0MQjB4rYb91VGi5QePmNQI6dtcQoQJ6K06LxZxom34mNNY0PxhpjNsk7akoXr3Unz27IIPHRQr3/p2HnOWFWEjshx3ZjHqqF35ovOcFev0ckQ842HF8r3zOSCCskY873HP6rBspYrVCQ6GmunAbHlUBr24/+CRzwzsMZn/yHEFcf2BM71Vb2zxwk95aLtKq8vvv5EjMKrDwB9unyk98bH3saKG/O6GTD72/uFuTyedhn70Dwekyv52iyXBnQylP7VcKHRFQc/z0wux7n2sX7PlyC8vmN9eWC5WW/2l+Jw/XtE8rry4y5aJv3FckWSZvdVDXEUan/nXNTQ1XsXNr3/ki0Wmfvujlpz+AZDFapf/bH8lhB//lP8DsX2bgnxZ+EMAAAAASUVORK5CYII=";
+const IMG_KIDZ = new Image(); IMG_KIDZ.src = LOGO_KIDZ;
+document.querySelectorAll("[data-logo]").forEach((img) => (img.src = img.dataset.logo === "kidz" ? LOGO_KIDZ : LOGO_WS));
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
@@ -596,16 +622,20 @@ const ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
 const SECCIONES = [
   { id: "anfitriones", titulo: "Anfitriones", desc: "Conteo del domingo y notas de lo que falta.", color: "c-orange", tag: "Domingo",
     ve: (r) => r.esAncianoOAdmin || r.ministerios.has("anfitriones") },
-  { id: "kidz", titulo: "Kidz", desc: "Ingreso de niños con código QR y aviso a padres.", color: "c-yellow", tag: "Domingo",
+  { id: "kidz", titulo: "Kidz", logo: "kidz", desc: "Ingreso de niños con código QR y aviso a padres.", color: "c-yellow", tag: "Domingo",
     ve: (r) => r.esAncianoOAdmin || r.ministerios.has("kidz") },
-  { id: "padres", titulo: "Mis niños", desc: "El código QR de tus hijos para Kidz y los anuncios.", color: "c-yellow", tag: "Kidz",
+  { id: "padres", titulo: "Mis niños", logo: "kidz", desc: "El código QR de tus hijos para Kidz y los anuncios.", color: "c-yellow", tag: "Kidz",
     ve: (r) => !!r.familiaId },
   { id: "bienvenida", titulo: "Bienvenida", desc: "Registro de personas nuevas y su seguimiento.", color: "c-green", tag: "Domingo",
     ve: (r) => r.esAncianoOAdmin || r.ministerios.has("bienvenida") },
-  { id: "worship", titulo: "Arco Worship", desc: "Lista de canciones, tonos y calendario del equipo.", color: "c-lilac", tag: "Domingo",
+  { id: "worship", titulo: "Arco Worship", logo: "ws", desc: "Lista de canciones, tonos y calendario del equipo.", color: "c-lilac", tag: "Domingo",
     ve: (r) => r.esAncianoOAdmin || r.ministerios.has("worship") },
   { id: "domingo", titulo: "Este domingo", desc: "Quién predica, supervisores y encargados de cada área.", color: "c-grey", tag: "Equipos",
     ve: (r) => r.esAncianoOAdmin || r.roles.has("secretaria") || r.ministerios.size > 0 },
+  { id: "formacion", titulo: "Formación Cristiana", desc: "Clases y eventos, inscritos y quién completó cada curso.", color: "c-sand", tag: "Formación",
+    ve: (r) => r.esAncianoOAdmin || r.ministerios.has("formacion") },
+  { id: "stand", titulo: "Stand de información", desc: "Inscribe personas a una clase o evento.", color: "c-green", tag: "Domingo",
+    ve: (r) => r.esAncianoOAdmin || r.ministerios.has("stand") || r.lideraMinisterios.has("formacion") },
   { id: "igho", titulo: "Mi IGHO", desc: "Miembros, asistencia de cada reunión y censo anual.", color: "c-sky", tag: "Semanal",
     ve: (r) => r.esAncianoOAdmin || r.roles.has("lider_igho") },
   { id: "resumen", titulo: "Resumen", desc: "Estadísticas de toda la iglesia.", color: "c-sand", tag: "Consejo",
@@ -622,7 +652,7 @@ let ctx = null; // { user, nombre, roles:Set, ministerios:Set, esAncianoOAdmin }
 
 // ---------------- Navegación ----------------
 function show(view) {
-  for (const v of ["login", "home", "resumen", "soon", "anfitriones", "kidz", "padres", "domingo", "worship", "bienvenida", "igho", "clave", "admin", "tablero"]) $("v-" + v).classList.toggle("hidden", v !== view);
+  for (const v of ["login", "home", "resumen", "soon", "anfitriones", "kidz", "padres", "domingo", "worship", "bienvenida", "igho", "clave", "admin", "tablero", "formacion", "stand"]) $("v-" + v).classList.toggle("hidden", v !== view);
   document.body.classList.toggle("modo-tablero", view === "tablero");
   $("nav").classList.toggle("hidden", view === "login" || view === "clave");
   document.querySelectorAll(".nav [data-go]").forEach((b) => b.classList.toggle("on", b.dataset.go === view));
@@ -640,6 +670,8 @@ function abrir(id) {
   if (id === "igho") { show("igho"); return abrirIgho(); }
   if (id === "admin") { show("admin"); return abrirAdmin(ctx.roles.has("admin") ? "usuarios" : "familias"); }
   if (id === "tablero") { show("tablero"); return abrirTablero(); }
+  if (id === "formacion") { show("formacion"); return abrirFormacion(null); }
+  if (id === "stand") { show("stand"); return abrirStand(); }
   const s = SECCIONES.find((x) => x.id === id);
   $("soon-title").textContent = s.titulo;
   $("soon-text").textContent = "Esta sección se construirá en las próximas etapas. Ya tienes acceso a ella según tu rol.";
@@ -706,7 +738,8 @@ function pintarHome() {
   $("hello").textContent = `Hola, ${ctx.nombre}`;
   $("avatar").textContent = ctx.nombre[0]?.toUpperCase() || "·";
   const principal = ["anciano", "admin", "lider_igho", "secretaria", "finanzas", "lider_ministerio", "servidor"].find((x) => ctx.roles.has(x));
-  $("role-label").textContent = principal ? ROL_NOMBRE[principal] : ctx.familiaId ? "Familia Kidz" : "Sin rol asignado";
+  $("role-label").textContent = principal === "servidor" && ctx.ministerios.size === 1 && ctx.ministerios.has("anuncios") ? "Anunciante"
+    : principal ? ROL_NOMBRE[principal] : ctx.familiaId ? "Familia Kidz" : "Sin rol asignado";
   $("nav-resumen").classList.toggle("hidden", !ctx.esAncianoOAdmin);
 
   // Próximos domingos
@@ -725,6 +758,7 @@ function pintarHome() {
   const visibles = SECCIONES.filter((s) => s.ve(ctx));
   $("cards").innerHTML = visibles.length ? visibles.map((s) => `
     <button class="card ${s.color}" data-go="${s.id}">
+      ${s.logo ? `<img class="card-logo" src="${s.logo === "kidz" ? LOGO_KIDZ : LOGO_WS}" alt="">` : ""}
       <h3>${esc(s.titulo)}</h3>
       <div class="desc">${esc(s.desc)}</div>
       <span class="go">${ARROW}</span>
@@ -773,7 +807,7 @@ async function cargarResumen() {
   let cobMins = (cob.data || []).map((x) => x.ministerios?.codigo).filter(Boolean);
   // El administrador sin cobertura asignada cubre toda la iglesia: ve todos los IGHO y ministerios.
   const todaLaIglesia = ctx.roles.has("admin") && !cobIghos.length && !cobMins.length;
-  if (todaLaIglesia) cobMins = ["anfitriones", "kidz", "bienvenida", "worship"];
+  if (todaLaIglesia) cobMins = ["anfitriones", "kidz", "bienvenida", "worship", "formacion"];
   const total = personas.length, bautizados = personas.filter((x) => x.bautizado).length;
   const nuevos = censos.filter((x) => x.tiempo_en_arco === "menos_1").length;
   const porIgho = ighos.map((g) => ({ nombre: g.nombre, n: personas.filter((x) => x.igho_id === g.id).length })).sort((a, b) => b.n - a.n);
@@ -824,6 +858,7 @@ async function cargarResumen() {
     const listo = (sc.count || 0) > 0 && (eq.count || 0) > 0;
     minHtml.push(`<div class="panel"><h4>Arco Worship · este domingo</h4><div class="ig-foot ${listo ? "" : "warn"}">${listo ? "✓ " : "⚠ "}${sc.count || 0} canciones y ${eq.count || 0} personas asignadas para el ${fmtCorta.format(fromYmd(f))}</div></div>`);
   }
+  if (cobMins.includes("formacion")) minHtml.push(await resumenFormacionHtml());
   if (minHtml.length) html += `<div class="sec-title">${todaLaIglesia ? "Ministerios" : "Ministerios que cubres"}</div>${minHtml.join("")}`;
 
   html += `<div class="sec-title">Toda la iglesia</div>
@@ -884,7 +919,7 @@ function pintarContadores(contId, campos, valores, onChange) {
 const quien = (nombre, cuando) => cuando ? `Guardado por ${esc(nombre || "—")} · ${fmtLarga.format(new Date(cuando))}, ${fmtHora.format(new Date(cuando))}` : "";
 
 // ---------------- Anfitriones ----------------
-const anf = { fecha: null, v: { adultos: 0, nuevos: 0, ninos_auditorio: 0 }, kidz: null };
+const anf = { fecha: null, v: { adultos: 0, nuevos: 0, ninos_auditorio: 0, manteles: 0 }, kidz: null };
 const CAMPOS_ANF = [
   { k: "adultos", label: "Adultos", hint: "Incluye a las personas nuevas" },
   { k: "nuevos", label: "De ellos, nuevos", hint: "Primera vez en Arco" },
@@ -906,13 +941,14 @@ async function abrirAnfitriones(fecha) {
     sb.from("conteo_anfitriones").select("*").eq("fecha", anf.fecha).maybeSingle(),
     sb.from("conteo_kidz").select("*").eq("fecha", anf.fecha).maybeSingle(),
   ]);
-  anf.v = { adultos: a.data?.adultos ?? 0, nuevos: a.data?.nuevos ?? 0, ninos_auditorio: a.data?.ninos_auditorio ?? 0 };
+  anf.v = { adultos: a.data?.adultos ?? 0, nuevos: a.data?.nuevos ?? 0, ninos_auditorio: a.data?.ninos_auditorio ?? 0, manteles: a.data?.manteles ?? 0 };
   anf.kidz = k.data || null;
   $("anf-kidz").innerHTML = anf.kidz
     ? `<div class="kidz-box"><div><b>${anf.kidz.ninos}</b>Niños en Kidz</div><div><b>${anf.kidz.servidores}</b>Servidores</div></div>`
     : "Kidz todavía no ha registrado su conteo para este domingo.";
   if (a.data) $("anf-msg").innerHTML = quien(a.data.registrado_nombre, a.data.actualizado_en);
   pintarContadores("anf-counters", CAMPOS_ANF, anf.v, totalAnf);
+  pintarContadores("anf-manteles", [{ k: "manteles", label: "Manteles para lavar" }], anf.v, () => {});
   totalAnf();
   cargarNotas(); cargarHistorial();
 }
@@ -1008,6 +1044,7 @@ async function abrirDomingo(fecha) {
   if (p.error || it.error) { $("dom-body").innerHTML = `<div class="soon">${esc((p.error || it.error).message)}</div>`; return; }
   dom.prog = p.data; dom.items = it.data || [];
   pintarDomingo();
+  ponerAnuncios();
 }
 function pintarDomingo() {
   if (dom.editando) return pintarDomingoEdicion();
@@ -1717,7 +1754,9 @@ $("nc-form").addEventListener("submit", async (e) => {
 });
 
 // ---------- Editor de roles (se usa al crear y al editar) ----------
-const MIN_ROLES = [["anfitriones", "Anfitriones"], ["kidz", "Kidz"], ["bienvenida", "Bienvenida"], ["worship", "Arco Worship"]];
+const MIN_ROLES = [["anfitriones", "Anfitriones"], ["kidz", "Kidz"], ["bienvenida", "Bienvenida"], ["worship", "Arco Worship"],
+                   ["anuncios", "Anuncios"], ["formacion", "Formación Cristiana"], ["stand", "Stand de información"]];
+const NIVEL_SIERVO = { anuncios: "Anunciante" };   // nombre del nivel "Siervo" en cada ministerio
 const ROLES_SIMPLES = [["anciano", "Miembro del Consejo"], ["secretaria", "Secretaría"], ["finanzas", "Finanzas"], ["admin", "Administrador de la app"]];
 let ighosAdmin = [];
 
@@ -1728,7 +1767,7 @@ function editorRoles(contId, roles, cob = { ighos: [], mins: [] }) {
   $(contId).innerHTML = `
     <div class="hint" style="margin-top:6px">Ministerio dominical</div>
     ${MIN_ROLES.map(([c, t]) => `<div class="rol-row"><span>${t}</span><div class="seg small" data-min="${c}">
-      ${[["", "—"], ["siervo", "Siervo"], ["lider", "Líder"]].map(([v, l]) => `<button type="button" data-v="${v}" class="${nivel(c) === v ? "on" : ""}">${l}</button>`).join("")}</div></div>`).join("")}
+      ${[["", "—"], ["siervo", NIVEL_SIERVO[c] || "Siervo"], ["lider", "Líder"]].map(([v, l]) => `<button type="button" data-v="${v}" class="${nivel(c) === v ? "on" : ""}">${l}</button>`).join("")}</div></div>`).join("")}
     <div class="hint" style="margin-top:12px">Líder de IGHO</div>
     <select data-igho><option value="">No lidera un IGHO</option>${opciones(ighosAdmin.map((i) => [i.id, i.nombre]), ighoSel)}</select>
     <div class="hint">Otros roles</div>
@@ -1762,7 +1801,7 @@ function leerRoles(contId) {
 }
 const MIN_NOMBRE = Object.fromEntries(MIN_ROLES);
 function resumenRoles(roles) {
-  return roles.map((r) => r.rol === "lider_ministerio" ? `Líder ${MIN_NOMBRE[r.ministerio] || ""}` : r.rol === "servidor" ? `Siervo ${MIN_NOMBRE[r.ministerio] || ""}`
+  return roles.map((r) => r.rol === "lider_ministerio" ? `Líder ${MIN_NOMBRE[r.ministerio] || ""}` : r.rol === "servidor" ? (NIVEL_SIERVO[r.ministerio] || `Siervo ${MIN_NOMBRE[r.ministerio] || ""}`)
     : r.rol === "lider_igho" ? `Líder IGHO ${r.igho || ""}` : ROL_NOMBRE[r.rol] || r.rol);
 }
 function tarjetaClave(nombre, usuario, clave, telefono) {
@@ -2024,15 +2063,16 @@ function qrSvg(texto, px = 240) {
 function qrImagen(texto, titulo, sub) {
   const q = qrcode(0, "M"); q.addData(texto); q.make();
   const n = q.getModuleCount(), W = 600, cell = Math.floor(500 / (n + 8)), lado = cell * (n + 8), off = Math.floor((W - lado) / 2), top = 40;
-  const c = document.createElement("canvas"); c.width = W; c.height = 760; const g = c.getContext("2d");
-  g.fillStyle = "#f6c64e"; g.fillRect(0, 0, W, 760);
+  const c = document.createElement("canvas"); c.width = W; c.height = 860; const g = c.getContext("2d");
+  g.fillStyle = "#f6c64e"; g.fillRect(0, 0, W, 860);
   g.fillStyle = "#fff"; g.fillRect(off, top, lado, lado);   // margen blanco de 4 módulos alrededor
   g.fillStyle = "#000";
   for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) if (q.isDark(y, x)) g.fillRect(off + (x + 4) * cell, top + (y + 4) * cell, cell, cell);
   g.fillStyle = "#1b1b1d"; g.textAlign = "center";
   g.font = "700 44px Outfit, sans-serif"; g.fillText(titulo, W / 2, 620);
   g.font = "28px Outfit, sans-serif"; g.fillText(sub, W / 2, 670);
-  g.font = "600 24px Outfit, sans-serif"; g.fillText("ARCO KIDZ · Arco Ríos", W / 2, 725);
+  if (IMG_KIDZ.complete && IMG_KIDZ.naturalWidth) { const lw = 170, lh = lw * IMG_KIDZ.naturalHeight / IMG_KIDZ.naturalWidth; g.drawImage(IMG_KIDZ, (W - lw) / 2, 690, lw, lh); }
+  g.font = "600 22px Outfit, sans-serif"; g.fillText("Arco Ríos", W / 2, 845);
   return new Promise((res) => c.toBlob(res, "image/png"));
 }
 async function compartirQr(texto, titulo, sub) {
@@ -3391,6 +3431,273 @@ function secPronto() {
   const fin = tb.seccion === "finanzas";
   $("tb-main").innerHTML = `<div class="soon">${fin ? "Finanzas (informe mensual por semana y gastos por categoría) se construirá en una próxima etapa. Solo lo verá el Consejo."
     : "Las tareas del Consejo («Cosas por cumplir») todavía están en la hoja Counsel Dashboard. Falta decidir si pasan a la app."}</div>`;
+}
+
+
+// ===================================================================
+// ANUNCIOS DEL DOMINGO (en «Este domingo»)
+// Líder de Anuncios / Consejo / secretaría los escriben; el Anunciante los ve y los da.
+// ===================================================================
+const puedeEditarAnuncios = () => ctx.esAncianoOAdmin || ctx.roles.has("secretaria") || ctx.lideraMinisterios.has("anuncios");
+const esAnunciante = () => ctx.ministerios.has("anuncios");
+async function cargarAnuncios(fecha) {
+  const [h, it] = await Promise.all([
+    sb.from("anuncios_domingo").select("*").eq("fecha", fecha).maybeSingle(),
+    sb.from("anuncios_items").select("*").eq("fecha", fecha).order("orden"),
+  ]);
+  return { cab: h.data || null, items: it.data || [], error: h.error || it.error };
+}
+function anunciosPanel(a) {
+  const mio = a.cab?.anunciante_user && a.cab.anunciante_user === ctx.user.id;
+  if (a.error && !puedeEditarAnuncios()) return "";
+  return `<div class="panel anun ${mio ? "mio" : ""}" id="anun-panel">
+    <div class="kclase-h"><h4>Anuncios</h4>${a.cab?.anunciante_nombre ? `<span class="tl-who" style="margin:0">Los da: ${esc(a.cab.anunciante_nombre)}</span>` : ""}</div>
+    ${mio ? `<div class="anun-mio">🎤 Te toca dar los anuncios este domingo</div>` : ""}
+    ${a.error ? `<div class="muted err">Falta ejecutar 12_anuncios_formacion.sql en Supabase.</div>` : ""}
+    ${a.items.map((x, i) => `<div class="anun-item"><span class="song-n">${i + 1}</span><div><div class="song-t">${esc(x.titulo)}</div>${x.texto ? `<div class="anun-txt">${esc(x.texto).replace(/\n/g, "<br>")}</div>` : ""}</div></div>`).join("")
+      || (a.error ? "" : `<div class="muted">Todavía no hay anuncios para este domingo.</div>`)}
+    ${puedeEditarAnuncios() && !a.error ? `<button class="btn-sec" id="anun-edit" style="width:100%">${a.items.length ? "Editar anuncios" : "Escribir anuncios"}</button>` : ""}
+  </div>`;
+}
+async function ponerAnuncios() {
+  if (dom.editando) return;
+  const a = await cargarAnuncios(dom.fecha);
+  const html = anunciosPanel(a); if (!html) return;
+  const body = $("dom-body");
+  const mio = a.cab?.anunciante_user === ctx.user.id;
+  // Al anunciante sus anuncios le aparecen arriba; a los demás, después del horario
+  if (mio || (esAnunciante() && !ctx.esAncianoOAdmin)) body.insertAdjacentHTML("afterbegin", html);
+  else { const ed = $("dom-edit"); ed ? ed.insertAdjacentHTML("beforebegin", html) : body.insertAdjacentHTML("beforeend", html); }
+  $("anun-edit")?.addEventListener("click", () => editarAnuncios(a));
+}
+async function editarAnuncios(a) {
+  const { data: eq } = await sb.rpc("anuncios_equipo");
+  let items = a.items.map((x) => ({ titulo: x.titulo, texto: x.texto || "" }));
+  if (!items.length) items = [{ titulo: "", texto: "" }];
+  const pintar = () => {
+    $("dom-body").innerHTML = `<div class="panel"><h4>Anuncios · ${esc(fmtTitulo(dom.fecha))}</h4>
+      <label>¿Quién los da?</label><select id="an-quien"><option value="">Sin asignar</option>${opciones((eq || []).map((p) => [p.user_id, p.nombre]), a.cab?.anunciante_user || "")}</select>
+      ${!(eq || []).length ? `<div class="hint">Da el rol «Anunciante» en Administración (Anuncios → Anunciante) para poder elegir aquí.</div>` : ""}
+      <div id="an-items">${items.map((x, i) => `<div class="anun-ed" data-i="${i}">
+        <div class="row-btns"><input class="a-t" placeholder="Título (ej.: Retiro de jóvenes)" value="${esc(x.titulo)}" style="margin:0">
+          <button class="x" data-up="${i}" aria-label="Subir">↑</button><button class="x" data-del="${i}" aria-label="Quitar">×</button></div>
+        <textarea class="a-x" placeholder="Lo que hay que decir: fecha, hora, lugar, a quién llamar…">${esc(x.texto)}</textarea></div>`).join("")}</div>
+      <button class="btn-sec" id="an-add" style="width:100%">+ Agregar anuncio</button>
+      <button class="btn-sec" id="an-copy" style="width:100%">Copiar del domingo anterior</button></div>
+      <button class="btn-primary" id="an-save">Guardar anuncios</button>
+      <button class="btn-sec" id="an-cancel" style="width:100%">Cancelar</button><div class="ok" id="an-msg"></div>`;
+    const leer = () => { items = [...document.querySelectorAll("#an-items .anun-ed")].map((r) => ({ titulo: r.querySelector(".a-t").value, texto: r.querySelector(".a-x").value })); };
+    $("an-items").querySelectorAll("[data-del]").forEach((b) => b.addEventListener("click", () => { leer(); items.splice(+b.dataset.del, 1); pintar(); }));
+    $("an-items").querySelectorAll("[data-up]").forEach((b) => b.addEventListener("click", () => { leer(); const i = +b.dataset.up; if (i) [items[i - 1], items[i]] = [items[i], items[i - 1]]; pintar(); }));
+    $("an-add").addEventListener("click", () => { leer(); items.push({ titulo: "", texto: "" }); pintar(); });
+    $("an-copy").addEventListener("click", async () => {
+      const { data: prev } = await sb.from("anuncios_items").select("fecha").lt("fecha", dom.fecha).order("fecha", { ascending: false }).limit(1).maybeSingle();
+      if (!prev) return ($("an-msg").textContent = "No hay anuncios anteriores.");
+      const { data } = await sb.from("anuncios_items").select("titulo, texto").eq("fecha", prev.fecha).order("orden");
+      items = (data || []).map((x) => ({ titulo: x.titulo, texto: x.texto || "" })); pintar();
+      $("an-msg").textContent = `Copiado del ${fmtCorta.format(fromYmd(prev.fecha))}. Revisa y guarda.`;
+    });
+    $("an-cancel").addEventListener("click", () => abrirDomingo(dom.fecha));
+    $("an-save").addEventListener("click", async () => {
+      leer();
+      const quien = $("an-quien").value, filas = items.filter((x) => x.titulo.trim()).map((x, i) => ({ fecha: dom.fecha, orden: i + 1, titulo: x.titulo.trim(), texto: x.texto.trim() || null }));
+      $("an-save").disabled = true;
+      let r = await sb.from("anuncios_domingo").upsert({ fecha: dom.fecha, anunciante_user: quien || null, anunciante_nombre: quien ? (eq || []).find((p) => p.user_id === quien)?.nombre : null,
+        actualizado_por_nombre: ctx.nombreCompleto, actualizado_en: new Date().toISOString() }, { onConflict: "fecha" });
+      if (!r.error) r = await sb.from("anuncios_items").delete().eq("fecha", dom.fecha);
+      if (!r.error && filas.length) r = await sb.from("anuncios_items").insert(filas);
+      $("an-save").disabled = false;
+      if (r.error) { $("an-msg").classList.add("err"); $("an-msg").textContent = "No se pudo guardar: " + r.error.message; return; }
+      abrirDomingo(dom.fecha);
+    });
+  };
+  pintar();
+}
+
+// ===================================================================
+// FORMACIÓN CRISTIANA: clases y eventos
+// ===================================================================
+const fc = { sel: null, cursos: null };
+const esLiderFormacion = () => ctx.esAncianoOAdmin || ctx.lideraMinisterios.has("formacion");
+const TIPO_FC = [["clase", "Clase"], ["evento", "Evento"]];
+const fechasFc = (o) => [o.fecha_inicio && fmtCorta.format(fromYmd(o.fecha_inicio)), o.fecha_fin && o.fecha_fin !== o.fecha_inicio && fmtCorta.format(fromYmd(o.fecha_fin))].filter(Boolean).join(" – ");
+const detalleFc = (o) => [fechasFc(o), o.horario, o.lugar].filter(Boolean).map(esc).join(" · ");
+
+async function abrirFormacion(id) {
+  const body = $("fc-body");
+  if (id !== undefined) fc.sel = id;
+  body.innerHTML = '<div class="loading">Cargando…</div>';
+  if (!fc.cursos) { const { data } = await sb.from("cursos").select("id, nombre").order("orden"); fc.cursos = data || []; }
+  const [o, i] = await Promise.all([
+    sb.from("fc_ofertas").select("*").order("abierta", { ascending: false }).order("fecha_inicio", { ascending: true, nullsFirst: false }),
+    sb.from("fc_inscripciones").select("oferta_id, estado"),
+  ]);
+  if (o.error) { body.innerHTML = `<div class="soon">No se pudo cargar. ${esc(o.error.message)}<br><br>¿Ya se ejecutó 12_anuncios_formacion.sql?</div>`; return; }
+  const cuenta = (id, est) => (i.data || []).filter((x) => x.oferta_id === id && (est ? x.estado === est : x.estado !== "retirado")).length;
+  if (fc.sel === "nueva") return formOferta(null);
+  if (fc.sel) { const of = o.data.find((x) => x.id === fc.sel); if (of) return verOferta(of); }
+  const card = (x) => `<button class="kcard fc-card ${x.abierta ? "" : "cerrada"}" data-of="${x.id}"><div>
+      <div class="sts" style="margin:0 0 4px"><span class="st">${x.tipo === "evento" ? "Evento" : "Clase"}</span>${x.abierta ? '<span class="st yes">Inscripciones abiertas</span>' : '<span class="st">Cerrada</span>'}</div>
+      <div class="kcard-n">${esc(x.nombre)}</div><div class="kcard-s">${detalleFc(x) || "Sin fecha"}</div>
+      <div class="kcard-s"><b>${cuenta(x.id)}</b> inscritos${x.cupo ? ` de ${x.cupo}` : ""}${cuenta(x.id, "completo") ? ` · ${cuenta(x.id, "completo")} completaron` : ""}</div></div><span class="kcard-qr">›</span></button>`;
+  body.innerHTML = `
+    ${esLiderFormacion() ? `<button class="btn-primary" id="fc-nueva" style="margin-top:0">+ Nueva clase o evento</button>` : ""}
+    <button class="btn-sec" id="fc-stand" style="width:100%">Inscribir a una persona (Stand)</button>
+    ${o.data.map(card).join("") || `<div class="soon">Todavía no hay clases ni eventos.${esLiderFormacion() ? " Crea el primero arriba." : ""}</div>`}`;
+  $("fc-nueva")?.addEventListener("click", () => abrirFormacion("nueva"));
+  $("fc-stand").addEventListener("click", () => abrir("stand"));
+  body.querySelectorAll("[data-of]").forEach((b) => b.addEventListener("click", () => abrirFormacion(+b.dataset.of)));
+}
+
+function formOferta(o) {
+  o = o || { tipo: "clase", abierta: true };
+  const body = $("fc-body");
+  body.innerHTML = `<div class="panel"><h4>${o.id ? "Editar" : "Nueva clase o evento"}</h4>
+    <div class="seg" id="fo-tipo">${TIPO_FC.map(([v, t]) => `<button type="button" data-v="${v}" class="${o.tipo === v ? "on" : ""}">${t}</button>`).join("")}</div>
+    <label>Nombre</label><input id="fo-n" value="${esc(o.nombre || "")}" placeholder="Ej.: Raíces · enero 2027 / Retiro de matrimonios">
+    <div id="fo-curso-w"><label>¿Cuenta como un curso de Formación?</label>
+      <select id="fo-curso"><option value="">No</option>${opciones(fc.cursos.map((c) => [String(c.id), c.nombre]), o.curso_id ? String(o.curso_id) : "")}</select>
+      <div class="hint">Si eliges un curso, quien la complete lo tendrá en su ficha.</div></div>
+    <div class="two"><div><label>Desde</label><input type="date" id="fo-i" value="${o.fecha_inicio || ""}"></div><div><label>Hasta</label><input type="date" id="fo-f" value="${o.fecha_fin || ""}"></div></div>
+    <label>Horario</label><input id="fo-h" value="${esc(o.horario || "")}" placeholder="Ej.: Domingos 11:30">
+    <div class="two"><div><label>Lugar</label><input id="fo-l" value="${esc(o.lugar || "")}"></div><div><label>Cupo (opcional)</label><input id="fo-c" type="number" inputmode="numeric" min="1" value="${o.cupo || ""}"></div></div>
+    <label>Descripción</label><textarea id="fo-d" placeholder="Lo que el Stand le puede contar a la persona">${esc(o.descripcion || "")}</textarea>
+    <label class="check" style="margin:6px 0 14px"><input type="checkbox" id="fo-a" ${o.abierta ? "checked" : ""}> Inscripciones abiertas en el Stand</label>
+    <button class="btn-primary" id="fo-save">Guardar</button><button class="btn-sec" id="fo-x" style="width:100%">Cancelar</button>
+    ${o.id ? `<button class="btn-sec danger" id="fo-del" style="width:100%">Eliminar</button>` : ""}<div class="ok err" id="fo-msg"></div></div>`;
+  let tipo = o.tipo;
+  const verCurso = () => $("fo-curso-w").classList.toggle("hidden", tipo !== "clase");
+  verCurso();
+  $("fo-tipo").querySelectorAll("button").forEach((b) => b.addEventListener("click", () => { tipo = b.dataset.v; $("fo-tipo").querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === b)); verCurso(); }));
+  $("fo-x").addEventListener("click", () => abrirFormacion(o.id || null));
+  $("fo-del")?.addEventListener("click", async () => {
+    if (!confirm(`¿Eliminar «${o.nombre}» y sus inscripciones?`)) return;
+    const { error } = await sb.from("fc_ofertas").delete().eq("id", o.id); if (error) return alert(error.message); abrirFormacion(null);
+  });
+  $("fo-save").addEventListener("click", async () => {
+    const row = { tipo, nombre: $("fo-n").value.trim(), curso_id: tipo === "clase" && $("fo-curso").value ? +$("fo-curso").value : null,
+      fecha_inicio: $("fo-i").value || null, fecha_fin: $("fo-f").value || null, horario: $("fo-h").value.trim() || null, lugar: $("fo-l").value.trim() || null,
+      cupo: $("fo-c").value ? +$("fo-c").value : null, descripcion: $("fo-d").value.trim() || null, abierta: $("fo-a").checked };
+    if (!row.nombre) return ($("fo-msg").textContent = "Escribe el nombre.");
+    const r = o.id ? await sb.from("fc_ofertas").update(row).eq("id", o.id).select().single()
+                   : await sb.from("fc_ofertas").insert({ ...row, creado_por_nombre: ctx.nombreCompleto }).select().single();
+    if (r.error) return ($("fo-msg").textContent = r.error.message);
+    abrirFormacion(r.data.id);
+  });
+}
+
+async function verOferta(o) {
+  const body = $("fc-body");
+  const { data, error } = await sb.from("fc_inscripciones").select("*").eq("oferta_id", o.id).order("nombre");
+  if (error) { body.innerHTML = `<div class="soon">${esc(error.message)}</div>`; return; }
+  const activos = data.filter((x) => x.estado !== "retirado"), lider = esLiderFormacion();
+  const ESTADO = { inscrito: ["st", "Inscrito"], completo: ["st yes", "Completó"], retirado: ["st no", "Retirado"] };
+  const recordatorio = (x) => `Hola ${x.nombre.split(" ")[0]}, te escribimos de Arco Ríos sobre «${o.nombre}»${detalleFc(o) ? ` (${[fechasFc(o), o.horario, o.lugar].filter(Boolean).join(" · ")})` : ""}. ¡Te esperamos!`;
+  body.innerHTML = `
+    <div class="hero"><div class="muted" style="color:var(--ink-dark-2)">${o.tipo === "evento" ? "Evento" : "Clase"}${o.curso_id ? " · cuenta como " + esc(fc.cursos.find((c) => c.id === o.curso_id)?.nombre || "curso") : ""}</div>
+      <div class="hero-date">${esc(o.nombre)}</div>
+      <div class="chips">${fechasFc(o) ? `<div class="chip"><span>Fecha</span><b>${esc(fechasFc(o))}</b></div>` : ""}${o.horario ? `<div class="chip"><span>Horario</span><b>${esc(o.horario)}</b></div>` : ""}
+        ${o.lugar ? `<div class="chip"><span>Lugar</span><b>${esc(o.lugar)}</b></div>` : ""}<div class="chip"><span>Inscritos</span><b>${activos.length}${o.cupo ? " de " + o.cupo : ""}</b></div></div></div>
+    ${o.descripcion ? `<div class="obs">${esc(o.descripcion).replace(/\n/g, "<br>")}</div>` : ""}
+    ${o.abierta ? `<button class="btn-primary" id="fv-ins">+ Inscribir a una persona</button>` : `<div class="obs">Inscripciones cerradas.</div>`}
+    <div class="panel"><h4>Inscritos (${activos.length})</h4>${lider && o.curso_id ? `<div class="hint">Marca «Completó» al terminar: queda en la ficha de la persona.</div>` : ""}
+      ${data.map((x) => { const w = waLink(x.telefono); return `<div class="nuevo"><div class="kclase-h"><b>${esc(x.nombre)}</b><span class="${ESTADO[x.estado][0]}">${ESTADO[x.estado][1]}</span></div>
+        <div class="muted">${x.telefono ? (w ? `<a class="wa" href="${w}?text=${encodeURIComponent(recordatorio(x))}" target="_blank" rel="noopener">${esc(x.telefono)} · recordar por WhatsApp</a>` : esc(x.telefono)) : "Sin teléfono"} · ${fmtCorta.format(new Date(x.creado_en))}${x.inscrito_por_nombre ? " · por " + esc(x.inscrito_por_nombre) : ""}</div>
+        ${x.notas ? `<div class="knota">${esc(x.notas)}</div>` : ""}
+        ${lider ? `<div class="row-btns" style="margin-top:8px">${["completo", "inscrito", "retirado"].filter((e) => e !== x.estado).map((e) => `<button class="btn-sec mini" data-est="${e}" data-ins="${x.id}">${{ completo: "Completó", inscrito: "Volver a inscrito", retirado: "Se retiró" }[e]}</button>`).join("")}</div>` : ""}</div>`; }).join("") || '<div class="muted">Nadie inscrito todavía.</div>'}</div>
+    ${lider ? `<button class="btn-sec" id="fv-edit" style="width:100%">Editar clase o evento</button>` : ""}
+    <button class="btn-sec" id="fv-back" style="width:100%">← Todas las clases y eventos</button>`;
+  $("fv-back").addEventListener("click", () => abrirFormacion(null));
+  $("fv-edit")?.addEventListener("click", () => formOferta(o));
+  $("fv-ins")?.addEventListener("click", () => { st_.oferta = o.id; abrir("stand"); });
+  body.querySelectorAll("[data-est]").forEach((b) => b.addEventListener("click", async () => {
+    const { error } = await sb.rpc("fc_estado", { p_insc: +b.dataset.ins, p_estado: b.dataset.est }); if (error) return alert(error.message); verOferta(o);
+  }));
+}
+
+// ===================================================================
+// STAND DE INFORMACIÓN: inscribir personas a una clase o evento
+// ===================================================================
+const st_ = { oferta: null, persona: null };
+async function abrirStand() {
+  const body = $("st-body");
+  body.innerHTML = '<div class="loading">Cargando…</div>';
+  const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
+  const [o, ins] = await Promise.all([
+    sb.from("fc_ofertas").select("*").eq("abierta", true).order("fecha_inicio", { nullsFirst: false }),
+    sb.from("fc_inscripciones").select("nombre, oferta_id, inscrito_por_nombre, creado_en").gte("creado_en", hoy.toISOString()).order("creado_en", { ascending: false }),
+  ]);
+  if (o.error) { body.innerHTML = `<div class="soon">No se pudo cargar. ${esc(o.error.message)}</div>`; return; }
+  const ofertas = o.data;
+  if (!ofertas.some((x) => x.id === st_.oferta)) st_.oferta = ofertas[0]?.id || null;
+  st_.persona = null;
+  const nombreOf = (id) => ofertas.find((x) => x.id === id)?.nombre || "";
+  if (!ofertas.length) { body.innerHTML = `<div class="soon">No hay clases ni eventos con inscripciones abiertas. Formación Cristiana los abre en su página.</div>`; return; }
+  body.innerHTML = `
+    <div class="panel"><h4>1. ¿A qué se inscribe?</h4>
+      <div class="pick" id="st-of">${ofertas.map((x) => `<button type="button" data-of="${x.id}" class="${x.id === st_.oferta ? "on" : ""}">${esc(x.nombre)}</button>`).join("")}</div>
+      <div class="hint" id="st-det"></div></div>
+    <div class="panel"><h4>2. La persona</h4>
+      <input id="st-q" placeholder="Buscar por nombre o celular" autocomplete="off"><div id="st-res"></div>
+      <div class="hint" style="margin-top:10px">¿No aparece? Escribe sus datos:</div>
+      <div class="two"><div><input id="st-n" placeholder="Nombres" autocomplete="off"></div><div><input id="st-a" placeholder="Apellidos" autocomplete="off"></div></div>
+      <input id="st-t" placeholder="Celular (09…)" inputmode="tel" autocomplete="off">
+      <label>Notas (opcional)</label><textarea id="st-notas" placeholder="Ej.: viene con su esposa, necesita cuidado de niños"></textarea></div>
+    <button class="btn-primary" id="st-ok">Inscribir</button><div class="ok err" id="st-msg"></div><div id="st-listo"></div>
+    <div class="panel"><h4>Inscritos hoy (${(ins.data || []).length})</h4>
+      ${(ins.data || []).map((x) => `<div class="li"><div><b>${esc(x.nombre)}</b><div class="muted">${esc(nombreOf(x.oferta_id) || "")}</div></div><span class="muted">${fmtHora.format(new Date(x.creado_en))}</span></div>`).join("") || '<div class="muted">Nadie todavía.</div>'}</div>`;
+  const det = () => { const x = ofertas.find((y) => y.id === st_.oferta); $("st-det").innerHTML = x ? `${detalleFc(x) || "Sin fecha todavía"}${x.descripcion ? "<br>" + esc(x.descripcion) : ""}` : ""; };
+  det();
+  $("st-of").querySelectorAll("[data-of]").forEach((b) => b.addEventListener("click", () => { st_.oferta = +b.dataset.of; $("st-of").querySelectorAll("button").forEach((y) => y.classList.toggle("on", y === b)); det(); }));
+  let t;
+  $("st-q").addEventListener("input", (e) => { st_.persona = null; clearTimeout(t); t = setTimeout(async () => {
+    const q = e.target.value.trim(); if (q.length < 2) return ($("st-res").innerHTML = "");
+    const { data, error } = await sb.rpc("fc_buscar_personas", { q });
+    if (error) return ($("st-res").innerHTML = `<div class="muted err">${esc(error.message)}</div>`);
+    $("st-res").innerHTML = (data || []).map((p) => `<div class="li"><div><b>${esc(p.nombre)}</b><div class="muted">${p.telefono ? esc(p.telefono) : "sin teléfono"}${p.igho ? " · IGHO " + esc(p.igho) : ""}</div></div><button class="btn-sec mini" data-p="${p.id}" data-n="${esc(p.nombre)}" data-t="${esc(p.telefono || "")}">Elegir</button></div>`).join("") || '<div class="muted">No se encontró. Escribe sus datos abajo.</div>';
+    $("st-res").querySelectorAll("[data-p]").forEach((b) => b.addEventListener("click", () => {
+      st_.persona = { id: b.dataset.p, nombre: b.dataset.n, tel: b.dataset.t };
+      $("st-res").innerHTML = `<div class="li"><b>${esc(st_.persona.nombre)}</b><span class="st yes">Elegida</span></div>`;
+    }));
+  }, 300); });
+  $("st-ok").addEventListener("click", async () => {
+    const msg = $("st-msg"); msg.textContent = "";
+    if (!st_.oferta) return (msg.textContent = "Elige la clase o evento.");
+    const tel = normalizarTelefono($("st-t").value);
+    if (!st_.persona && !$("st-n").value.trim()) return (msg.textContent = "Busca a la persona o escribe su nombre.");
+    if (!st_.persona && $("st-t").value.trim() && tel.length !== 10) return (msg.textContent = "El celular debe tener 10 dígitos (09…).");
+    $("st-ok").disabled = true;
+    const { error } = await sb.rpc("fc_inscribir", { p_oferta: st_.oferta, p_persona: st_.persona?.id || null, p_nombres: $("st-n").value.trim() || null,
+      p_apellidos: $("st-a").value.trim() || null, p_telefono: tel || null, p_notas: $("st-notas").value.trim() || null, p_quien: ctx.nombreCompleto });
+    $("st-ok").disabled = false;
+    if (error) return (msg.textContent = error.message);
+    const x = ofertas.find((y) => y.id === st_.oferta), nombre = st_.persona?.nombre || `${$("st-n").value.trim()} ${$("st-a").value.trim()}`.trim();
+    const w = waLink(st_.persona?.tel || tel);
+    const texto = `Hola ${nombre.split(" ")[0]}, ¡quedaste inscrito/a en «${x.nombre}»!${detalleFc(x) ? ` ${[fechasFc(x), x.horario, x.lugar].filter(Boolean).join(" · ")}.` : ""} Te esperamos. — Arco Ríos`;
+    abrirStand().then(() => {
+      $("st-listo").innerHTML = `<div class="total-card"><div class="l">✓ Inscrito/a</div><div class="n" style="font-size:28px">${esc(nombre)}</div><div class="det">${esc(x.nombre)}</div></div>
+        ${w ? `<a class="btn-primary wa-btn" href="${w}?text=${encodeURIComponent(texto)}" target="_blank" rel="noopener">Enviarle confirmación por WhatsApp</a>` : ""}`;
+      $("st-listo").scrollIntoView({ block: "center" });
+    });
+  });
+}
+
+// Resumen del Consejo: panel de Formación (para quien la cubre)
+async function resumenFormacionHtml() {
+  const anio = String(new Date().getFullYear());
+  const [o, i, pc, p] = await Promise.all([
+    sb.from("fc_ofertas").select("id, nombre, abierta"), sb.from("fc_inscripciones").select("oferta_id, estado, creado_en"),
+    sb.from("persona_cursos").select("persona_id, cursos(codigo)"), sb.from("personas").select("id", { count: "exact", head: true }).eq("activo", true),
+  ]);
+  if (o.error) return `<div class="panel"><h4>Formación Cristiana</h4><div class="muted">${esc(o.error.message)}</div></div>`;
+  const ins = i.data || [], tot = p.count || 0, de = (cod) => new Set((pc.data || []).filter((x) => x.cursos?.codigo === cod).map((x) => x.persona_id)).size;
+  const abiertas = o.data.filter((x) => x.abierta);
+  return `<div class="panel"><h4>Formación Cristiana</h4><div class="tiles" style="margin:8px 0 10px">
+    <div class="tile"><div class="n">${abiertas.length}</div><div class="l">Inscripciones abiertas</div></div>
+    <div class="tile"><div class="n">${ins.filter((x) => x.estado === "inscrito").length}</div><div class="l">Inscritos ahora</div></div>
+    <div class="tile"><div class="n">${ins.filter((x) => x.estado === "completo" && x.creado_en.startsWith(anio)).length}</div><div class="l">Completaron en ${anio}</div></div>
+    <div class="tile"><div class="n">${tot ? Math.round((de("raices") / tot) * 100) : 0}%</div><div class="l">Han tomado Raíces</div></div></div>
+    ${abiertas.length ? barras(abiertas.map((x) => ({ nombre: x.nombre, n: ins.filter((y) => y.oferta_id === x.id && y.estado !== "retirado").length }))) : ""}</div>`;
 }
 
 iniciar();
