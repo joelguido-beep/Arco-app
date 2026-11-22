@@ -395,6 +395,11 @@
   .anun.mio { border: 2px solid var(--orange); }
   .anun-mio { background: var(--orange); color: var(--ink-dark); border-radius: 999px; padding: 10px 16px; font-weight: 600; margin: 10px 0 4px; }
   .anun-ed { padding: 10px 0; border-bottom: 1px solid var(--surface-2); } .anun-ed textarea { margin-top: 8px; }
+  .anun-box { display: grid; grid-template-columns: 104px 1fr; gap: 10px; border-radius: 16px; padding: 12px 14px; margin: 8px 0; font-size: 15px; line-height: 1.4; color: var(--ink-dark); }
+  .anun-box.rec { background: #fff3b0; } .anun-box.rec b { color: #7a5b00; }
+  .anun-box.imp { background: #ffdcdc; } .anun-box.imp b { color: #b3261e; }
+  .anun-new { display: inline-block; background: var(--orange); color: var(--ink-dark); font-size: 11px; font-weight: 700; border-radius: 999px; padding: 2px 8px; vertical-align: middle; margin-left: 6px; }
+  .anun-nota { color: #ff8a7a; font-size: 14px; margin-top: 6px; }
   .fc-card { background: var(--sand); } .fc-card.cerrada { opacity: .6; }
   .fc-card .st { background: rgba(27,27,29,.12); color: var(--ink-dark); } .fc-card .st.yes { background: var(--ink-dark); color: var(--green); }
   /* ---------- Reunión del Consejo ---------- */
@@ -3483,27 +3488,42 @@ function secPronto() {
 
 // ===================================================================
 // ANUNCIOS DEL DOMINGO (en «Este domingo»)
-// Líder de Anuncios / Consejo / secretaría los escriben; el Anunciante los ve y los da.
+// Líder de Anuncios / Consejo / secretaría los escriben; los Anunciantes los ven y los dan.
+// Cada domingo = recordatorios fijos + anuncios fijos de inicio + los nuevos de la semana + fijos del final.
 // ===================================================================
 const puedeEditarAnuncios = () => ctx.esAncianoOAdmin || ctx.roles.has("secretaria") || ctx.lideraMinisterios.has("anuncios");
 const esAnunciante = () => ctx.ministerios.has("anuncios");
+const TIPO_FIJO = [["recordatorio", "Recordatorio"], ["importante", "Importante"], ["inicio", "Anuncio fijo · al inicio"], ["final", "Anuncio fijo · al final"]];
 async function cargarAnuncios(fecha) {
-  const [h, it] = await Promise.all([
+  const [h, it, fj] = await Promise.all([
     sb.from("anuncios_domingo").select("*").eq("fecha", fecha).maybeSingle(),
     sb.from("anuncios_items").select("*").eq("fecha", fecha).order("orden"),
+    sb.from("anuncios_fijos").select("*").eq("activo", true).order("orden"),
   ]);
-  return { cab: h.data || null, items: it.data || [], error: h.error || it.error };
+  return { cab: h.data || null, items: it.data || [], fijos: fj.error ? [] : fj.data || [], sinFijos: !!fj.error, error: h.error || it.error };
 }
+const anunciantesDe = (cab) => (cab?.anunciantes?.length ? cab.anunciantes : cab?.anunciante_user ? [cab.anunciante_user] : []);
+const nombresAnunciantes = (cab) => cab?.anunciantes_nombres || cab?.anunciante_nombre || "";
 function anunciosPanel(a) {
-  const mio = a.cab?.anunciante_user && a.cab.anunciante_user === ctx.user.id;
+  const mio = anunciantesDe(a.cab).includes(ctx.user.id);
   if (a.error && !puedeEditarAnuncios()) return "";
+  const de = (t) => a.fijos.filter((f) => f.tipo === t);
+  const lista = [...de("inicio").map((x) => ({ ...x, fijo: true })), ...a.items, ...de("final").map((x) => ({ ...x, fijo: true }))];
+  const item = (x, i) => `<div class="anun-item"><span class="song-n">${i + 1}</span><div>
+      <div class="song-t">${esc(x.titulo || "")}${x.fijo ? "" : ' <span class="anun-new">Nuevo</span>'}</div>
+      ${x.texto ? `<div class="anun-txt">${esc(x.texto).replace(/\n/g, "<br>")}</div>` : ""}
+      ${x.nota ? `<div class="anun-nota">📝 ${esc(x.nota)}</div>` : ""}</div></div>`;
+  const quien = nombresAnunciantes(a.cab);
   return `<div class="panel anun ${mio ? "mio" : ""}" id="anun-panel">
-    <div class="kclase-h"><h4>Anuncios</h4>${a.cab?.anunciante_nombre ? `<span class="tl-who" style="margin:0">Los da: ${esc(a.cab.anunciante_nombre)}</span>` : ""}</div>
+    <div class="kclase-h"><h4>Anuncios</h4>${quien ? `<span class="tl-who" style="margin:0">Los da: ${esc(quien)}</span>` : ""}</div>
     ${mio ? `<div class="anun-mio">🎤 Te toca dar los anuncios este domingo</div>` : ""}
     ${a.error ? `<div class="muted err">Falta ejecutar 12_anuncios_formacion.sql en Supabase.</div>` : ""}
-    ${a.items.map((x, i) => `<div class="anun-item"><span class="song-n">${i + 1}</span><div><div class="song-t">${esc(x.titulo)}</div>${x.texto ? `<div class="anun-txt">${esc(x.texto).replace(/\n/g, "<br>")}</div>` : ""}</div></div>`).join("")
-      || (a.error ? "" : `<div class="muted">Todavía no hay anuncios para este domingo.</div>`)}
-    ${puedeEditarAnuncios() && !a.error ? `<button class="btn-sec" id="anun-edit" style="width:100%">${a.items.length ? "Editar anuncios" : "Escribir anuncios"}</button>` : ""}
+    ${de("recordatorio").map((f) => `<div class="anun-box rec"><b>Recordatorio</b><span>${esc(f.texto)}</span></div>`).join("")}
+    ${de("importante").map((f) => `<div class="anun-box imp"><b>Importante</b><span>${esc(f.texto)}</span></div>`).join("")}
+    ${a.items.length ? "" : `<div class="muted" style="margin:8px 0">Todavía no hay anuncios nuevos para este domingo.</div>`}
+    ${lista.map(item).join("")}
+    ${puedeEditarAnuncios() && !a.error ? `<button class="btn-sec" id="anun-edit" style="width:100%">${a.items.length ? "Editar anuncios de este domingo" : "Escribir anuncios de este domingo"}</button>
+      <button class="link" id="anun-fijos" style="margin-top:6px">Editar lo que se anuncia cada semana</button>` : ""}
   </div>`;
 }
 async function ponerAnuncios() {
@@ -3511,50 +3531,101 @@ async function ponerAnuncios() {
   const a = await cargarAnuncios(dom.fecha);
   const html = anunciosPanel(a); if (!html) return;
   const body = $("dom-body");
-  const mio = a.cab?.anunciante_user === ctx.user.id;
+  const mio = anunciantesDe(a.cab).includes(ctx.user.id);
   // Al anunciante sus anuncios le aparecen arriba; a los demás, después del horario
   if (mio || (esAnunciante() && !ctx.esAncianoOAdmin)) body.insertAdjacentHTML("afterbegin", html);
   else { const ed = $("dom-edit"); ed ? ed.insertAdjacentHTML("beforebegin", html) : body.insertAdjacentHTML("beforeend", html); }
   $("anun-edit")?.addEventListener("click", () => editarAnuncios(a));
+  $("anun-fijos")?.addEventListener("click", () => editarFijos());
 }
 async function editarAnuncios(a) {
   const { data: eq } = await sb.rpc("anuncios_equipo");
-  let items = a.items.map((x) => ({ titulo: x.titulo, texto: x.texto || "" }));
-  if (!items.length) items = [{ titulo: "", texto: "" }];
+  const sel = new Set(anunciantesDe(a.cab));
+  let items = a.items.map((x) => ({ titulo: x.titulo, texto: x.texto || "", nota: x.nota || "" }));
+  if (!items.length) items = [{ titulo: "", texto: "", nota: "" }];
   const pintar = () => {
-    $("dom-body").innerHTML = `<div class="panel"><h4>Anuncios · ${esc(fmtTitulo(dom.fecha))}</h4>
-      <label>¿Quién los da?</label><select id="an-quien"><option value="">Sin asignar</option>${opciones((eq || []).map((p) => [p.user_id, p.nombre]), a.cab?.anunciante_user || "")}</select>
+    $("dom-body").innerHTML = `<div class="panel"><h4>Anuncios nuevos · ${esc(fmtTitulo(dom.fecha))}</h4>
+      <div class="hint">Los recordatorios y los anuncios de cada semana ya salen solos. Aquí van solo los de este domingo.</div>
+      <label>¿Quiénes los dan? (puedes elegir a varios)</label>
+      <div class="pick" id="an-quien">${(eq || []).map((p) => `<button type="button" data-u="${p.user_id}" class="${sel.has(p.user_id) ? "on" : ""}">${esc(p.nombre)}</button>`).join("")}</div>
       ${!(eq || []).length ? `<div class="hint">Da el rol «Anunciante» en Administración (Anuncios → Anunciante) para poder elegir aquí.</div>` : ""}
       <div id="an-items">${items.map((x, i) => `<div class="anun-ed" data-i="${i}">
-        <div class="row-btns"><input class="a-t" placeholder="Título (ej.: Retiro de jóvenes)" value="${esc(x.titulo)}" style="margin:0">
+        <div class="row-btns"><input class="a-t" placeholder="Título (ej.: Feria de Navidad)" value="${esc(x.titulo)}" style="margin:0">
           <button class="x" data-up="${i}" aria-label="Subir">↑</button><button class="x" data-del="${i}" aria-label="Quitar">×</button></div>
-        <textarea class="a-x" placeholder="Lo que hay que decir: fecha, hora, lugar, a quién llamar…">${esc(x.texto)}</textarea></div>`).join("")}</div>
+        <textarea class="a-x" placeholder="Lo que hay que decir: fecha, hora, lugar, a quién buscar…">${esc(x.texto)}</textarea>
+        <input class="a-n" placeholder="Nota para el anunciante (no se lee). Ej.: señalar a Andrés Padilla" value="${esc(x.nota)}"></div>`).join("")}</div>
       <button class="btn-sec" id="an-add" style="width:100%">+ Agregar anuncio</button>
-      <button class="btn-sec" id="an-copy" style="width:100%">Copiar del domingo anterior</button></div>
+      <button class="btn-sec" id="an-copy" style="width:100%">Copiar los nuevos del domingo anterior</button></div>
       <button class="btn-primary" id="an-save">Guardar anuncios</button>
       <button class="btn-sec" id="an-cancel" style="width:100%">Cancelar</button><div class="ok" id="an-msg"></div>`;
-    const leer = () => { items = [...document.querySelectorAll("#an-items .anun-ed")].map((r) => ({ titulo: r.querySelector(".a-t").value, texto: r.querySelector(".a-x").value })); };
+    const leer = () => { items = [...document.querySelectorAll("#an-items .anun-ed")].map((r) => ({ titulo: r.querySelector(".a-t").value, texto: r.querySelector(".a-x").value, nota: r.querySelector(".a-n").value })); };
+    $("an-quien").querySelectorAll("[data-u]").forEach((b) => b.addEventListener("click", () => { sel.has(b.dataset.u) ? sel.delete(b.dataset.u) : sel.add(b.dataset.u); b.classList.toggle("on"); }));
     $("an-items").querySelectorAll("[data-del]").forEach((b) => b.addEventListener("click", () => { leer(); items.splice(+b.dataset.del, 1); pintar(); }));
     $("an-items").querySelectorAll("[data-up]").forEach((b) => b.addEventListener("click", () => { leer(); const i = +b.dataset.up; if (i) [items[i - 1], items[i]] = [items[i], items[i - 1]]; pintar(); }));
-    $("an-add").addEventListener("click", () => { leer(); items.push({ titulo: "", texto: "" }); pintar(); });
+    $("an-add").addEventListener("click", () => { leer(); items.push({ titulo: "", texto: "", nota: "" }); pintar(); });
     $("an-copy").addEventListener("click", async () => {
       const { data: prev } = await sb.from("anuncios_items").select("fecha").lt("fecha", dom.fecha).order("fecha", { ascending: false }).limit(1).maybeSingle();
       if (!prev) return ($("an-msg").textContent = "No hay anuncios anteriores.");
-      const { data } = await sb.from("anuncios_items").select("titulo, texto").eq("fecha", prev.fecha).order("orden");
-      items = (data || []).map((x) => ({ titulo: x.titulo, texto: x.texto || "" })); pintar();
+      const { data } = await sb.from("anuncios_items").select("titulo, texto, nota").eq("fecha", prev.fecha).order("orden");
+      items = (data || []).map((x) => ({ titulo: x.titulo, texto: x.texto || "", nota: x.nota || "" })); pintar();
       $("an-msg").textContent = `Copiado del ${fmtCorta.format(fromYmd(prev.fecha))}. Revisa y guarda.`;
     });
     $("an-cancel").addEventListener("click", () => abrirDomingo(dom.fecha));
     $("an-save").addEventListener("click", async () => {
       leer();
-      const quien = $("an-quien").value, filas = items.filter((x) => x.titulo.trim()).map((x, i) => ({ fecha: dom.fecha, orden: i + 1, titulo: x.titulo.trim(), texto: x.texto.trim() || null }));
+      const ids = (eq || []).filter((p) => sel.has(p.user_id)).map((p) => p.user_id);
+      const nombres = (eq || []).filter((p) => sel.has(p.user_id)).map((p) => p.nombre);
+      const juntos = nombres.length > 1 ? nombres.slice(0, -1).join(", ") + " y " + nombres[nombres.length - 1] : nombres[0] || null;
+      const filas = items.filter((x) => x.titulo.trim()).map((x, i) => ({ fecha: dom.fecha, orden: i + 1, titulo: x.titulo.trim(), texto: x.texto.trim() || null, nota: x.nota.trim() || null }));
       $("an-save").disabled = true;
-      let r = await sb.from("anuncios_domingo").upsert({ fecha: dom.fecha, anunciante_user: quien || null, anunciante_nombre: quien ? (eq || []).find((p) => p.user_id === quien)?.nombre : null,
+      let r = await sb.from("anuncios_domingo").upsert({ fecha: dom.fecha, anunciantes: ids, anunciantes_nombres: juntos, anunciante_user: ids[0] || null, anunciante_nombre: juntos,
         actualizado_por_nombre: ctx.nombreCompleto, actualizado_en: new Date().toISOString() }, { onConflict: "fecha" });
       if (!r.error) r = await sb.from("anuncios_items").delete().eq("fecha", dom.fecha);
       if (!r.error && filas.length) r = await sb.from("anuncios_items").insert(filas);
       $("an-save").disabled = false;
-      if (r.error) { $("an-msg").classList.add("err"); $("an-msg").textContent = "No se pudo guardar: " + r.error.message; return; }
+      if (r.error) {
+        $("an-msg").classList.add("err");
+        $("an-msg").textContent = "No se pudo guardar: " + r.error.message + (/anunciantes|nota/.test(r.error.message) ? " (falta ejecutar 14_anuncios_v2.sql)" : "");
+        return;
+      }
+      abrirDomingo(dom.fecha);
+    });
+  };
+  pintar();
+}
+// Lo que se anuncia todas las semanas
+async function editarFijos() {
+  const { data, error } = await sb.from("anuncios_fijos").select("*").order("orden");
+  if (error) { alert("Falta ejecutar 14_anuncios_v2.sql en Supabase. " + error.message); return; }
+  const orden = { recordatorio: 0, importante: 1, inicio: 2, final: 3 };
+  let fijos = (data || []).sort((a, b) => orden[a.tipo] - orden[b.tipo] || a.orden - b.orden).map((f) => ({ tipo: f.tipo, titulo: f.titulo || "", texto: f.texto, nota: f.nota || "", activo: f.activo }));
+  const pintar = () => {
+    $("dom-body").innerHTML = `<div class="panel"><h4>Lo que se anuncia cada semana</h4>
+      <div class="hint">Los recordatorios salen arriba en amarillo y rojo. Los anuncios fijos van antes («al inicio») o después («al final») de los nuevos de cada domingo. Desmarca «Activo» para pausar uno sin borrarlo.</div>
+      <div id="af-items">${fijos.map((f, i) => `<div class="anun-ed" data-i="${i}">
+        <div class="row-btns"><select class="f-tipo" style="margin:0">${opciones(TIPO_FIJO, f.tipo)}</select>
+          <button class="x" data-up="${i}" aria-label="Subir">↑</button><button class="x" data-del="${i}" aria-label="Quitar">×</button></div>
+        <input class="f-t" placeholder="Título (los recordatorios no lo necesitan)" value="${esc(f.titulo)}" style="margin-top:8px">
+        <textarea class="f-x" placeholder="Texto">${esc(f.texto)}</textarea>
+        <input class="f-n" placeholder="Nota para el anunciante (opcional)" value="${esc(f.nota)}">
+        <label class="check"><input type="checkbox" class="f-a" ${f.activo ? "checked" : ""}> Activo</label></div>`).join("")}</div>
+      <button class="btn-sec" id="af-add" style="width:100%">+ Agregar</button></div>
+      <button class="btn-primary" id="af-save">Guardar</button>
+      <button class="btn-sec" id="af-cancel" style="width:100%">Cancelar</button><div class="ok err" id="af-msg"></div>`;
+    const leer = () => { fijos = [...document.querySelectorAll("#af-items .anun-ed")].map((r) => ({ tipo: r.querySelector(".f-tipo").value, titulo: r.querySelector(".f-t").value, texto: r.querySelector(".f-x").value, nota: r.querySelector(".f-n").value, activo: r.querySelector(".f-a").checked })); };
+    $("af-items").querySelectorAll("[data-del]").forEach((b) => b.addEventListener("click", () => { leer(); fijos.splice(+b.dataset.del, 1); pintar(); }));
+    $("af-items").querySelectorAll("[data-up]").forEach((b) => b.addEventListener("click", () => { leer(); const i = +b.dataset.up; if (i) [fijos[i - 1], fijos[i]] = [fijos[i], fijos[i - 1]]; pintar(); }));
+    $("af-add").addEventListener("click", () => { leer(); fijos.push({ tipo: "inicio", titulo: "", texto: "", nota: "", activo: true }); pintar(); });
+    $("af-cancel").addEventListener("click", () => abrirDomingo(dom.fecha));
+    $("af-save").addEventListener("click", async () => {
+      leer();
+      const cuenta = {};
+      const filas = fijos.filter((f) => f.texto.trim()).map((f) => ({ tipo: f.tipo, orden: (cuenta[f.tipo] = (cuenta[f.tipo] || 0) + 1), titulo: f.titulo.trim() || null, texto: f.texto.trim(), nota: f.nota.trim() || null, activo: f.activo }));
+      $("af-save").disabled = true;
+      let r = await sb.from("anuncios_fijos").delete().gte("id", 0);
+      if (!r.error && filas.length) r = await sb.from("anuncios_fijos").insert(filas);
+      $("af-save").disabled = false;
+      if (r.error) return ($("af-msg").textContent = "No se pudo guardar: " + r.error.message);
       abrirDomingo(dom.fecha);
     });
   };
