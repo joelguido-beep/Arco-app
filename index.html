@@ -663,7 +663,7 @@ const SECCIONES = [
     ve: (r) => !!r.familiaId },
   { id: "bienvenida", titulo: "Bienvenida", desc: "Registro de personas nuevas y su seguimiento.", color: "c-green", tag: "Domingo",
     ve: (r) => r.esAncianoOAdmin || r.ministerios.has("bienvenida") },
-  { id: "worship", titulo: "Arco Worship", logo: "ws", desc: "Lista de canciones, tonos y calendario del equipo.", color: "c-lilac", tag: "Domingo",
+  { id: "worship", titulo: "Arco Worship", logo: "ws", desc: "Canciones, equipos, consola, multimedia y diapositivas de la prédica.", color: "c-lilac", tag: "Domingo",
     ve: (r) => r.esAncianoOAdmin || r.ministerios.has("worship") },
   { id: "domingo", titulo: "Este domingo", desc: "Quién predica, supervisores y encargados de cada área.", color: "c-grey", tag: "Equipos",
     ve: (r) => r.esAncianoOAdmin || r.roles.has("secretaria") || r.ministerios.size > 0 },
@@ -892,9 +892,10 @@ async function cargarResumen() {
   }
   if (cobMins.includes("worship")) {
     const f = ymd(proximoDomingo());
-    const [sc, eq] = await Promise.all([sb.from("worship_canciones").select("id", { count: "exact", head: true }).eq("fecha", f), sb.from("worship_equipo").select("id", { count: "exact", head: true }).eq("fecha", f)]);
+    const [sc, eq, pr] = await Promise.all([sb.from("worship_canciones").select("id", { count: "exact", head: true }).eq("fecha", f), sb.from("worship_equipo").select("id", { count: "exact", head: true }).eq("fecha", f), sb.from("predica_archivos").select("id", { count: "exact", head: true }).eq("fecha", f)]);
     const listo = (sc.count || 0) > 0 && (eq.count || 0) > 0;
-    minHtml.push(`<div class="panel"><h4>Arco Worship · este domingo</h4><div class="ig-foot ${listo ? "" : "warn"}">${listo ? "✓ " : "⚠ "}${sc.count || 0} canciones y ${eq.count || 0} personas asignadas para el ${fmtCorta.format(fromYmd(f))}</div></div>`);
+    minHtml.push(`<div class="panel"><h4>Arco Worship · este domingo</h4><div class="ig-foot ${listo ? "" : "warn"}">${listo ? "✓ " : "⚠ "}${sc.count || 0} canciones y ${eq.count || 0} personas asignadas para el ${fmtCorta.format(fromYmd(f))}</div>
+      <div class="ig-foot ${pr.count ? "" : "warn"}">${pr.count ? `✓ Diapositivas de la prédica subidas (${pr.count})` : "⚠ Faltan las diapositivas de la prédica"}</div></div>`);
   }
   if (cobMins.includes("formacion")) minHtml.push(await resumenFormacionHtml());
   if (minHtml.length) html += `<div class="sec-title">${todaLaIglesia ? "Ministerios" : "Ministerios que cubres"}</div>${minHtml.join("")}`;
@@ -1098,6 +1099,7 @@ function pintarDomingo() {
       <div class="hero-date">${esc(fmtTitulo(dom.fecha))}</div>
       <div class="chips">${chip("Predica", p.predicador)}${chip("Encargado espiritual", p.supervisor_espiritual)}${chip("Supervisor logístico", p.supervisor_logistico)}</div>
     </div>
+    ${ctx.esAncianoOAdmin || ctx.ministerios.has("worship") ? `<button class="btn-sec" id="dom-predica" style="width:100%;margin-top:12px">${ctx.esAncianoOAdmin ? "Subir diapositivas de la prédica" : "Diapositivas de la prédica"}</button>` : ""}
     ${p.observaciones ? `<div class="obs"><b>Observaciones</b>${esc(p.observaciones)}</div>` : ""}
     <div class="tl">${dom.items.map((x, i) => `
       <div class="tl-row ${i === actual ? "now" : ""} ${i < actual ? "past" : ""}">
@@ -1108,7 +1110,10 @@ function pintarDomingo() {
     ${editar}`;
   hookDomEdit();
 }
-function hookDomEdit() { const b = $("dom-edit"); if (b) b.addEventListener("click", () => { dom.editando = true; pintarDomingo(); }); }
+function hookDomEdit() {
+  const b = $("dom-edit"); if (b) b.addEventListener("click", () => { dom.editando = true; pintarDomingo(); });
+  const pr = $("dom-predica"); if (pr) pr.addEventListener("click", () => { show("worship"); abrirWorship("predica", dom.fecha); });
+}
 
 function pintarDomingoEdicion() {
   const p = dom.prog || {};
@@ -1170,19 +1175,26 @@ function pintarDomingoEdicion() {
 // =================== WORSHIP ===================
 const ws = { tab: "domingo", fecha: null, canciones: [], series: [], equipos: [], miembros: [], busca: "" };
 const esLiderWorship = () => ctx.esAncianoOAdmin || ctx.lideraMinisterios.has("worship");
-const FUNCIONES = ["Dirección", "Voz", "Guitarra eléctrica", "Guitarra acústica", "Bajo", "Batería", "Teclado", "Sonido", "Multimedia", "Proyección"];
+const FUNCIONES = ["Dirección", "Voz", "Guitarra eléctrica", "Guitarra acústica", "Bajo", "Batería", "Teclado", "Consola", "Multimedia", "Proyección"];
+// Áreas de Worship: cada equipo es de un área; cada función también
+const AREAS_WS = [["alabanza", "Alabanza"], ["consola", "Consola (sonido)"], ["multimedia", "Multimedia"]];
+const FUN_AREA = { alabanza: ["Dirección", "Voz", "Guitarra eléctrica", "Guitarra acústica", "Bajo", "Batería", "Teclado"], consola: ["Consola"], multimedia: ["Multimedia", "Proyección"] };
+const areaDeFuncion = (f) => { const u = unaccent(f); return /consola|sonido|audio/.test(u) ? "consola" : /multimedia|proyecc|pantalla|diapositiva|camara|transmision|luces/.test(u) ? "multimedia" : "alabanza"; };
+const areaEquipo = (id) => ws.equipos.find((e) => e.id === id)?.area || "alabanza";
+const nombreArea = (a) => (AREAS_WS.find(([k]) => k === a) || [, a])[1];
 const unaccent = (s) => String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
-const TABS_WS = [["domingo", "Domingo"], ["armar", "Armar lista"], ["canciones", "Canciones"], ["series", "Series"], ["equipos", "Equipos"]];
+const TABS_WS = [["domingo", "Domingo"], ["predica", "Prédica"], ["armar", "Armar lista"], ["canciones", "Canciones"], ["series", "Series"], ["equipos", "Equipos"]];
+const TABS_WS_TODOS = ["domingo", "predica", "canciones"];
 
 async function abrirWorship(tab, fecha) {
   const lider = esLiderWorship();
   ws.tab = tab || ws.tab;
-  if (!lider && !["domingo", "canciones"].includes(ws.tab)) ws.tab = "domingo";
+  if (!lider && !TABS_WS_TODOS.includes(ws.tab)) ws.tab = "domingo";
   ws.fecha = fecha || ws.fecha || ymd(proximoDomingo());
-  $("ws-tabs").innerHTML = TABS_WS.filter(([k]) => lider || k === "domingo" || k === "canciones")
+  $("ws-tabs").innerHTML = TABS_WS.filter(([k]) => lider || TABS_WS_TODOS.includes(k))
     .map(([k, t]) => `<button data-tab="${k}" class="${k === ws.tab ? "on" : ""}">${t}</button>`).join("");
   $("ws-tabs").querySelectorAll("button").forEach((b) => b.addEventListener("click", () => abrirWorship(b.dataset.tab)));
-  const conFecha = ws.tab === "domingo" || ws.tab === "armar";
+  const conFecha = ["domingo", "armar", "predica"].includes(ws.tab);
   $("ws-dates").classList.toggle("hidden", !conFecha);
   if (conFecha) pintarFechasLista("ws-dates", domingosAlrededor(1, 5), ws.fecha, ymd(proximoDomingo()), "Este domingo", (f) => abrirWorship(ws.tab, f));
   $("ws-body").innerHTML = '<div class="loading">Cargando…</div>';
@@ -1195,9 +1207,9 @@ async function abrirWorship(tab, fecha) {
   ]);
   const err = c.error || s.error || e.error || m.error || me.error;
   if (err) { $("ws-body").innerHTML = `<div class="soon">${esc(err.message)}</div>`; return; }
-  ws.canciones = c.data; ws.series = s.data; ws.equipos = e.data;
+  ws.canciones = c.data; ws.series = s.data; ws.equipos = e.data.map((x) => ({ ...x, area: x.area || "alabanza" }));
   ws.miembros = m.data.map((x) => ({ ...x, equipos: me.data.filter((y) => y.persona_id === x.persona_id).map((y) => y.equipo_id) }));
-  ({ domingo: verDomingoWorship, armar: armarLista, canciones: pintarCanciones, series: pintarSeries, equipos: pintarEquipos })[ws.tab]();
+  ({ domingo: verDomingoWorship, predica: pintarPredica, armar: armarLista, canciones: pintarCanciones, series: pintarSeries, equipos: pintarEquipos })[ws.tab]();
 }
 const cancionPorId = (id) => ws.canciones.find((c) => c.id === id) || {};
 const serieDeFecha = (f) => ws.series.find((s) => s.inicio && s.fin && s.inicio <= f && f <= s.fin);
@@ -1217,6 +1229,7 @@ async function verDomingoWorship() {
     sb.from("worship_equipo").select("*").eq("fecha", ws.fecha),
     ctx.personaId ? sb.from("worship_equipo").select("fecha, funcion").eq("persona_id", ctx.personaId).gte("fecha", ymd(new Date())).order("fecha") : Promise.resolve({ data: [] }),
   ]);
+  const pred = (await sb.from("predica_archivos").select("id, descargado_en").eq("fecha", ws.fecha)).data || [];
   const aus = (await sb.from("worship_ausencias").select("*").gte("fecha", ymd(new Date())).order("fecha")).data || [];
   const ausDe = (pid, f) => aus.find((a) => a.persona_id === pid && a.fecha === f);
   const avisosOtros = esLiderWorship() ? aus.filter((a) => a.persona_id !== ctx.personaId) : [];
@@ -1236,12 +1249,16 @@ async function verDomingoWorship() {
         <div class="song-main"><div class="song-t">${esc(c.titulo)}</div><div class="muted">${esc(c.artista || "")}</div><div class="song-links">${linksCancion(c)}</div></div>
         <div class="key">${esc(x.tono || c.tono || "—")}</div><div></div></div>`; }).join("") || `<div class="muted">Todavía no hay lista para este domingo.</div>`}
     </div>
-    <div class="panel"><h4>Quién toca qué</h4>
-      ${(e.data || []).map((m) => { const a = ausDe(m.persona_id, ws.fecha); return `<div class="li"><div><b>${esc(m.nombre)}</b>${a && esLiderWorship() ? `<div class="aus-motivo">${esc(a.motivo)}</div>` : ""}</div>${a ? `<span class="st no">No puede</span>` : `<span class="st yes">${esc(m.funcion)}</span>`}</div>`; }).join("") || `<div class="muted">Todavía no se ha asignado el equipo.</div>`}
-    </div>
+    ${AREAS_WS.map(([area, titulo]) => { const gente = (e.data || []).filter((m) => areaDeFuncion(m.funcion) === area); return `<div class="panel"><h4>${area === "alabanza" ? "Alabanza · quién toca qué" : esc(titulo)}</h4>
+      ${gente.map((m) => { const a = ausDe(m.persona_id, ws.fecha); return `<div class="li"><div><b>${esc(m.nombre)}</b>${a && esLiderWorship() ? `<div class="aus-motivo">${esc(a.motivo)}</div>` : ""}</div>${a ? `<span class="st no">No puede</span>` : `<span class="st yes">${esc(m.funcion)}</span>`}</div>`; }).join("") || `<div class="muted">${area === "alabanza" ? "Todavía no se ha asignado el equipo." : "Nadie asignado todavía."}</div>`}
+    </div>`; }).join("")}
+    <div class="panel"><h4>Diapositivas de la prédica</h4>
+      <div class="li"><div class="${pred.length ? "" : "muted"}">${pred.length ? `${pred.length} archivo(s) subido(s)${pred.every((x) => x.descargado_en) ? " · ✓ descargado" : ""}` : "El predicador todavía no ha subido nada."}</div>
+      <button class="btn-sec mini" id="ws-ir-predica">${pred.length ? "Ver" : "Abrir"}</button></div></div>
     ${esLiderWorship() ? `<button class="btn-primary" id="ws-ir-armar">${s.data?.length ? "Editar esta lista" : "Armar la lista"}</button>` : ""}`;
   hookPdf($("ws-body"));
   if ($("ws-ir-armar")) $("ws-ir-armar").addEventListener("click", () => abrirWorship("armar", ws.fecha));
+  $("ws-ir-predica").addEventListener("click", () => abrirWorship("predica", ws.fecha));
   $("ws-body").querySelectorAll("[data-nopuedo]").forEach((b) => b.addEventListener("click", () => {
     const caja = $("ws-body").querySelector(`[data-caja="${b.dataset.nopuedo}"]`); caja.classList.toggle("hidden"); caja.querySelector("textarea").focus();
   }));
@@ -1262,6 +1279,9 @@ async function verDomingoWorship() {
 }
 
 // ---------- Armar lista (líder) ----------
+// Una persona sirve en una sola cosa por domingo; su función dice en qué área aparece.
+const funDefault = (m, area) => (m.funciones || []).find((f) => areaDeFuncion(f) === area) || FUN_AREA[area][0];
+const funOpciones = (m, area, actual) => { const suyas = (m.funciones || []).filter((f) => areaDeFuncion(f) === area); return [...new Set([...(suyas.length ? suyas : FUN_AREA[area]), ...(actual ? [actual] : [])])]; };
 async function armarLista() {
   const [d, s, e] = await Promise.all([
     sb.from("worship_domingo").select("*").eq("fecha", ws.fecha).maybeSingle(),
@@ -1269,18 +1289,38 @@ async function armarLista() {
     sb.from("worship_equipo").select("*").eq("fecha", ws.fecha),
   ]);
   const ausHoy = new Map(((await sb.from("worship_ausencias").select("persona_id, motivo").eq("fecha", ws.fecha)).data || []).map((a) => [a.persona_id, a.motivo]));
+  const equiposAlabanza = ws.equipos.filter((x) => x.area === "alabanza");
   const st = {
     serie: d.data?.serie_id || serieDeFecha(ws.fecha)?.id || ws.series[0]?.id || null,
-    equipo: d.data?.equipo_id || ws.equipos[0]?.id || null,
+    equipo: d.data?.equipo_id || equiposAlabanza[0]?.id || null,
     canciones: (s.data || []).map((x) => ({ id: x.cancion_id, tono: x.tono })),
     gente: new Map((e.data || []).filter((x) => x.persona_id).map((x) => [x.persona_id, x.funcion])),
   };
-  if (!e.data?.length && st.equipo) ws.miembros.filter((m) => m.equipos.includes(st.equipo)).forEach((m) => st.gente.set(m.persona_id, m.funciones[0] || "Voz"));
+  const ponerEquipo = () => {
+    for (const [pid, f] of [...st.gente]) if (areaDeFuncion(f) === "alabanza") st.gente.delete(pid);
+    ws.miembros.filter((m) => m.equipos.includes(st.equipo) && !st.gente.has(m.persona_id)).forEach((m) => st.gente.set(m.persona_id, funDefault(m, "alabanza")));
+  };
+  if (!e.data?.length && st.equipo) ponerEquipo();
+  const enArea = (m, area) => st.gente.has(m.persona_id) && areaDeFuncion(st.gente.get(m.persona_id)) === area;
+  const fila = (m, area) => {
+    const on = enArea(m, area), otra = !on && st.gente.has(m.persona_id) ? nombreArea(areaDeFuncion(st.gente.get(m.persona_id))) : "";
+    return `<div class="mrow ${on ? "on" : ""}">
+      <button class="att ${on ? "on" : ""}" data-toggle="${m.persona_id}" data-area="${area}"><span class="dot2">${on ? "✓" : ""}</span>${esc(m.nombre)}${otra ? `<span class="muted" style="font-weight:400;margin-left:6px">· ya está en ${esc(otra)}</span>` : ""}</button>
+      ${ausHoy.has(m.persona_id) ? `<div class="aus-motivo" style="grid-column:1 / -1;margin:-4px 0 8px">⚠ No puede: ${esc(ausHoy.get(m.persona_id))}</div>` : ""}
+      ${on ? `<select data-fun="${m.persona_id}">${opciones(funOpciones(m, area, st.gente.get(m.persona_id)).map((f) => [f, f]), st.gente.get(m.persona_id))}</select>` : ""}</div>`;
+  };
+  const seccion = (area, n, titulo, encabezado, vacio) => {
+    const base = area === "alabanza" ? ws.miembros.filter((m) => m.equipos.includes(st.equipo))
+      : ws.miembros.filter((m) => m.equipos.some((id) => areaEquipo(id) === area));
+    const lista = [...base, ...ws.miembros.filter((m) => !base.includes(m) && enArea(m, area))];
+    const otros = ws.miembros.filter((m) => !lista.includes(m));
+    return `<div class="panel"><h4>${n}. ${titulo}</h4>${encabezado}
+      ${lista.map((m) => fila(m, area)).join("") || `<div class="muted">${vacio}</div>`}
+      ${otros.length ? `<select data-otro="${area}"><option value="">+ Agregar a alguien de otro equipo…</option>${opciones(otros.map((m) => [m.persona_id, m.nombre]))}</select>` : ""}</div>`;
+  };
   const pintar = () => {
     const serie = ws.series.find((x) => x.id === st.serie);
     const disponibles = serie ? serie.worship_serie_canciones.map((x) => cancionPorId(x.cancion_id)).filter((c) => c.id) : ws.canciones;
-    const delEquipo = ws.miembros.filter((m) => m.equipos.includes(st.equipo) || st.gente.has(m.persona_id));
-    const otros = ws.miembros.filter((m) => !delEquipo.includes(m));
     $("ws-body").innerHTML = `
       <div class="panel"><h4>1. Serie</h4>
         <select id="ar-serie"><option value="">Todas las canciones</option>${opciones(ws.series.map((x) => [String(x.id), x.nombre]), String(st.serie || ""))}</select>
@@ -1290,30 +1330,26 @@ async function armarLista() {
           <select class="key-sel" data-tono="${i}"><option value="">${esc(c.tono || "Tono")}</option>${opciones(TONOS.map((t) => [t, t]), x.tono || "")}</select>
           <div class="song-ctl"><button class="x" data-up="${i}" aria-label="Subir">↑</button><button class="x" data-quita="${i}" aria-label="Quitar">×</button></div></div>`; }).join("")}
         <div class="pick">${disponibles.filter((c) => !st.canciones.some((x) => x.id === c.id)).map((c) => `<button data-pon="${c.id}">+ ${esc(c.titulo)}</button>`).join("") || `<div class="muted">No hay más canciones en esta serie.</div>`}</div></div>
-      <div class="panel"><h4>3. Equipo</h4>
-        <select id="ar-equipo">${opciones(ws.equipos.map((x) => [String(x.id), x.nombre]), String(st.equipo || ""))}</select>
-        <div class="hint">Marca quién toca y en qué. Puedes agregar a alguien de otro equipo.</div>
-        ${delEquipo.map((m) => `<div class="mrow ${st.gente.has(m.persona_id) ? "on" : ""}">
-          <button class="att ${st.gente.has(m.persona_id) ? "on" : ""}" data-toggle="${m.persona_id}"><span class="dot2">${st.gente.has(m.persona_id) ? "✓" : ""}</span>${esc(m.nombre)}</button>
-          ${ausHoy.has(m.persona_id) ? `<div class="aus-motivo" style="grid-column:1 / -1;margin:-4px 0 8px">⚠ No puede: ${esc(ausHoy.get(m.persona_id))}</div>` : ""}
-          ${st.gente.has(m.persona_id) ? `<select data-fun="${m.persona_id}">${opciones([...new Set([...(m.funciones.length ? m.funciones : FUNCIONES)])].map((f) => [f, f]), st.gente.get(m.persona_id))}</select>` : ""}</div>`).join("") || `<div class="muted">Este equipo no tiene miembros. Agrégalos en la pestaña Equipos.</div>`}
-        ${otros.length ? `<select id="ar-otro"><option value="">+ Agregar de otro equipo…</option>${opciones(otros.map((m) => [m.persona_id, m.nombre]))}</select>` : ""}</div>
+      ${seccion("alabanza", 3, "Equipo de alabanza",
+        `<select id="ar-equipo">${opciones(equiposAlabanza.map((x) => [String(x.id), x.nombre]), String(st.equipo || ""))}</select><div class="hint">Marca quién toca y en qué.</div>`,
+        "Este equipo no tiene miembros. Agrégalos en la pestaña Equipos.")}
+      ${seccion("consola", 4, "Consola (sonido)", `<div class="hint">Quién maneja la consola este domingo.</div>`, "Todavía no hay nadie en Consola. Agrégalos en la pestaña Equipos.")}
+      ${seccion("multimedia", 5, "Multimedia", `<div class="hint">Quién maneja las pantallas y las diapositivas.</div>`, "Todavía no hay nadie en Multimedia. Agrégalos en la pestaña Equipos.")}
       <button class="btn-primary" id="ar-save">Guardar lista</button><div class="ok" id="ar-msg"></div>`;
     $("ar-serie").addEventListener("change", (ev) => { st.serie = ev.target.value ? +ev.target.value : null; pintar(); });
-    $("ar-equipo").addEventListener("change", (ev) => {
-      st.equipo = +ev.target.value; st.gente = new Map();
-      ws.miembros.filter((m) => m.equipos.includes(st.equipo)).forEach((m) => st.gente.set(m.persona_id, m.funciones[0] || "Voz")); pintar();
-    });
+    if ($("ar-equipo")) $("ar-equipo").addEventListener("change", (ev) => { st.equipo = +ev.target.value; ponerEquipo(); pintar(); });
     $("ws-body").querySelectorAll("[data-pon]").forEach((b) => b.addEventListener("click", () => { st.canciones.push({ id: +b.dataset.pon, tono: null }); pintar(); }));
     $("ws-body").querySelectorAll("[data-quita]").forEach((b) => b.addEventListener("click", () => { st.canciones.splice(+b.dataset.quita, 1); pintar(); }));
     $("ws-body").querySelectorAll("[data-up]").forEach((b) => b.addEventListener("click", () => { const i = +b.dataset.up; if (i) { [st.canciones[i - 1], st.canciones[i]] = [st.canciones[i], st.canciones[i - 1]]; pintar(); } }));
     $("ws-body").querySelectorAll("[data-tono]").forEach((sel) => sel.addEventListener("change", () => { st.canciones[+sel.dataset.tono].tono = sel.value || null; }));
     $("ws-body").querySelectorAll("[data-toggle]").forEach((b) => b.addEventListener("click", () => {
-      const id = b.dataset.toggle, m = ws.miembros.find((x) => x.persona_id === id);
-      st.gente.has(id) ? st.gente.delete(id) : st.gente.set(id, m.funciones[0] || "Voz"); pintar();
+      const id = b.dataset.toggle, area = b.dataset.area, m = ws.miembros.find((x) => x.persona_id === id);
+      enArea(m, area) ? st.gente.delete(id) : st.gente.set(id, funDefault(m, area)); pintar();
     }));
     $("ws-body").querySelectorAll("[data-fun]").forEach((sel) => sel.addEventListener("change", () => st.gente.set(sel.dataset.fun, sel.value)));
-    if ($("ar-otro")) $("ar-otro").addEventListener("change", (ev) => { const m = ws.miembros.find((x) => x.persona_id === ev.target.value); if (m) { st.gente.set(m.persona_id, m.funciones[0] || "Voz"); pintar(); } });
+    $("ws-body").querySelectorAll("[data-otro]").forEach((sel) => sel.addEventListener("change", () => {
+      const m = ws.miembros.find((x) => x.persona_id === sel.value); if (m) { st.gente.set(m.persona_id, funDefault(m, sel.dataset.otro)); pintar(); }
+    }));
     $("ar-save").addEventListener("click", async () => {
       const msg = $("ar-msg"); msg.classList.remove("err");
       if (!st.canciones.length) { msg.classList.add("err"); msg.textContent = "Elige al menos una canción."; return; }
@@ -1329,6 +1365,88 @@ async function armarLista() {
     });
   };
   pintar();
+}
+
+// ---------- Prédica: el predicador sube las diapositivas, Multimedia las descarga ----------
+const puedeSubirPredica = () => esLiderWorship();
+const fmtBytes = (n) => !n ? "" : n < 1048576 ? `${Math.max(1, Math.round(n / 1024))} KB` : `${(n / 1048576).toFixed(1)} MB`;
+const MAX_PREDICA = 50 * 1048576;
+const rutaPredica = (f, n) => `${f}/${Date.now()}-${Math.random().toString(36).slice(2, 7)}-${unaccent(n).replace(/[^a-z0-9.]+/g, "-")}`;
+const fmtDescarga = new Intl.DateTimeFormat("es-EC", { weekday: "short", day: "numeric", month: "short", hour: "numeric", minute: "2-digit" });
+async function pintarPredica() {
+  const [a, p] = await Promise.all([
+    sb.from("predica_archivos").select("*").eq("fecha", ws.fecha).order("creado"),
+    sb.from("programa_domingo").select("predicador").eq("fecha", ws.fecha).maybeSingle(),
+  ]);
+  if (a.error) { $("ws-body").innerHTML = `<div class="soon">${esc(a.error.message)}</div>`; return; }
+  const arch = a.data || [], sube = puedeSubirPredica();
+  $("ws-body").innerHTML = `
+    <div class="hero"><div class="hero-date">${esc(fmtTitulo(ws.fecha))}</div>
+      <div class="chips">${p.data?.predicador ? `<div class="chip"><span>Predica</span><b>${esc(p.data.predicador)}</b></div>` : ""}<div class="chip"><span>Archivos</span><b>${arch.length}</b></div></div></div>
+    <div class="panel"><h4>Diapositivas y archivos</h4>
+      ${arch.map((x) => `<div class="li" style="align-items:flex-start"><div style="min-width:0">
+          <b>${esc(x.titulo || x.nombre_archivo || "Enlace")}</b>
+          <div class="muted">${x.path ? `${esc(x.nombre_archivo || "")}${x.bytes ? " · " + fmtBytes(x.bytes) : ""}` : "Enlace externo"}${x.subido_por_nombre ? ` · subido por ${esc(x.subido_por_nombre)}` : ""}</div>
+          ${x.nota ? `<div class="aus-motivo" style="color:var(--ink)">📝 ${esc(x.nota)}</div>` : ""}
+          <div class="sts" style="margin-top:6px">${x.descargado_en ? `<span class="st yes">✓ Descargado${x.descargado_por_nombre ? " por " + esc(x.descargado_por_nombre) : ""} · ${esc(fmtDescarga.format(new Date(x.descargado_en)))}</span>` : `<span class="st">Multimedia aún no lo descarga</span>`}</div>
+          <div class="song-links">${x.path ? `<button class="link" data-bajar="${x.id}">Descargar</button>` : ""}${x.enlace ? `<a href="${esc(x.enlace)}" target="_blank" rel="noopener" data-enlace="${x.id}">Abrir enlace</a>` : ""}${sube ? `<button class="link" data-borrar="${x.id}" style="color:var(--coral)">Quitar</button>` : ""}</div>
+        </div></div>`).join("") || `<div class="muted">${sube ? "Todavía no hay archivos para este domingo. Súbelos abajo." : "El predicador todavía no ha subido las diapositivas de este domingo."}</div>`}
+      <div class="ok" id="pr-bajar-msg"></div></div>
+    ${sube ? `<div class="panel"><h4>Subir para Multimedia</h4>
+      <label>Título (opcional)</label><input id="pr-t" placeholder="Ej.: La Revelación de Cristo · parte 3">
+      <label class="btn-sec upload">Elegir archivo(s)<input type="file" id="pr-f" multiple hidden accept=".pptx,.ppt,.key,.pdf,.mp4,.mov,.m4v,.jpg,.jpeg,.png,.zip,application/pdf,video/*,image/*"></label>
+      <div class="muted" id="pr-fname"></div>
+      <div class="hint">PowerPoint, Keynote, PDF, video o imágenes · hasta 50 MB cada uno.</div>
+      <label>…o un enlace (Google Drive, Canva, OneDrive)</label><input id="pr-l" type="url" placeholder="https://…">
+      <label>Nota para Multimedia (opcional)</label><textarea id="pr-n" placeholder="Ej.: el video va después del segundo punto"></textarea>
+      <button class="btn-primary" id="pr-save">Subir</button><div class="ok" id="pr-msg"></div></div>` : ""}`;
+
+  $("ws-body").querySelectorAll("[data-bajar]").forEach((b) => b.addEventListener("click", async () => {
+    const x = arch.find((y) => y.id === +b.dataset.bajar), msg = $("pr-bajar-msg");
+    b.disabled = true; msg.classList.remove("err"); msg.textContent = "Preparando la descarga…";
+    const { data, error } = await sb.storage.from("predicas").createSignedUrl(x.path, 3600, { download: x.nombre_archivo || true });
+    b.disabled = false;
+    if (error) { msg.classList.add("err"); msg.textContent = "No se pudo descargar: " + error.message; return; }
+    const link = document.createElement("a"); link.href = data.signedUrl; link.rel = "noopener"; document.body.appendChild(link); link.click(); link.remove();
+    msg.textContent = "";
+    if (x.subido_por !== ctx.user.id) { await sb.rpc("predica_descargada", { p_id: x.id, p_nombre: ctx.nombreCompleto || ctx.nombre || "" }); pintarPredica(); }
+  }));
+  $("ws-body").querySelectorAll("[data-enlace]").forEach((l) => l.addEventListener("click", async () => {
+    const x = arch.find((y) => y.id === +l.dataset.enlace);
+    if (x.subido_por !== ctx.user.id) { await sb.rpc("predica_descargada", { p_id: x.id, p_nombre: ctx.nombreCompleto || ctx.nombre || "" }); setTimeout(pintarPredica, 400); }
+  }));
+  $("ws-body").querySelectorAll("[data-borrar]").forEach((b) => b.addEventListener("click", async () => {
+    const x = arch.find((y) => y.id === +b.dataset.borrar);
+    if (!confirm(`¿Quitar "${x.titulo || x.nombre_archivo || "este enlace"}"?`)) return;
+    if (x.path) await sb.storage.from("predicas").remove([x.path]);
+    const { error } = await sb.from("predica_archivos").delete().eq("id", x.id); if (error) return alert(error.message);
+    pintarPredica();
+  }));
+  if (!sube) return;
+  $("pr-f").addEventListener("change", (ev) => { $("pr-fname").textContent = [...ev.target.files].map((f) => `${f.name} (${fmtBytes(f.size)})`).join(" · "); });
+  $("pr-save").addEventListener("click", async () => {
+    const files = [...$("pr-f").files], enlace = $("pr-l").value.trim(), titulo = $("pr-t").value.trim() || null, nota = $("pr-n").value.trim() || null, msg = $("pr-msg");
+    msg.classList.add("err");
+    if (!files.length && !enlace) return (msg.textContent = "Elige un archivo o pega un enlace.");
+    if (enlace && !/^https?:\/\//i.test(enlace)) return (msg.textContent = "El enlace debe empezar con https://");
+    const grandes = files.filter((f) => f.size > MAX_PREDICA);
+    if (grandes.length) return (msg.textContent = `${grandes.map((f) => f.name).join(", ")} pesa más de 50 MB. Súbelo a Google Drive y pega el enlace.`);
+    $("pr-save").disabled = true; msg.classList.remove("err");
+    const base = { fecha: ws.fecha, nota, subido_por: ctx.user.id, subido_por_nombre: ctx.nombreCompleto || ctx.nombre || null };
+    const fallas = [];
+    for (const [i, f] of files.entries()) {
+      msg.textContent = `Subiendo ${i + 1} de ${files.length}: ${f.name}…`;
+      const path = rutaPredica(ws.fecha, f.name);
+      const up = await sb.storage.from("predicas").upload(path, f, { contentType: f.type || "application/octet-stream" });
+      if (up.error) { fallas.push(`${f.name} (${up.error.message})`); continue; }
+      const ins = await sb.from("predica_archivos").insert({ ...base, titulo: files.length === 1 ? titulo : (titulo ? `${titulo} · ${f.name}` : null), nombre_archivo: f.name, path, bytes: f.size });
+      if (ins.error) { await sb.storage.from("predicas").remove([path]); fallas.push(`${f.name} (${ins.error.message})`); }
+    }
+    if (enlace) { const ins = await sb.from("predica_archivos").insert({ ...base, titulo, enlace }); if (ins.error) fallas.push("enlace (" + ins.error.message + ")"); }
+    $("pr-save").disabled = false;
+    if (fallas.length) { msg.classList.add("err"); msg.textContent = "No se pudo subir: " + fallas.join(", "); return; }
+    pintarPredica();
+  });
 }
 
 // ---------- Canciones (repositorio + subir PDF) ----------
@@ -1472,16 +1590,17 @@ function pintarEquipos(editId) {
   if (editId !== undefined) return editarMiembroWorship(editId);
   const nombreEq = (id) => ws.equipos.find((e) => e.id === id)?.nombre || "";
   $("ws-body").innerHTML = `<button class="btn-primary" id="eq-new" style="margin-top:0">+ Agregar miembro</button>
-    ${ws.equipos.map((eq) => { const ms = ws.miembros.filter((m) => m.equipos.includes(eq.id)); return `<div class="panel"><h4>${esc(eq.nombre)} (${ms.length})</h4>
-      ${ms.map((m) => `<div class="li"><div><b>${esc(m.nombre)}</b><div class="sts">${m.funciones.map((f) => `<span class="st yes">${esc(f)}</span>`).join("")}${m.equipos.length > 1 ? `<span class="st">Rota: ${m.equipos.map(nombreEq).join(", ")}</span>` : ""}</div></div>
-        <button class="btn-sec mini" data-m="${m.persona_id}">Editar</button></div>`).join("") || `<div class="muted">Sin miembros.</div>`}</div>`; }).join("")}
+    ${AREAS_WS.map(([area, titulo]) => { const eqs = ws.equipos.filter((x) => x.area === area); return !eqs.length ? "" : `<div class="sec-title">${esc(titulo)}</div>` + eqs.map((eq) => { const ms = ws.miembros.filter((m) => m.equipos.includes(eq.id)); return `<div class="panel"><h4>${esc(eq.nombre)} (${ms.length})</h4>
+      ${ms.map((m) => `<div class="li"><div><b>${esc(m.nombre)}</b><div class="sts">${m.funciones.map((f) => `<span class="st yes">${esc(f)}</span>`).join("")}${m.equipos.length > 1 ? `<span class="st">Está en: ${m.equipos.map(nombreEq).join(", ")}</span>` : ""}</div></div>
+        <button class="btn-sec mini" data-m="${m.persona_id}">Editar</button></div>`).join("") || `<div class="muted">Sin miembros.</div>`}</div>`; }).join(""); }).join("")}
     ${(() => { const sin = ws.miembros.filter((m) => !m.equipos.length); return sin.length ? `<div class="panel"><h4>Sin equipo</h4>${sin.map((m) => `<div class="li"><b>${esc(m.nombre)}</b><button class="btn-sec mini" data-m="${m.persona_id}">Editar</button></div>`).join("")}</div>` : ""; })()}
-    <div class="panel"><h4>Equipos</h4><div class="add-row"><input id="eq-nombre" placeholder="Ej.: Equipo C" style="margin:0"><button class="btn-sec mini" id="eq-add">Crear</button></div></div>`;
+    <div class="panel"><h4>Crear equipo</h4><input id="eq-nombre" placeholder="Ej.: Equipo C">
+      <select id="eq-area">${opciones(AREAS_WS)}</select><button class="btn-sec" id="eq-add" style="width:100%">Crear equipo</button></div>`;
   $("eq-new").addEventListener("click", () => pintarEquipos(null));
   $("ws-body").querySelectorAll("[data-m]").forEach((b) => b.addEventListener("click", () => pintarEquipos(b.dataset.m)));
   $("eq-add").addEventListener("click", async () => {
     const n = $("eq-nombre").value.trim(); if (!n) return;
-    const { error } = await sb.from("worship_equipos").insert({ nombre: n }); if (error) return alert(error.message); abrirWorship("equipos");
+    const { error } = await sb.from("worship_equipos").insert({ nombre: n, area: $("eq-area").value }); if (error) return alert(error.message); abrirWorship("equipos");
   });
 }
 function editarMiembroWorship(pid) {
@@ -1496,12 +1615,12 @@ function editarMiembroWorship(pid) {
         <input id="wm-nn" placeholder="Nombres" autocomplete="off"><input id="wm-na" placeholder="Apellidos" autocomplete="off">
         <input id="wm-nt" placeholder="Celular (09…), opcional" inputmode="tel" autocomplete="off">
         <button type="button" class="btn-sec" style="width:100%" id="wm-nueva-ok">Agregar persona</button><div class="ok err" id="wm-nueva-msg"></div></div>`}
-    <label>¿Qué toca? (puede ser más de una)</label>
+    <label>¿Qué hace? (puede ser más de una)</label>
     <div class="pick" id="wm-funs">${todas.map((f) => `<button type="button" data-f="${esc(f)}" class="${st.fun.has(f) ? "on" : ""}">${esc(f)}</button>`).join("")}<button type="button" id="wm-otro">+ Otro</button></div>
     <div id="wm-otro-box" style="display:none;gap:8px;margin-bottom:10px"><input id="wm-otro-t" placeholder="Ej.: Violín" autocomplete="off" style="flex:1"><button type="button" class="btn-sec mini" id="wm-otro-ok">Añadir</button></div>
-    <div class="hint">La primera que elijas será la que se sugiere al armar la lista.</div>
+    <div class="hint">La primera que elijas será la que se sugiere al armar la lista. Consola y Multimedia salen en su propia sección.</div>
     <label>Equipo(s)</label>
-    ${ws.equipos.map((e) => `<label class="check" style="margin-bottom:10px"><input type="checkbox" data-e="${e.id}" ${st.eq.has(e.id) ? "checked" : ""}> ${esc(e.nombre)}</label>`).join("")}
+    ${ws.equipos.map((e) => `<label class="check" style="margin-bottom:10px"><input type="checkbox" data-e="${e.id}" ${st.eq.has(e.id) ? "checked" : ""}> ${esc(e.nombre)}<span class="muted" style="margin-left:6px">· ${esc(nombreArea(e.area))}</span></label>`).join("")}
     <div class="hint">Si rota entre equipos, marca todos los que corresponda.</div>
     <button class="btn-primary" id="wm-save">Guardar</button>
     <button class="btn-sec" id="wm-cancel" style="width:100%">Cancelar</button>
