@@ -72,6 +72,57 @@
   .c-orange { background: var(--orange); } .c-orange .desc { color: var(--ink-dark); } .c-peach { background: var(--peach); } .c-sand { background: var(--sand); } .c-yellow { background: var(--yellow); } .c-green { background: var(--green); }
   .c-grey { background: var(--grey); } .c-lilac { background: var(--lilac); } .c-sky { background: var(--sky); }
 
+  /* ---------- Tarjetas apiladas (inicio y resumen) ---------- */
+  .big-hdr { margin: 4px 0 26px; }
+  .big-t { font-size: 42px; font-weight: 600; line-height: 1.02; letter-spacing: -1.2px; }
+  .big-d { font-size: 42px; font-weight: 600; line-height: 1.08; letter-spacing: -1.2px; color: #5a5a55; }
+  .pila { position: relative; margin: 0 -13px; isolation: isolate; }
+  .pcard { display: block; position: relative; width: 100%; text-align: left; font: inherit; border: 0; border-radius: 26px; padding: 16px 18px 44px;
+           color: var(--ink-dark); min-height: 150px; box-shadow: 0 -1px 0 rgba(0,0,0,.18), 0 -10px 22px rgba(0,0,0,.2); will-change: transform; }
+  .pcard + .pcard { margin-top: -26px; }
+  .pc-top { position: relative; min-height: 70px; }
+  .pc-head { display: flex; align-items: center; gap: 10px; max-width: 60%; }
+  .pc-lbl { font-size: 16px; font-weight: 700; line-height: 1.08; letter-spacing: -.2px; }
+  .pc-logo { height: 30px; flex: none; }
+  .pc-sub { font-size: 13px; font-weight: 500; color: rgba(0,0,0,.52); margin-top: 4px; max-width: 60%; line-height: 1.3; }
+  .pc-num { position: absolute; right: -2px; top: -10px; font-size: 76px; font-weight: 400; letter-spacing: -3.5px; line-height: 1; font-variant-numeric: tabular-nums; }
+  .pc-num small { font-size: 30px; letter-spacing: -1px; margin-left: 2px; opacity: .55; }
+  .pc-go { position: absolute; right: 0; top: 0; width: 50px; height: 50px; border-radius: 50%; background: var(--ink-dark); color: var(--ink); display: grid; place-items: center; }
+  .pc-go svg { width: 22px; height: 22px; }
+  .pc-more { margin-top: 18px; font-size: 14px; }
+  .pc-note { font-size: 13px; font-weight: 500; color: rgba(0,0,0,.6); margin-top: 10px; line-height: 1.4; }
+  .pc-chart { display: flex; align-items: flex-end; gap: 7px; height: 104px; padding-top: 20px; }
+  .pc-col { flex: 1; background: rgba(0,0,0,.2); border-radius: 7px 7px 3px 3px; position: relative; min-height: 4px; }
+  .pc-col.on { background: var(--ink-dark); }
+  .pc-col span { position: absolute; top: -17px; left: -4px; right: -4px; text-align: center; font-size: 10px; font-weight: 600; opacity: .6; }
+  .pc-col.on span { opacity: 1; }
+  .pc-ax { display: flex; justify-content: space-between; font-size: 11px; opacity: .55; margin-top: 6px; font-weight: 500; }
+  .pc-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+  .pc-tiles.t3 { grid-template-columns: 1fr 1fr 1fr; }
+  .pc-tiles div { background: rgba(255,255,255,.32); border-radius: 16px; padding: 9px 12px; font-size: 12px; font-weight: 500; line-height: 1.25; }
+  .pc-tiles b { display: block; font-size: 24px; font-weight: 500; letter-spacing: -.5px; }
+  .pc-pills { display: flex; flex-wrap: wrap; gap: 7px; }
+  .pc-pills span { background: rgba(0,0,0,.09); border-radius: 999px; padding: 8px 12px; font-size: 13px; font-weight: 500; }
+  .pc-pills b { margin-left: 5px; }
+  .pc-list > div { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(0,0,0,.1); font-size: 14px; font-weight: 600; }
+  .pc-list > div:last-child { border-bottom: 0; }
+  .pc-list span { font-weight: 500; opacity: .62; text-align: right; flex: none; max-width: 55%; }
+  .pc-list .yo { background: var(--ink-dark); color: var(--ink); border-radius: 14px; padding: 10px 12px; border: 0; margin-bottom: 4px; }
+  .pc-list .warn span { color: #a3330f; opacity: 1; }
+  .pc-prog { height: 10px; border-radius: 9px; background: rgba(0,0,0,.1); margin: 2px 0 14px; overflow: hidden; }
+  .pc-prog i { display: block; height: 100%; background: var(--ink-dark); border-radius: 9px; }
+  .pcard .bar-row .name { color: inherit; } .pcard .bar-row .val { color: rgba(0,0,0,.55); }
+  .pcard .bar { background: var(--ink-dark); } .pcard .bar-track { background: rgba(0,0,0,.08); border-radius: 4px; }
+  .c-orange.pcard, .c-coral.pcard { color: var(--ink-dark); } .c-coral { background: var(--coral); }
+  .mini-hdr { position: fixed; top: 0; left: 50%; transform: translate(-50%, -100%); width: min(480px, 100%); z-index: 40; background: rgba(27,27,29,.94);
+              backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); padding: max(12px, env(safe-area-inset-top)) 18px 12px; display: flex; align-items: center; gap: 12px;
+              transition: transform .25s ease; }
+  .mini-hdr.on { transform: translate(-50%, 0); }
+  .mini-hdr .dot { width: 36px; height: 36px; border-radius: 50%; background: var(--orange); display: grid; place-items: center; flex: none; }
+  .mini-hdr .dot img { height: 19px; }
+  .mini-hdr b { display: block; font-size: 19px; font-weight: 600; line-height: 1.1; } .mini-hdr span { font-size: 13px; color: var(--ink-2); }
+  .nav { z-index: 50; }
+
   /* ---------- Bottom nav ---------- */
   .nav { position: fixed; left: 50%; transform: translateX(-50%); bottom: max(16px, env(safe-area-inset-bottom)); display: flex; gap: 10px;
          background: #0f0f10; border-radius: 999px; padding: 8px; box-shadow: 0 10px 30px rgba(0,0,0,.45); }
@@ -469,17 +520,14 @@
       <span class="pill"><span class="dot"><img src="data:image/png;base64,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" alt=""></span><span id="role-label">Mi acceso</span></span>
       <div class="avatar" id="avatar">·</div>
     </div>
-    <div class="hello" id="hello">Hola</div>
-    <div class="hello-sub">¿Qué vamos a hacer hoy?</div>
-    <div class="dates" id="dates"></div>
-    <div class="cards" id="cards"></div>
+    <div class="big-hdr"><div class="big-t" id="hello">Hola</div><div class="big-d" id="hoy-txt"></div></div>
+    <div class="pila" id="cards"></div>
   </section>
 
   <!-- ================= RESUMEN (ANCIANOS) ================= -->
   <section id="v-resumen" class="hidden">
     <div class="top"><button class="back" data-go="home" aria-label="Volver"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button></div>
-    <div class="page-title">Resumen</div>
-    <div class="hello-sub">Tu cobertura y la iglesia en general</div>
+    <div class="big-hdr"><div class="big-t">Resumen</div><div class="big-d" id="res-fecha">Tu cobertura</div></div>
     <div id="resumen-body"><div class="loading">Cargando…</div></div>
   </section>
 
@@ -611,6 +659,7 @@
   <div id="scan-res" class="scan-res hidden"></div>
 </div>
 
+<div class="mini-hdr" id="mini-hdr"><span class="dot"><img src="data:image/png;base64,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" alt=""></span><div><b id="mini-t">Arco Ríos</b><span id="mini-d"></span></div></div>
 <nav class="nav hidden" id="nav">
   <button data-go="home" class="on" aria-label="Inicio"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3.2l8.5 7.3V20a1 1 0 0 1-1 1h-5v-6h-5v6h-5a1 1 0 0 1-1-1v-9.5z"/></svg></button>
   <button data-go="resumen" id="nav-resumen" class="hidden" aria-label="Resumen"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M11 3.05V13h9.95A9 9 0 1 1 11 3.05zM13 3.05A9 9 0 0 1 20.95 11H13z"/></svg></button>
@@ -653,6 +702,189 @@ const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "
 
 const ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg>';
 
+// =================== Tarjetas apiladas ===================
+// Al abrir, las tarjetas están apiladas (se ve el título y el número de cada una);
+// al deslizar se separan hasta quedar abiertas con su detalle.
+const PILA = { PEEK: 84, SLIVER: 14, OVER: 26, NAV: 104 };
+const pilas = new Set();
+let vistaActual = "login";
+function htmlTarjeta(c, i) {
+  const tag = c.go ? "button" : "div";
+  const num = c.num === null ? `<span class="pc-go">${ARROW}</span>` : `<div class="pc-num">${c.num ?? "·"}${c.unit ? `<small>${c.unit}</small>` : ""}</div>`;
+  return `<${tag} class="pcard ${c.color}" ${c.go ? `data-go="${c.go}"` : ""} data-pc="${esc(c.key)}" style="z-index:${i + 1}">
+    <div class="pc-top"><div class="pc-head"><div class="pc-lbl">${c.label}</div>${c.logo ? `<img class="pc-logo" src="${LOGOS[c.logo]}" alt="">` : ""}</div>
+      <div class="pc-sub">${c.sub ?? ""}</div>${num}</div>
+    <div class="pc-more">${c.detail ?? ""}</div></${tag}>`;
+}
+function pintarPila(cont, cards) {
+  cont.innerHTML = cards.map(htmlTarjeta).join("");
+  pilas.add(cont); medirPila(cont);
+}
+// Cambia una tarjeta cuando llegan sus datos
+function llenarTarjeta(cont, key, d) {
+  const el = cont.querySelector(`[data-pc="${CSS.escape(key)}"]`); if (!el || !d) return;
+  if ("num" in d) {
+    const old = el.querySelector(".pc-num, .pc-go");
+    old.outerHTML = d.num === null ? `<span class="pc-go">${ARROW}</span>` : `<div class="pc-num">${d.num ?? "·"}${d.unit ? `<small>${d.unit}</small>` : ""}</div>`;
+  }
+  if ("sub" in d) el.querySelector(".pc-sub").innerHTML = d.sub ?? "";
+  if ("detail" in d) el.querySelector(".pc-more").innerHTML = d.detail ?? "";
+  medirPila(cont);
+}
+function medirPila(cont) {
+  if (!cont.offsetParent) return;
+  const cards = [...cont.children];
+  cards.forEach((c) => (c.style.transform = ""));
+  const docTop = cont.getBoundingClientRect().top + window.scrollY;
+  const h = cards.map((c) => c.offsetHeight);
+  const natural = [], stacked = [];
+  let y = 0; h.forEach((x, i) => { natural.push(y); y += x - PILA.OVER; });
+  const naturalFin = docTop + y + PILA.OVER;
+  const n = cards.length - 1;
+  // Si todo cabe en la pantalla, no se apila
+  if (n < 2 || naturalFin <= innerHeight - PILA.NAV + 40) { cont._delta = cards.map(() => 0); return aplicarPilas(); }
+  const libre = innerHeight - docTop - PILA.NAV - PILA.PEEK - 24;
+  const grandes = Math.max(0, Math.min(n, Math.floor((libre - n * PILA.SLIVER) / (PILA.PEEK - PILA.SLIVER))));
+  let s = 0; cards.forEach((c, i) => { stacked.push(s); s += Math.min(i < grandes ? PILA.PEEK : PILA.SLIVER, h[i] - PILA.OVER); });
+  cont._delta = cards.map((c, i) => Math.min(0, stacked[i] - natural[i]));
+  aplicarPilas();
+}
+function aplicarPilas() {
+  const R = innerHeight * 0.6, p = Math.min(1, Math.max(0, window.scrollY / R)), e = 1 - (1 - p) * (1 - p);
+  for (const cont of pilas) {
+    if (!cont.offsetParent || !cont._delta) continue;
+    [...cont.children].forEach((c, i) => { const d = (cont._delta[i] || 0) * (1 - e); c.style.transform = d ? `translateY(${d.toFixed(1)}px)` : ""; });
+  }
+  const mini = $("mini-hdr");
+  if (mini) mini.classList.toggle("on", ["home", "resumen"].includes(vistaActual) && window.scrollY > 170);
+}
+let pilaRaf = 0;
+window.addEventListener("scroll", () => { if (!pilaRaf) pilaRaf = requestAnimationFrame(() => { pilaRaf = 0; aplicarPilas(); }); }, { passive: true });
+window.addEventListener("resize", () => pilas.forEach(medirPila));
+document.fonts?.ready.then(() => pilas.forEach(medirPila));
+function ponerMini(titulo, sub) { $("mini-t").textContent = titulo; $("mini-d").textContent = sub; }
+
+// Gráfico de columnas: [{ n, l }] del más antiguo al más reciente
+function columnas(items) {
+  if (!items.length) return "";
+  const mx = Math.max(...items.map((x) => x.n), 1);
+  return `<div class="pc-chart">${items.map((x, i) => `<div class="pc-col ${i === items.length - 1 ? "on" : ""}" style="height:${Math.max(4, Math.round((x.n / mx) * 80))}px"><span>${x.n}</span></div>`).join("")}</div>
+    <div class="pc-ax"><span>${esc(items[0].l)}</span><span>${esc(items[items.length - 1].l)}</span></div>`;
+}
+const lista = (rows) => `<div class="pc-list">${rows.map((r) => `<div class="${r.cls || ""}">${r.a}<span>${r.b ?? ""}</span></div>`).join("")}</div>`;
+const fmtDiaMes = (f) => fmtCorta.format(fromYmd(f)).replace(".", "");
+const promedio = (xs) => xs.length ? Math.round(xs.reduce((a, b) => a + b, 0) / xs.length) : 0;
+const nombreCorto = (n, a) => `${(n || "").split(" ")[0]} ${(a || "").split(" ")[0]}`.trim();
+
+// ---------- Datos de cada tarjeta del inicio ----------
+const ETIQUETA_HOME = { worship: "Arco<br>Worship", domingo: "Este<br>domingo", formacion: "Formación<br>Cristiana", stand: "Stand de<br>información",
+  consejo: "Reunión del<br>Consejo", tablero: "Tablero del<br>Consejo" };
+const DATOS_HOME = {
+  async anfitriones() {
+    const { data, error } = await sb.from("asistencia_domingo").select("fecha, total, nuevos").order("fecha", { ascending: false }).limit(8);
+    if (error) throw error;
+    if (!data?.length) return { num: "0", sub: "Sin conteos todavía", detail: `<div class="pc-note">Toca para registrar el conteo del domingo.</div>` };
+    const u = data[0], mes = data.filter((d) => d.fecha.slice(0, 7) === u.fecha.slice(0, 7));
+    return { num: u.total, sub: `personas · ${fmtDiaMes(u.fecha)}`, detail: columnas([...data].reverse().map((d) => ({ n: d.total, l: fmtDiaMes(d.fecha) })))
+      + `<div class="pc-tiles"><div><b>${promedio(mes.map((d) => d.total))}</b>promedio del mes</div><div><b>${u.nuevos || 0}</b>nuevos ese domingo</div></div>` };
+  },
+  async kidz() {
+    const { data, error } = await sb.from("conteo_kidz").select("fecha, ninos, servidores").order("fecha", { ascending: false }).limit(8);
+    if (error) throw error;
+    if (!data?.length) return { num: "0", sub: "Sin registros todavía", detail: `<div class="pc-note">Toca para registrar el ingreso con QR.</div>` };
+    const u = data[0];
+    const [cl, ck] = await Promise.all([sb.from("kidz_clases").select("id, nombre").order("orden"), sb.from("kidz_checkins").select("nino_id, kidz_ninos(clase_id)").eq("fecha", u.fecha)]);
+    const pills = (cl.data || []).map((c) => `<span>${esc(c.nombre)}<b>${(ck.data || []).filter((x) => x.kidz_ninos?.clase_id === c.id).length}</b></span>`).join("");
+    return { num: u.ninos, sub: `niños · ${u.servidores || 0} siervos · ${fmtDiaMes(u.fecha)}`,
+      detail: `${pills ? `<div class="pc-pills">${pills}</div>` : ""}<div class="pc-note">Promedio de las últimas ${data.length} semanas: ${promedio(data.map((d) => d.ninos))} niños</div>` };
+  },
+  async padres() {
+    const { data, error } = await sb.from("kidz_ninos").select("nombres, apodo").eq("familia_id", ctx.familiaId).eq("activo", true).order("nombres");
+    if (error) throw error;
+    return { num: data.length, sub: data.length === 1 ? "niño en Kidz" : "niños en Kidz",
+      detail: lista(data.map((n) => ({ a: esc(n.apodo || n.nombres), b: "Ver QR" }))) + `<div class="pc-note">Toca para ver el código QR y los anuncios.</div>` };
+  },
+  async bienvenida() {
+    const { data, error } = await sb.from("nuevos_seguimiento").select("nombres, apellidos, primera_visita, clase_bienvenida, igho_nombre").order("primera_visita", { ascending: false }).limit(100);
+    if (error) throw error;
+    const h30 = new Date(); h30.setDate(h30.getDate() - 30);
+    const mes = data.filter((x) => fromYmd(x.primera_visita) >= h30);
+    return { num: mes.length, sub: `nuevos en 30 días · ${mes.filter((x) => x.clase_bienvenida).length} con clase`,
+      detail: data.length ? lista(data.slice(0, 3).map((x) => ({ a: esc(nombreCorto(x.nombres, x.apellidos)), b: x.igho_nombre ? esc(x.igho_nombre) : `1ª visita ${fmtDiaMes(x.primera_visita)}` }))) : `<div class="pc-note">Todavía no hay personas nuevas registradas.</div>` };
+  },
+  async worship() {
+    const f = ymd(proximoDomingo());
+    const [d, c, e, p, eqs] = await Promise.all([
+      sb.from("worship_domingo").select("equipo_id").eq("fecha", f).maybeSingle(), sb.from("worship_canciones").select("id", { count: "exact", head: true }).eq("fecha", f),
+      sb.from("worship_equipo").select("persona_id, nombre, funcion").eq("fecha", f), sb.from("predica_archivos").select("descargado_en").eq("fecha", f),
+      sb.from("worship_equipos").select("id, nombre")]);
+    if (c.error) throw c.error;
+    const gente = e.data || [], eq = (eqs.data || []).find((x) => x.id === d.data?.equipo_id);
+    const de = (a) => gente.filter((g) => areaDeFuncion(g.funcion) === a).map((g) => esc(g.nombre.split(" ")[0])).join(", ") || "—";
+    const yo = gente.find((g) => g.persona_id && g.persona_id === ctx.personaId), pr = p.data || [];
+    return { num: c.count || 0, sub: `canciones · ${eq ? esc(eq.nombre) : "lista pendiente"} · ${fmtDiaMes(f)}`,
+      detail: lista([...(yo ? [{ cls: "yo", a: "Te toca servir", b: esc(yo.funcion) }] : []), { a: "Consola", b: de("consola") }, { a: "Multimedia", b: de("multimedia") },
+        { a: "Diapositivas de la prédica", b: !pr.length ? "faltan" : pr.every((x) => x.descargado_en) ? "✓ descargadas" : "✓ subidas", cls: pr.length ? "" : "warn" }]) };
+  },
+  async domingo() {
+    const f = ymd(proximoDomingo());
+    const [p, it, an] = await Promise.all([sb.from("programa_domingo").select("predicador").eq("fecha", f).maybeSingle(),
+      sb.from("programa_items").select("hora, actividad").eq("fecha", f).order("orden"), sb.from("anuncios_domingo").select("anunciantes_nombres").eq("fecha", f).maybeSingle()]);
+    const items = it.data || [], dt = fromYmd(f);
+    const mes = new Intl.DateTimeFormat("es-EC", { month: "short" }).format(dt).replace(".", "");
+    const rows = items.filter((x) => /predic|alabanza|santa cena|anuncio|bienvenida/i.test(x.actividad)).slice(0, 4).map((x) => ({ a: esc(x.actividad), b: hhmm(x.hora) }));
+    return { num: dt.getDate(), unit: mes, sub: p.data?.predicador ? `Predica: ${esc(p.data.predicador)}` : "Programa pendiente",
+      detail: (rows.length ? lista(rows) : `<div class="pc-note">Todavía no hay programa para este domingo.</div>`)
+        + (an.data?.anunciantes_nombres ? `<div class="pc-note">Anuncios: ${esc(an.data.anunciantes_nombres)}</div>` : "") };
+  },
+  async formacion() {
+    const [o, i] = await Promise.all([sb.from("fc_ofertas").select("id, nombre, abierta"), sb.from("fc_inscripciones").select("oferta_id, estado")]);
+    if (o.error) throw o.error;
+    const ab = o.data.filter((x) => x.abierta), ins = i.data || [];
+    return { num: ab.length, sub: "clases y eventos abiertos",
+      detail: ab.length ? lista(ab.slice(0, 4).map((x) => ({ a: esc(x.nombre), b: `${ins.filter((y) => y.oferta_id === x.id && y.estado !== "retirado").length} inscritos` }))) : `<div class="pc-note">No hay inscripciones abiertas.</div>` };
+  },
+  async stand() {
+    const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
+    const [i, o] = await Promise.all([sb.from("fc_inscripciones").select("id", { count: "exact", head: true }).gte("creado_en", hoy.toISOString()), sb.from("fc_ofertas").select("nombre").eq("abierta", true)]);
+    if (i.error) throw i.error;
+    return { num: i.count || 0, sub: "inscritos hoy", detail: (o.data || []).length ? `<div class="pc-pills">${o.data.map((x) => `<span>${esc(x.nombre)}</span>`).join("")}</div>` : "" };
+  },
+  async igho() {
+    const desde = new Date(); desde.setDate(desde.getDate() - 6);
+    if (ctx.esAncianoOAdmin) {
+      const [g, r] = await Promise.all([sb.from("igho").select("id, nombre").eq("activo", true).order("nombre"), sb.from("reuniones_igho").select("igho_id").gte("fecha", ymd(desde))]);
+      if (g.error) throw g.error;
+      const hechos = new Set((r.data || []).map((x) => x.igho_id)), faltan = g.data.filter((x) => !hechos.has(x.id)), n = g.data.length - faltan.length;
+      return { num: n, unit: `/${g.data.length}`, sub: faltan.length ? `reportaron esta semana · faltan ${faltan.length}` : "reportaron esta semana · ✓ todos",
+        detail: `<div class="pc-prog"><i style="width:${g.data.length ? Math.round((n / g.data.length) * 100) : 0}%"></i></div>`
+          + (faltan.length ? `<div class="pc-pills">${faltan.slice(0, 8).map((x) => `<span>${esc(x.nombre)}</span>`).join("")}${faltan.length > 8 ? `<span>+${faltan.length - 8}</span>` : ""}</div>` : "") };
+    }
+    const ids = ctx.ighoIds; if (!ids.length) return { num: "—", sub: "Sin IGHO asignado" };
+    const [g, p, r] = await Promise.all([sb.from("igho").select("id, nombre").in("id", ids), sb.from("personas").select("id", { count: "exact", head: true }).in("igho_id", ids).eq("activo", true),
+      sb.from("reuniones_igho").select("fecha, asistencia_igho(count)").in("igho_id", ids).order("fecha", { ascending: false }).limit(8)]);
+    const rs = r.data || [], esta = rs.some((x) => fromYmd(x.fecha) >= desde);
+    return { num: p.count || 0, sub: `miembros · ${esc((g.data || []).map((x) => x.nombre).join(", "))}`,
+      detail: columnas([...rs].reverse().map((x) => ({ n: x.asistencia_igho?.[0]?.count ?? 0, l: fmtDiaMes(x.fecha) })))
+        + `<div class="pc-note">${esta ? "✓ Ya registraste la asistencia de esta semana." : "⚠ Falta registrar la asistencia de esta semana."}</div>` };
+  },
+  async resumen() {
+    const [p, g] = await Promise.all([sb.from("personas").select("bautizado").eq("activo", true), sb.from("igho").select("id", { count: "exact", head: true }).eq("activo", true)]);
+    if (p.error) throw p.error;
+    const t = p.data.length, b = p.data.filter((x) => x.bautizado).length;
+    return { num: t, sub: "personas registradas", detail: `<div class="pc-tiles"><div><b>${g.count || 0}</b>IGHO activos</div><div><b>${t ? Math.round((b / t) * 100) : 0}%</b>bautizados</div></div><div class="pc-note">Toca para ver tu cobertura.</div>` };
+  },
+  async consejo() {
+    const { data, error } = await sb.from("consejo_tareas").select("descripcion, fecha").eq("completado", false).is("descartada_en", null).order("fecha");
+    if (error) throw error;
+    const hoy = ymd(new Date()), vencidas = data.filter((x) => x.fecha && x.fecha < hoy).length;
+    const corto = (t) => { t = String(t || ""); return esc(t.length > 38 ? t.slice(0, 36) + "…" : t); };
+    return { num: data.length, sub: vencidas ? `pendientes · ${vencidas} con fecha pasada` : "pendientes",
+      detail: lista(data.slice(0, 3).map((x) => ({ a: corto(x.descripcion), b: x.fecha ? fmtDiaMes(x.fecha) : "", cls: x.fecha && x.fecha < hoy ? "warn" : "" }))) };
+  },
+};
+const SIN_NUMERO = { tablero: true, admin: true, finanzas: true };
+
 // Cada sección de la app: quién la ve y cómo se ve.
 const SECCIONES = [
   { id: "anfitriones", titulo: "Anfitriones", desc: "Conteo del domingo y notas de lo que falta.", color: "c-orange", tag: "Domingo",
@@ -693,7 +925,10 @@ function show(view) {
   document.body.classList.toggle("modo-tablero", view === "tablero");
   $("nav").classList.toggle("hidden", view === "login" || view === "clave");
   document.querySelectorAll(".nav [data-go]").forEach((b) => b.classList.toggle("on", b.dataset.go === view));
+  vistaActual = view;
   window.scrollTo(0, 0);
+  requestAnimationFrame(() => { pilas.forEach(medirPila); aplicarPilas(); });
+  if (view === "home" && ctx) ponerMini(`Hola, ${ctx.nombre}`, $("hoy-txt").textContent);
 }
 function abrir(id) {
   if (id === "home") return show("home");
@@ -742,9 +977,10 @@ async function iniciar() {
 
   const { data: roles, error } = await sb.from("usuarios_roles").select("rol, igho_id, ministerios(codigo)").eq("user_id", user.id);
   if (error) { console.error(error); }
-  const r = { roles: new Set(), ministerios: new Set(), lideraMinisterios: new Set() };
+  const r = { roles: new Set(), ministerios: new Set(), lideraMinisterios: new Set(), ighoIds: [] };
   for (const x of roles || []) {
     r.roles.add(x.rol);
+    if (x.rol === "lider_igho" && x.igho_id) r.ighoIds.push(x.igho_id);
     if (x.ministerios?.codigo) {
       r.ministerios.add(x.ministerios.codigo);
       if (x.rol === "lider_ministerio") r.lideraMinisterios.add(x.ministerios.codigo);
@@ -773,41 +1009,23 @@ const ROL_NOMBRE = { admin: "Administrador", anciano: "Miembro del Consejo", lid
                      finanzas: "Finanzas", lider_ministerio: "Líder de ministerio", servidor: "Siervo" };
 
 function pintarHome() {
-  $("hello").textContent = `Hola, ${ctx.nombre}`;
+  $("hello").innerHTML = `Hola,<br>${esc(ctx.nombre)}`;
   $("avatar").textContent = ctx.nombre[0]?.toUpperCase() || "·";
   const principal = ["anciano", "admin", "lider_igho", "secretaria", "finanzas", "lider_ministerio", "servidor"].find((x) => ctx.roles.has(x));
   $("role-label").textContent = principal === "servidor" && ctx.ministerios.size === 1 && ctx.ministerios.has("anuncios") ? "Anunciante"
     : principal ? ROL_NOMBRE[principal] : ctx.familiaId ? "Familia Kidz" : "Sin rol asignado";
   $("nav-resumen").classList.toggle("hidden", !ctx.esAncianoOAdmin);
-
-  // Próximos domingos
-  const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
-  const dom = new Date(hoy); dom.setDate(hoy.getDate() + ((7 - hoy.getDay()) % 7));
-  const fmt = new Intl.DateTimeFormat("es-EC", { day: "2-digit", month: "short" });
-  let html = "";
-  for (let i = -2; i <= 3; i++) {
-    const d = new Date(dom); d.setDate(dom.getDate() + i * 7);
-    html += i === 0 ? `<div class="date on">${fmt.format(d)}<small>Este domingo</small></div>`
-                    : `<div class="date">${fmt.format(d)}</div>`;
-  }
-  $("dates").innerHTML = html;
-  requestAnimationFrame(() => { const on = $("dates").querySelector(".on"); on && on.scrollIntoView({ inline: "center", block: "nearest" }); });
+  const hoyTxt = new Intl.DateTimeFormat("es-EC", { weekday: "long", day: "numeric", month: "short" }).format(new Date()).replace(/[.,]/g, "").replace(/ de /g, " ").replace(/^\w/, (c) => c.toUpperCase());
+  $("hoy-txt").textContent = hoyTxt;
 
   const visibles = SECCIONES.filter((s) => s.ve(ctx));
-  $("cards").innerHTML = visibles.length ? visibles.map((s) => `
-    <button class="card ${s.color}" data-go="${s.id}">
-      ${s.logo ? `<img class="card-logo ${s.logo}" src="${LOGOS[s.logo]}" alt="">` : ""}
-      <h3>${esc(s.titulo)}</h3>
-      <div class="desc">${esc(s.desc)}</div>
-      <span class="go">${ARROW}</span>
-      <div class="foot"><span id="foot-${s.id}">Abrir</span><span class="tag">${esc(s.tag)}</span></div>
-    </button>`).join("")
-    : `<div class="soon">Todavía no tienes un rol asignado. Pide a un administrador que te dé acceso.</div>`;
-
-  if (ctx.esAncianoOAdmin) {
-    sb.from("personas").select("*", { count: "exact", head: true }).then(({ count }) => {
-      if (count != null && $("foot-resumen")) $("foot-resumen").textContent = `${count} personas registradas`;
-    });
+  if (!visibles.length) { $("cards").innerHTML = `<div class="soon" style="margin:0 13px">Todavía no tienes un rol asignado. Pide a un administrador que te dé acceso.</div>`; return; }
+  pintarPila($("cards"), visibles.map((s) => ({ key: s.id, go: s.id, color: s.color, logo: s.logo, label: ETIQUETA_HOME[s.id] || esc(s.titulo),
+    num: SIN_NUMERO[s.id] ? null : undefined, sub: SIN_NUMERO[s.id] || !DATOS_HOME[s.id] ? esc(s.desc) : "",
+    detail: s.id === "finanzas" ? `<div class="pc-note">Muy pronto.</div>` : "" })));
+  for (const s of visibles) {
+    const f = DATOS_HOME[s.id]; if (!f) continue;
+    f().then((d) => llenarTarjeta($("cards"), s.id, d)).catch((e) => { console.error(s.id, e); llenarTarjeta($("cards"), s.id, { num: "—", sub: esc(s.desc) }); });
   }
 }
 
@@ -829,6 +1047,7 @@ function tabla(items, cab) {
 
 async function cargarResumen() {
   const body = $("resumen-body");
+  $("res-fecha").textContent = ctx.roles.has("admin") ? "Toda la iglesia" : "Tu cobertura";
   body.innerHTML = '<div class="loading">Cargando…</div>';
   const hace8 = new Date(); hace8.setDate(hace8.getDate() - 56);
   const [p, i, c, cob, reu] = await Promise.all([
@@ -846,75 +1065,73 @@ async function cargarResumen() {
   // El administrador sin cobertura asignada cubre toda la iglesia: ve todos los IGHO y ministerios.
   const todaLaIglesia = ctx.roles.has("admin") && !cobIghos.length && !cobMins.length;
   if (todaLaIglesia) cobMins = ["anfitriones", "kidz", "bienvenida", "worship", "formacion"];
+  $("res-fecha").textContent = todaLaIglesia ? "Toda la iglesia" : "Tu cobertura";
+  ponerMini("Resumen", todaLaIglesia ? "Toda la iglesia" : "Tu cobertura");
   const total = personas.length, bautizados = personas.filter((x) => x.bautizado).length;
   const nuevos = censos.filter((x) => x.tiempo_en_arco === "menos_1").length;
   const porIgho = ighos.map((g) => ({ nombre: g.nombre, n: personas.filter((x) => x.igho_id === g.id).length })).sort((a, b) => b.n - a.n);
   const porTiempo = TIEMPO.map(([k, nombre]) => ({ nombre, n: censos.filter((x) => x.tiempo_en_arco === k).length }));
+  const cards = [];
 
   // ---- IGHO que cubre ----
   const verIghos = todaLaIglesia ? ighos : ighos.filter((g) => cobIghos.includes(g.id));
-  const hoy = new Date();
-  const tarjetaIgho = (g) => {
-    const rs = reuniones.filter((r) => r.igho_id === g.id), cuentas = rs.map((r) => r.asistencia_igho?.[0]?.count ?? 0);
-    const miembros = personas.filter((x) => x.igho_id === g.id).length;
-    const prom = cuentas.length ? Math.round(cuentas.reduce((a, b) => a + b, 0) / cuentas.length) : null;
-    const ultima = rs[0]?.fecha, dias = ultima ? Math.round((hoy - fromYmd(ultima)) / 864e5) : null;
-    const alerta = dias === null || dias > 14;
-    return `<div class="ig-card">
-      <div class="ig-name">${esc(g.nombre)}</div>
-      <div class="ig-stats"><div><b>${miembros}</b><span>Miembros</span></div><div><b>${prom ?? "—"}</b><span>Promedio asistencia</span></div><div><b>${rs.length}/8</b><span>Semanas registradas</span></div></div>
-      <div class="ig-foot ${alerta ? "warn" : ""}">${alerta ? "⚠ " : "✓ "}${ultima ? `Último registro: ${fmtCorta.format(fromYmd(ultima))} (hace ${dias} días)` : "Sin registros de asistencia en 8 semanas"}</div></div>`;
-  };
-  let html = "";
-  if (verIghos.length) html += `<div class="sec-title">${todaLaIglesia ? "Todos los IGHO" : "IGHO que cubres"}</div>
-    <div class="hint">Últimas 8 semanas</div>
-    <div class="ig-grid">${verIghos.map(tarjetaIgho).join("")}</div>`;
+  if (verIghos.length) {
+    const hoy = new Date();
+    const filas = verIghos.map((g) => {
+      const rs = reuniones.filter((r) => r.igho_id === g.id), cuentas = rs.map((r) => r.asistencia_igho?.[0]?.count ?? 0);
+      const ultima = rs[0]?.fecha, dias = ultima ? Math.round((hoy - fromYmd(ultima)) / 864e5) : null;
+      return { g, prom: cuentas.length ? promedio(cuentas) : null, dias, sem: rs.length, alerta: dias === null || dias > 14,
+        miembros: personas.filter((x) => x.igho_id === g.id).length };
+    });
+    const al = filas.filter((x) => !x.alerta).length;
+    cards.push({ key: "ighos", color: "c-sky", logo: "igho", label: todaLaIglesia ? "Todos los<br>IGHO" : "IGHO que<br>cubres", num: al, unit: `/${verIghos.length}`,
+      sub: "al día (registro en 14 días)",
+      detail: lista(filas.map((x) => ({ cls: x.alerta ? "warn" : "", a: `${esc(x.g.nombre)}<div style="font-weight:500;opacity:.6;font-size:12px">${x.miembros} miembros · ${x.sem}/8 semanas</div>`,
+        b: x.dias === null ? "⚠ sin registros" : `${x.alerta ? "⚠ " : ""}hace ${x.dias} d · prom ${x.prom}` }))) });
+  }
 
   // ---- Ministerios que cubre ----
-  const minHtml = [];
-  if (cobMins.includes("anfitriones")) {
-    const { data } = await sb.from("asistencia_domingo").select("fecha, total, nuevos").order("fecha", { ascending: false }).limit(8);
-    minHtml.push(`<div class="panel"><h4>Anfitriones · asistencia del domingo</h4><div class="hint">Total por domingo</div>${data?.length ? barras(data.map((d) => ({ nombre: `${fmtCorta.format(fromYmd(d.fecha))} · ${d.nuevos} nuevos`, n: d.total }))) : '<div class="muted">Sin conteos todavía.</div>'}</div>`);
-  }
-  if (cobMins.includes("kidz")) {
-    const { data } = await sb.from("conteo_kidz").select("fecha, ninos, servidores").order("fecha", { ascending: false }).limit(8);
-    minHtml.push(`<div class="panel"><h4>Kidz · niños por domingo</h4>${data?.length ? barras(data.map((d) => ({ nombre: `${fmtCorta.format(fromYmd(d.fecha))} · ${d.servidores} servidores`, n: d.ninos }))) : '<div class="muted">Sin conteos todavía.</div>'}</div>`);
-  }
-  if (cobMins.includes("bienvenida")) {
-    const { data } = await sb.from("nuevos_seguimiento").select("primera_visita, clase_bienvenida, igho_nombre");
+  const tareas = [];
+  if (cobMins.includes("anfitriones")) tareas.push(sb.from("asistencia_domingo").select("fecha, total, nuevos").order("fecha", { ascending: false }).limit(8).then(({ data }) => {
+    const d = data || [], u = d[0];
+    return { key: "anf", color: "c-orange", label: "Asistencia<br>del domingo", num: u ? u.total : "0", sub: u ? `personas · ${fmtDiaMes(u.fecha)}` : "Sin conteos todavía",
+      detail: u ? columnas([...d].reverse().map((x) => ({ n: x.total, l: fmtDiaMes(x.fecha) }))) + `<div class="pc-tiles"><div><b>${promedio(d.map((x) => x.total))}</b>promedio ${d.length} semanas</div><div><b>${u.nuevos || 0}</b>nuevos</div></div>` : "" };
+  }));
+  if (cobMins.includes("kidz")) tareas.push(sb.from("conteo_kidz").select("fecha, ninos, servidores").order("fecha", { ascending: false }).limit(8).then(({ data }) => {
+    const d = data || [], u = d[0];
+    return { key: "kidz", color: "c-yellow", logo: "kidz", label: "Kidz", num: u ? u.ninos : "0", sub: u ? `niños · ${u.servidores || 0} siervos · ${fmtDiaMes(u.fecha)}` : "Sin registros todavía",
+      detail: u ? columnas([...d].reverse().map((x) => ({ n: x.ninos, l: fmtDiaMes(x.fecha) }))) : "" };
+  }));
+  if (cobMins.includes("bienvenida")) tareas.push(sb.from("nuevos_seguimiento").select("primera_visita, clase_bienvenida, igho_nombre").then(({ data }) => {
     const d = data || [], h30 = new Date(); h30.setDate(h30.getDate() - 30);
     const pct = (n) => d.length ? Math.round((n / d.length) * 100) + "%" : "—";
-    minHtml.push(`<div class="panel"><h4>Bienvenida · personas nuevas</h4><div class="tiles" style="margin:8px 0 0">
-      <div class="tile"><div class="n">${d.filter((x) => fromYmd(x.primera_visita) >= h30).length}</div><div class="l">Nuevos (30 días)</div></div>
-      <div class="tile"><div class="n">${d.length}</div><div class="l">Registrados en total</div></div>
-      <div class="tile"><div class="n">${pct(d.filter((x) => x.clase_bienvenida).length)}</div><div class="l">Tomaron la clase</div></div>
-      <div class="tile"><div class="n">${pct(d.filter((x) => x.igho_nombre).length)}</div><div class="l">Ya están en un IGHO</div></div></div></div>`);
-  }
-  if (cobMins.includes("worship")) {
-    const f = ymd(proximoDomingo());
-    const [sc, eq, pr] = await Promise.all([sb.from("worship_canciones").select("id", { count: "exact", head: true }).eq("fecha", f), sb.from("worship_equipo").select("id", { count: "exact", head: true }).eq("fecha", f), sb.from("predica_archivos").select("id", { count: "exact", head: true }).eq("fecha", f)]);
-    const listo = (sc.count || 0) > 0 && (eq.count || 0) > 0;
-    minHtml.push(`<div class="panel"><h4>Arco Worship · este domingo</h4><div class="ig-foot ${listo ? "" : "warn"}">${listo ? "✓ " : "⚠ "}${sc.count || 0} canciones y ${eq.count || 0} personas asignadas para el ${fmtCorta.format(fromYmd(f))}</div>
-      <div class="ig-foot ${pr.count ? "" : "warn"}">${pr.count ? `✓ Diapositivas de la prédica subidas (${pr.count})` : "⚠ Faltan las diapositivas de la prédica"}</div></div>`);
-  }
-  if (cobMins.includes("formacion")) minHtml.push(await resumenFormacionHtml());
-  if (minHtml.length) html += `<div class="sec-title">${todaLaIglesia ? "Ministerios" : "Ministerios que cubres"}</div>${minHtml.join("")}`;
-
-  html += `<div class="sec-title">Toda la iglesia</div>
-    <div class="tiles">
-      <div class="tile"><div class="n">${total}</div><div class="l">Personas</div></div>
-      <div class="tile"><div class="n">${ighos.length}</div><div class="l">IGHO activos</div></div>
-      <div class="tile"><div class="n">${total ? Math.round((bautizados / total) * 100) : 0}%</div><div class="l">Bautizados (${bautizados})</div></div>
-      <div class="tile"><div class="n">${nuevos}</div><div class="l">Menos de 1 año en Arco</div></div>
-    </div>
-    <div class="panel"><h4>Personas por IGHO</h4><div class="hint">Según la base de datos</div>${barras(porIgho)}
-      <button class="table-toggle" data-tabla="t1">Ver como tabla</button><div id="t1" class="hidden">${tabla(porIgho, "IGHO")}</div></div>
-    <div class="panel"><h4>Tiempo en Arco</h4><div class="hint">Respuestas del censo ${ANIO_CENSO}</div>${barras(porTiempo, censos.length)}</div>`;
-  body.innerHTML = html;
-  body.querySelectorAll("[data-tabla]").forEach((b) => b.addEventListener("click", () => {
-    const t = $(b.dataset.tabla); t.classList.toggle("hidden");
-    b.textContent = t.classList.contains("hidden") ? "Ver como tabla" : "Ocultar tabla";
+    return { key: "bien", color: "c-green", label: "Nuevos<br>del mes", num: d.filter((x) => fromYmd(x.primera_visita) >= h30).length, sub: "Bienvenida · últimos 30 días",
+      detail: `<div class="pc-tiles t3"><div><b>${d.length}</b>registrados</div><div><b>${pct(d.filter((x) => x.clase_bienvenida).length)}</b>tomaron la clase</div><div><b>${pct(d.filter((x) => x.igho_nombre).length)}</b>en un IGHO</div></div>` };
   }));
+  if (cobMins.includes("worship")) tareas.push(DATOS_HOME.worship().then((d) => ({ key: "ws", color: "c-lilac", logo: "ws", label: "Arco<br>Worship", ...d })));
+  if (cobMins.includes("formacion")) tareas.push(formacionTarjeta());
+  (await Promise.allSettled(tareas)).forEach((r) => r.status === "fulfilled" ? cards.push(r.value) : console.error(r.reason));
+
+  // ---- Toda la iglesia ----
+  cards.push({ key: "iglesia", color: "c-peach", label: "Toda la<br>iglesia", num: total, sub: "personas en la base",
+    detail: `<div class="pc-tiles t3"><div><b>${ighos.length}</b>IGHO activos</div><div><b>${total ? Math.round((bautizados / total) * 100) : 0}%</b>bautizados (${bautizados})</div><div><b>${nuevos}</b>menos de 1 año en Arco</div></div>` });
+  cards.push({ key: "porigho", color: "c-grey", label: "Personas<br>por IGHO", num: ighos.length, sub: "IGHO activos", detail: barras(porIgho) });
+  cards.push({ key: "tiempo", color: "c-white", label: "Tiempo<br>en Arco", num: censos.length, sub: `respuestas del censo ${ANIO_CENSO}`, detail: barras(porTiempo, censos.length) });
+  body.innerHTML = `<div class="pila" id="res-pila"></div>`;
+  pintarPila($("res-pila"), cards);
+}
+async function formacionTarjeta() {
+  const anio = String(new Date().getFullYear());
+  const [o, i, pc, p] = await Promise.all([
+    sb.from("fc_ofertas").select("id, nombre, abierta"), sb.from("fc_inscripciones").select("oferta_id, estado, creado_en"),
+    sb.from("persona_cursos").select("persona_id, cursos(codigo)"), sb.from("personas").select("id", { count: "exact", head: true }).eq("activo", true),
+  ]);
+  if (o.error) throw o.error;
+  const ins = i.data || [], tot = p.count || 0, de = (cod) => new Set((pc.data || []).filter((x) => x.cursos?.codigo === cod).map((x) => x.persona_id)).size;
+  const abiertas = o.data.filter((x) => x.abierta);
+  return { key: "fc", color: "c-sand", logo: "fc", label: "Formación<br>Cristiana", num: ins.filter((x) => x.estado === "inscrito").length, sub: `inscritos ahora · ${abiertas.length} abiertas`,
+    detail: `<div class="pc-tiles"><div><b>${ins.filter((x) => x.estado === "completo" && x.creado_en.startsWith(anio)).length}</b>completaron en ${anio}</div><div><b>${tot ? Math.round((de("raices") / tot) * 100) : 0}%</b>han tomado Raíces</div></div>`
+      + (abiertas.length ? `<div style="margin-top:14px">${barras(abiertas.map((x) => ({ nombre: x.nombre, n: ins.filter((y) => y.oferta_id === x.id && y.estado !== "retirado").length })))}</div>` : "") };
 }
 
 // ---------------- Utilidades de fechas ----------------
