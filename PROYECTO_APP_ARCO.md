@@ -142,6 +142,11 @@ Kidz with QR: camera check-in/check-out (photo confirmation, allergies, parent n
 - Notifications work on Joel's Android (function `swift-action` deployed with notificar.ts, Verify JWT off).
 - To confirm: `21_censo_rellenar.sql` and `22_stand_igho.sql` run in Supabase; cron job `recordatorio-siervos` points to `/functions/v1/swift-action` (check: `select command from cron.job where jobname = 'recordatorio-siervos';`).
 
+## Status (23 Nov 2026, after v11)
+- Files 23 and 26 ran OK in Supabase. Confirm 24 (IGHO editor, Jamie Díaz, attendance import) and 25 (Bienvenida → IGHO) were run too.
+- After deleting the Kidz test counts of 20 and 22 Nov, add the sheet's 22 Nov count (337 adults, 68 children) if not done: `insert into conteo_anfitriones (fecha, adultos, ninos_auditorio, nuevos, registrado_nombre, actualizado_en) values ('2026-11-22', 337, 68, 0, 'Hoja de asistencia 2026', now()) on conflict (fecha) do nothing;`
+- Supabase SQL editor tip: run each file in a New query with the whole file pasted; temp tables don't survive between statements there.
+
 ## Pending
 - Test notifications on an iPhone (Safari → Agregar a pantalla de inicio first); check the first Saturday reminder (Supabase → Edge Functions → swift-action → Logs, Saturday 20:00)
 - Decide: should Consejo spouses see Reunión del Consejo? (now hidden)
