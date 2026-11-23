@@ -169,7 +169,7 @@ end $$;
 
 select cron.schedule('recordatorio-siervos', '0 1 * * 0', $cron$
   select net.http_post(
-    url := 'https://lmitwnfvelwbbkjkvmtb.supabase.co/functions/v1/notificar',
+    url := 'https://lmitwnfvelwbbkjkvmtb.supabase.co/functions/v1/swift-action',
     headers := jsonb_build_object('Content-Type', 'application/json',
                                   'x-cron-secreto', (select valor from public.ajustes_privados where clave = 'cron_secreto')),
     body := jsonb_build_object('accion', 'recordatorios'),

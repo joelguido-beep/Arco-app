@@ -737,7 +737,7 @@
 
   <!-- ================= AVISOS ================= -->
   <section id="v-avisos" class="hidden"><div class="top"><button class="back" data-go="home" aria-label="Volver"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button></div>
-    <div class="page-title">Avisos</div><div class="hello-sub" id="av-sub">Notificaciones de Arco Ríos</div><div id="av-body"></div></section>
+    <div class="page-title">Avisos</div><div class="hello-sub" id="av-sub">Notificaciones de Arco Ríos · versión 23-nov v3</div><div id="av-body"></div></section>
 
   <!-- ================= CENSO (enlace público, sin cuenta) ================= -->
   <section id="v-censo" class="hidden"><div class="top"><span class="pill"><span class="dot" id="cz-logo"></span>Arco Ríos</span></div>
@@ -2167,6 +2167,10 @@ async function cargarIgho() {
   const { data, error } = await sb.from("personas").select("id, nombres, apellidos, telefono, fecha_nacimiento").eq("igho_id", ig.sel).eq("activo", true).order("nombres");
   if (error) { $("ig-body").innerHTML = `<div class="soon">${esc(error.message)}</div>`; return; }
   ig.miembros = data;
+  // Personas que pidieron en el Stand conocer este IGHO
+  const hace30 = new Date(); hace30.setDate(hace30.getDate() - 30);
+  const { data: it } = await sb.from("igho_interesados").select("*").eq("igho_id", ig.sel).or(`contactado_en.is.null,contactado_en.gte.${hace30.toISOString()}`).order("creado_en", { ascending: false });
+  ig.interes = it || [];
   ig.cubre = ctx.esAncianoOAdmin ? await cubroIgho(ig.sel).catch(() => false) : false;
   if (ctx.conyuge) marcarSoloVer("igho", !ctx.ighoIds.includes(ig.sel));
   ig.marcados = new Set();
@@ -2174,7 +2178,16 @@ async function cargarIgho() {
 }
 function pintarMiembros() {
   const cumpleIds = new Set(cumplesDeLaSemana(ig.miembros).map((p) => p.id));
-  $("ig-body").innerHTML = `${cumplesIghoHtml(ig.miembros)}
+  const yaEsta = (x) => ig.miembros.some((m) => m.id === x.persona_id);
+  const interesHtml = ig.interes?.length ? `<div class="panel" style="border:2px solid var(--orange)"><h4>Quieren unirse (${ig.interes.filter((x) => !x.contactado_en).length})</h4>
+      <div class="hint">Lo pidieron en el Stand de información. Contáctales pronto.</div>
+      ${ig.interes.map((x) => { const w = waLink(x.telefono); return `<div class="nuevo"><div class="kclase-h"><b>${esc(x.nombre)}</b>${x.contactado_en ? '<span class="st yes">✓ Contactado</span>' : '<span class="st">Pendiente</span>'}</div>
+        <div class="muted">${fmtCorta.format(new Date(x.creado_en))}${x.inscrito_por_nombre ? " · Stand: " + esc(x.inscrito_por_nombre) : ""}</div>
+        ${x.notas ? `<div class="knota">${esc(x.notas)}</div>` : ""}
+        <div class="row-btns" style="margin-top:8px">${w ? `<a class="btn-sec mini wa-mini" href="${w}?text=${encodeURIComponent(`Hola ${x.nombre.split(" ")[0]}, soy ${ctx.nombre}, líder del IGHO ${ig.lista.find((g) => g.id === ig.sel)?.nombre || ""} de Arco Ríos. ¡Me contaron que quieres conocer nuestra iglesia de hogar! 🏠`)}" target="_blank" rel="noopener">WhatsApp</a>` : ""}
+          ${x.contactado_en ? "" : `<button class="btn-sec mini" data-contacto="${x.id}">Ya le contacté</button>`}
+          ${x.persona_id && !yaEsta(x) ? `<button class="btn-sec mini" data-unir="${x.id}">Agregar al IGHO</button>` : yaEsta(x) ? '<span class="muted">Ya es miembro</span>' : ""}</div></div>`; }).join("")}</div>` : "";
+  $("ig-body").innerHTML = `${interesHtml}${cumplesIghoHtml(ig.miembros)}
     <div class="panel">
       <h4>Miembros (${ig.miembros.length})</h4><div class="hint">Toca un nombre para editar su ficha${ig.cubre ? ". Marca personas para moverlas a otro IGHO." : ""}</div>
       ${ig.miembros.map((p) => `<div class="li"><div>${ig.cubre ? `<input type="checkbox" class="ig-mk" data-mk="${p.id}" aria-label="Marcar"> ` : ""}<button class="link name-btn" data-editar="${p.id}">${esc(p.nombres)} ${esc(p.apellidos || "")}${cumpleIds.has(p.id) ? " 🎂" : ""}</button><div>${telHtml(p.telefono)}</div></div><div class="row-btns"><button class="btn-sec mini" data-editar="${p.id}">Editar</button><button class="x" data-quitar="${p.id}" aria-label="Quitar del IGHO">×</button></div></div>`).join("") || `<div class="muted">Este IGHO no tiene miembros todavía.</div>`}
@@ -2193,6 +2206,14 @@ function pintarMiembros() {
       <div class="ok" id="ig-msg"></div>
     </div>`;
   $("ig-body").querySelectorAll("[data-editar]").forEach((b) => b.addEventListener("click", () => editarMiembro(b.dataset.editar)));
+  const contactado = (id) => sb.from("igho_interesados").update({ contactado_en: new Date().toISOString(), contactado_por: ctx.nombreCompleto }).eq("id", id);
+  $("ig-body").querySelectorAll("[data-contacto]").forEach((b) => b.addEventListener("click", async () => { const { error } = await contactado(+b.dataset.contacto); if (error) return alert(error.message); cargarIgho(); }));
+  $("ig-body").querySelectorAll("[data-unir]").forEach((b) => b.addEventListener("click", async () => {
+    const x = ig.interes.find((y) => y.id === +b.dataset.unir); if (!x || !confirm(`¿Agregar a ${x.nombre} como miembro de este IGHO?`)) return;
+    const { error } = await sb.rpc("agregar_a_igho", { p_persona: x.persona_id, p_igho: ig.sel }); if (error) return alert(error.message);
+    if (!x.contactado_en) await contactado(x.id);
+    cargarIgho();
+  }));
   $("ig-body").querySelectorAll("[data-mk]").forEach((x) => x.addEventListener("change", () => (x.checked ? ig.marcados.add(x.dataset.mk) : ig.marcados.delete(x.dataset.mk))));
   $("ig-mover")?.addEventListener("click", () => moverSeleccion([...ig.marcados], () => cargarIgho()));
   $("ig-mult")?.addEventListener("click", () => { $("ig-tabs").classList.add("hidden"); abrirMultiplicar(ig.sel, "ig-body", () => { $("ig-tabs").classList.remove("hidden"); abrirIgho(); }); });
@@ -4578,19 +4599,23 @@ async function abrirStand() {
   await cargarCursosFc();
   const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
   const domF = ymd(proximoDomingo());
-  const [o, ins, an, ac, rg] = await Promise.all([
+  const [o, ins, an, ac, rg, ig_, it_] = await Promise.all([
     sb.from("fc_ofertas").select("*").eq("abierta", true).order("fecha_inicio", { nullsFirst: false }),
     sb.from("fc_inscripciones").select("nombre, oferta_id, inscrito_por_nombre, creado_en").gte("creado_en", hoy.toISOString()).order("creado_en", { ascending: false }),
     cargarAnuncios(domF),
     sb.from("stand_actividades").select("*").eq("abierta", true).order("creado_en", { ascending: false }),
     sb.from("stand_registros").select("*").order("creado_en", { ascending: false }),
+    sb.rpc("stand_ighos"),
+    sb.from("igho_interesados").select("*").gte("creado_en", hoy.toISOString()).order("creado_en", { ascending: false }),
   ]);
+  const ighosSt = ig_.error ? [] : ig_.data || [], interesHoy = it_.error ? [] : it_.data || [];
   if (o.error) { body.innerHTML = `<div class="soon">No se pudo cargar. ${esc(o.error.message)}</div>`; return; }
   const ofertas = o.data, acts = ac.error ? [] : ac.data || [], regs = rg.error ? [] : rg.data || [];
   // Todo lo que se puede inscribir: actividades de los anuncios y clases/eventos de Formación
   const opciones_ = [
     ...acts.map((a) => ({ k: "a" + a.id, nombre: a.titulo, tipo: a.tipo === "ninos" ? "ninos" : "personas", act: a, det: a.detalle ? esc(a.detalle).replace(/\n/g, "<br>") : "Actividad de los anuncios" })),
     ...ofertas.map((x) => ({ k: "o" + x.id, nombre: x.nombre, tipo: "oferta", of: x, e: estiloDe(x), det: `${detalleFc(x) || "Sin fecha todavía"}${x.descripcion ? "<br>" + esc(x.descripcion) : ""}` })),
+    ...(ighosSt.length ? [{ k: "igho", nombre: "Iglesia de hogar (IGHO)", tipo: "igho", det: "Para quien quiere conocer un IGHO. Su líder recibe un aviso para contactarle." }] : []),
   ];
   if (st_.oferta) st_.sel = "o" + st_.oferta;
   if (!opciones_.some((x) => x.k === st_.sel)) st_.sel = opciones_[0]?.k || null;
@@ -4599,17 +4624,12 @@ async function abrirStand() {
   const nombreOf = (id) => ofertas.find((x) => x.id === id)?.nombre || "";
   const puedeCerrar = puedeEditarAnuncios();
 
-  // ---- Anuncios de la semana (resumen) ----
-  const de = (t) => an.fijos.filter((f) => f.tipo === t);
-  const listaAn = [...de("inicio").map((x) => ({ ...x, fijo: true })), ...an.items, ...de("final").map((x) => ({ ...x, fijo: true }))];
-  const anunHtml = `<div class="panel"><div class="kclase-h"><h4>Anuncios · ${esc(fmtTitulo(domF))}</h4>${nombresAnunciantes(an.cab) ? `<span class="tl-who" style="margin:0">Los da: ${esc(nombresAnunciantes(an.cab))}</span>` : ""}</div>
-      <div class="hint">Para responder preguntas en el Stand. Toca un anuncio para ver el detalle.</div>
-      ${de("recordatorio").map((f) => `<div class="anun-box rec"><b>Recordatorio</b><span>${esc(f.texto)}</span></div>`).join("")}
-      ${de("importante").map((f) => `<div class="anun-box imp"><b>Importante</b><span>${esc(f.texto)}</span></div>`).join("")}
-      ${listaAn.length ? `<div class="st-anun">${listaAn.map((x, i) => `<details${x.stand_actividad_id ? " open" : ""}><summary><span class="song-n">${i + 1}</span><span>${esc(x.titulo || "")}${x.fijo ? "" : ' <span class="anun-new">Nuevo</span>'}${x.stand_actividad_id ? '<span class="st-tag">Inscripciones aquí</span>' : ""}</span></summary>
+  // ---- Anuncios nuevos de la semana (eventos y actividades) ----
+  const anunHtml = an.items.length ? `<div class="panel"><h4>Anuncios nuevos · ${esc(fmtTitulo(domF))}</h4>
+      <div class="hint">Eventos y actividades de esta semana. Toca uno para ver el detalle.</div>
+      <div class="st-anun">${an.items.map((x, i) => `<details${x.stand_actividad_id ? " open" : ""}><summary><span class="song-n">${i + 1}</span><span>${esc(x.titulo || "")}${x.stand_actividad_id ? '<span class="st-tag">Inscripciones aquí</span>' : ""}</span></summary>
         ${x.texto ? `<div class="anun-txt">${esc(x.texto).replace(/\n/g, "<br>")}</div>` : ""}
-        ${x.stand_actividad_id && acts.some((a) => a.id === x.stand_actividad_id) ? `<button class="btn-sec mini solo-edit" data-ir="a${x.stand_actividad_id}" style="margin:8px 0 0 34px">Inscribir</button>` : ""}</details>`).join("")}</div>`
-        : `<div class="muted">Todavía no hay anuncios para este domingo.</div>`}</div>`;
+        ${x.stand_actividad_id && acts.some((a) => a.id === x.stand_actividad_id) ? `<button class="btn-sec mini solo-edit" data-ir="a${x.stand_actividad_id}" style="margin:8px 0 0 34px">Inscribir</button>` : ""}</details>`).join("")}</div></div>` : "";
 
   if (!opciones_.length) {
     body.innerHTML = anunHtml + `<div class="soon">No hay inscripciones abiertas. Se abren al marcar «Inscripciones en el Stand» en un anuncio, o desde Formación Cristiana.</div>`;
@@ -4617,7 +4637,17 @@ async function abrirStand() {
   }
   const sel = elegida();
   const regsSel = sel.act ? regs.filter((r) => r.actividad_id === sel.act.id) : [];
-  const form = sel.tipo === "ninos"
+  const form = sel.tipo === "igho"
+    ? `<div class="panel solo-edit"><h4>2. ¿A qué IGHO?</h4>
+        <select id="st-ig"><option value="">Elige el IGHO…</option>${ighosSt.map((g) => `<option value="${g.id}">${esc(g.nombre)}${g.lider ? " · " + esc(g.lider) : ""}${g.ubicacion ? " · " + esc(g.ubicacion) : ""}</option>`).join("")}</select>
+        <div class="hint" id="st-ig-det"></div></div>
+      <div class="panel solo-edit"><h4>3. La persona</h4>
+        <input id="st-q" placeholder="Buscar por nombre o celular" autocomplete="off"><div id="st-res"></div>
+        <div class="hint" style="margin-top:10px">¿No aparece? Escribe sus datos:</div>
+        <div class="two"><div><input id="st-n" placeholder="Nombres" autocomplete="off"></div><div><input id="st-a" placeholder="Apellidos" autocomplete="off"></div></div>
+        <input id="st-t" placeholder="Celular (09…)" inputmode="tel" autocomplete="off">
+        <label>Notas para el líder (opcional)</label><textarea id="st-notas" placeholder="Ej.: vive en Totoracocha, puede los jueves"></textarea></div>`
+    : sel.tipo === "ninos"
     ? `<div class="panel solo-edit"><h4>2. El niño o la niña</h4>
         <input id="st-q" placeholder="Buscar en Kidz por nombre" autocomplete="off"><div id="st-res"></div>
         <div class="hint" style="margin-top:10px">¿No está en Kidz? Escribe sus datos:</div>
@@ -4632,7 +4662,11 @@ async function abrirStand() {
         <div class="two"><div><input id="st-n" placeholder="Nombres" autocomplete="off"></div><div><input id="st-a" placeholder="Apellidos" autocomplete="off"></div></div>
         <input id="st-t" placeholder="Celular (09…)" inputmode="tel" autocomplete="off">
         <label>Notas (opcional)</label><textarea id="st-notas" placeholder="Ej.: viene con su esposa, necesita cuidado de niños"></textarea></div>`;
-  const listaHtml = sel.act
+  const listaHtml = sel.tipo === "igho"
+    ? `<div class="panel"><h4>Quieren ir a un IGHO · hoy (${interesHoy.length})</h4>
+        ${interesHoy.map((x) => `<div class="li"><div><b>${esc(x.nombre)}</b><div class="muted">${esc(ighosSt.find((g) => g.id === x.igho_id)?.nombre || "")}${x.inscrito_por_nombre ? " · " + esc(x.inscrito_por_nombre) : ""}</div></div>
+          <span class="muted">${fmtHora.format(new Date(x.creado_en))}</span></div>`).join("") || '<div class="muted">Nadie todavía.</div>'}</div>`
+    : sel.act
     ? `<div class="panel"><div class="kclase-h"><h4>${esc(sel.nombre)} (${regsSel.length})</h4>${puedeCerrar ? `<button class="btn-sec mini solo-edit" id="st-cerrar">Cerrar inscripción</button>` : ""}</div>
         ${regsSel.map((x) => { const w = waLink(x.telefono); return `<div class="li"><div><b>${esc(x.nombre)}</b>${x.fecha_nacimiento ? ` <span class="muted">· ${edadTexto(x.fecha_nacimiento)}</span>` : ""}
           <div class="muted">${x.responsable ? esc(x.responsable) + " · " : ""}${x.telefono ? (w ? `<a class="wa" href="${w}" target="_blank" rel="noopener">${esc(x.telefono)}</a>` : esc(x.telefono)) : "sin teléfono"}</div>
@@ -4661,6 +4695,8 @@ async function abrirStand() {
     const { error } = await sb.from("stand_registros").delete().eq("id", +b.dataset.quita); if (error) return alert(error.message); abrirStand();
   }));
 
+  $("st-ig")?.addEventListener("change", (e) => { const g = ighosSt.find((x) => x.id === e.target.value);
+    $("st-ig-det").textContent = g ? `Líder: ${g.lider || "sin líder registrado"}${g.lider_con_app ? " · recibirá un aviso en la app" : " · no usa la app: te daremos su WhatsApp"}` : ""; });
   // Búsqueda
   let t;
   $("st-q")?.addEventListener("input", (e) => { st_.persona = null; clearTimeout(t); t = setTimeout(async () => {
@@ -4684,6 +4720,26 @@ async function abrirStand() {
     if (telEsc && tel.length !== 10) return (msg.textContent = "El celular debe tener 10 dígitos (09…).");
     $("st-ok").disabled = true;
     let error, nombre, telFinal;
+    if (sel.tipo === "igho") {
+      const g = ighosSt.find((x) => x.id === $("st-ig").value);
+      if (!g) { $("st-ok").disabled = false; return (msg.textContent = "Elige el IGHO."); }
+      const { data: r, error: e1 } = await sb.rpc("stand_igho_interes", { p_igho: g.id, p_persona: st_.persona?.id || null, p_nombres: $("st-n").value.trim() || null,
+        p_apellidos: $("st-a").value.trim() || null, p_telefono: tel || null, p_notas: $("st-notas").value.trim() || null, p_quien: ctx.nombreCompleto });
+      $("st-ok").disabled = false;
+      if (e1) return (msg.textContent = e1.message + (/stand_igho/.test(e1.message) ? " (falta ejecutar 22_stand_igho.sql)" : ""));
+      nombre = st_.persona?.nombre || `${$("st-n").value.trim()} ${$("st-a").value.trim()}`.trim(); telFinal = st_.persona?.tel || tel;
+      if (r?.personas) sb.functions.invoke(FUNCION_AVISOS, { body: { accion: "enviar_interes", id: r.aviso } }).catch(() => {});
+      const wl = waLink(g.lider_tel), wp = waLink(telFinal);
+      const paraLider = `Hola ${(g.lider || "").split(" ")[0]}, te escribimos del Stand de Arco Ríos: ${nombre}${telFinal ? " (" + telFinal + ")" : ""} quiere conocer tu IGHO ${g.nombre}. ¿Puedes contactarle? 🙏`;
+      const paraPersona = `Hola ${nombre.split(" ")[0]}, gracias por tu interés en las Iglesias de hogar de Arco Ríos. ${g.lider ? g.lider.split(" ")[0] + ", líder de " + g.nombre + "," : "El líder del IGHO"} te va a contactar pronto. 🏠`;
+      return abrirStand().then(() => {
+        $("st-listo").innerHTML = `<div class="total-card"><div class="l">✓ Listo</div><div class="n" style="font-size:26px">${esc(nombre)}</div>
+            <div class="det">${esc(g.nombre)} · ${r?.personas ? "el líder recibió un aviso en la app" : "el líder no usa la app todavía"}</div></div>
+          ${!r?.personas && wl ? `<a class="btn-primary wa-btn" href="${wl}?text=${encodeURIComponent(paraLider)}" target="_blank" rel="noopener">Avisar al líder por WhatsApp</a>` : ""}
+          ${wp ? `<a class="btn-sec wa-sec" style="display:block;text-align:center;text-decoration:none" href="${wp}?text=${encodeURIComponent(paraPersona)}" target="_blank" rel="noopener">Mensaje a ${esc(nombre.split(" ")[0])} por WhatsApp</a>` : ""}`;
+        $("st-listo").scrollIntoView({ block: "center" });
+      });
+    }
     if (sel.tipo === "oferta") {
       ({ error } = await sb.rpc("fc_inscribir", { p_oferta: sel.of.id, p_persona: st_.persona?.id || null, p_nombres: $("st-n").value.trim() || null,
         p_apellidos: $("st-a").value.trim() || null, p_telefono: tel || null, p_notas: $("st-notas").value.trim() || null, p_quien: ctx.nombreCompleto }));
@@ -5167,7 +5223,15 @@ function pintarCensoPublico() {
         <button class="btn-primary" id="cz-buscar">Buscar</button><div id="cz-res" style="margin-top:12px"></div></div>
       <div class="hint" style="text-align:center">Tus datos solo los ve el equipo pastoral de Arco Ríos.</div>`;
     const buscar = () => buscarCenso($("cz-qn").value.trim(), $("cz-qa").value.trim(), $("cz-res"),
-      (p) => { const [n, ...a] = p.nombre.split(" "); cz.yo = { persona_id: p.id, nombres: n, apellidos: a.join(" "), tel_fin: p.tel_fin, _nombre: p.nombre };
+      async (p) => {
+        // Trae lo que ya está en la base para que solo revise y corrija
+        const { data: d } = await sb.rpc("censo_persona", { p_codigo: cz.codigo, p_id: p.id });
+        if (d?.yo) {
+          cz.yo = { ...d.yo, tel_fin: p.tel_fin, _nombre: p.nombre, _base: true };
+          cz.direccion = d.direccion || "";
+          if (!cz.familia.length) cz.familia = (d.familia || []).map((m) => ({ ...m, _base: true }));
+          cz.paso = 2; return pintarCensoPublico();
+        } const [n, ...a] = p.nombre.split(" "); cz.yo = { persona_id: p.id, nombres: n, apellidos: a.join(" "), tel_fin: p.tel_fin, _nombre: p.nombre };
         // separar nombres y apellidos según lo que escribió
         const ap = unaccent($("cz-qa").value.trim()), idx = unaccent(p.nombre).indexOf(" " + ap.split(" ")[0]);
         if (idx > 0) { cz.yo.nombres = p.nombre.slice(0, idx); cz.yo.apellidos = p.nombre.slice(idx + 1); } else { cz.yo.nombres = n; cz.yo.apellidos = a.join(" "); }
@@ -5180,14 +5244,15 @@ function pintarCensoPublico() {
   }
   if (cz.paso === 2) {
     body.innerHTML = `${pasos}<div class="panel"><h4>Tus datos</h4>
-        ${cz.yo.persona_id ? `<div class="hint">Ya estás en la lista. Completa o corrige lo que haga falta; lo que dejes vacío no cambia.</div>` : `<div class="hint">Te agregamos como persona nueva.</div>`}
+        ${cz.yo._base ? `<div class="hint">Estos son los datos que tenemos. Revísalos y corrige lo que esté mal o falte.</div>`
+          : cz.yo.persona_id ? `<div class="hint">Ya estás en la lista. Completa o corrige lo que haga falta; lo que dejes vacío no cambia.</div>` : `<div class="hint">Te agregamos como persona nueva.</div>`}
         ${camposPersona(cz.yo, "cy-", true)}
         <label>Dirección de tu casa (opcional)</label><input id="cy-dir" value="${esc(cz.direccion || "")}" placeholder="Barrio, calle principal">
       </div>
       <button class="btn-primary" id="cz-sig">Siguiente: tu familia</button>
       <button class="btn-sec" id="cz-atras" style="width:100%">← No soy yo</button><div class="ok err" id="cz-msg"></div>`;
     hookSegSimple("cy-b");
-    $("cz-atras").addEventListener("click", () => { cz.paso = 1; pintarCensoPublico(); });
+    $("cz-atras").addEventListener("click", () => { cz.familia = cz.familia.filter((m) => !m._base); cz.paso = 1; pintarCensoPublico(); });
     $("cz-sig").addEventListener("click", () => {
       const p = leerPersona("cy-", cz.yo);
       if (!p.nombres) return ($("cz-msg").textContent = "Escribe tus nombres.");
@@ -5199,10 +5264,11 @@ function pintarCensoPublico() {
   if (cz.paso === 3) {
     if (cz.editando) return pintarFamiliar();
     body.innerHTML = `${pasos}<div class="panel"><h4>Tu familia</h4>
-        <div class="hint">Agrega a tu esposo/a, tus hijos y a quienes viven contigo. Así no tienen que llenar el censo por separado.</div>
+        <div class="hint">${cz.familia.some((m) => m._base) ? "Esta es la familia que tenemos registrada. Toca «Revisar» en cada uno para confirmar sus datos, quita a quien no corresponda y agrega a quien falte."
+          : "Agrega a tu esposo/a, tus hijos y a quienes viven contigo. Así no tienen que llenar el censo por separado."}</div>
         ${cz.familia.map((m, i) => `<div class="cz-fam"><div class="kclase-h"><b>${esc(m.nombres)} ${esc(m.apellidos || "")}</b><span class="st yes">${esc(nombreRel(m.relacion))}</span></div>
           <div class="muted">${m.vive_conmigo ? "Vive conmigo" : "No vive conmigo"}${m.fecha_nacimiento ? " · " + edadTexto(m.fecha_nacimiento) : ""}${m.persona_id ? " · ya está en la lista" : " · nuevo/a"}</div>
-          <div class="row-btns" style="margin-top:8px"><button class="btn-sec mini" data-ed="${i}">Editar</button><button class="btn-sec mini danger" data-del="${i}">Quitar</button></div></div>`).join("")
+          <div class="row-btns" style="margin-top:8px"><button class="btn-sec mini" data-ed="${i}">${m._base ? "Revisar" : "Editar"}</button><button class="btn-sec mini danger" data-del="${i}">Quitar</button></div></div>`).join("")
           || `<div class="muted" style="margin:10px 0">Todavía no agregas a nadie.</div>`}
         <button class="btn-sec" id="cz-add" style="width:100%">+ Agregar un familiar</button></div>
       <button class="btn-primary" id="cz-enviar">Enviar censo</button>
@@ -5213,7 +5279,7 @@ function pintarCensoPublico() {
     $("cz-atras").addEventListener("click", () => { cz.paso = 2; pintarCensoPublico(); });
     $("cz-enviar").addEventListener("click", async () => {
       $("cz-enviar").disabled = true;
-      const limpia = (p) => { const o = { ...p }; delete o.tel_fin; delete o._nombre; return o; };
+      const limpia = (p) => { const o = { ...p }; delete o.tel_fin; delete o._nombre; delete o._base; return o; };
       const { error } = await sb.rpc("censo_enviar", { p_codigo: cz.codigo, p_datos: { yo: limpia(cz.yo), direccion: cz.direccion || null, familia: cz.familia.map(limpia), enviado: new Date().toISOString() } });
       $("cz-enviar").disabled = false;
       if (error) return ($("cz-msg").textContent = error.message);
@@ -5239,7 +5305,7 @@ function pintarFamiliar() {
   body.innerHTML = `<div class="cz-paso">Paso 3 de 3 · Familiar</div><div class="panel"><h4>${cz.editando.i === null ? "Agregar un familiar" : "Editar familiar"}</h4>
       <label>¿Qué es tuyo/a?</label><select id="cf-rel">${opciones(RELACION, m.relacion)}</select>
       <label class="check" style="margin:12px 0"><input type="checkbox" id="cf-vive" ${m.vive_conmigo ? "checked" : ""}> Vive conmigo</label>
-      ${ya ? `${m.persona_id ? `<div class="hint">Ya está en la lista de la iglesia: ${esc(m._nombre || m.nombres)}. Completa lo que falte.</div>` : ""}
+      ${ya ? `${m.persona_id ? `<div class="hint">Ya está en la lista de la iglesia. Revisa sus datos y corrige lo que esté mal o falte.</div>` : ""}
           ${camposPersona(m, "cf-", !m.vive_conmigo)}`
         : `<div class="hint">Primero búscalo/a en la lista de la iglesia.</div>
           <div class="two"><div><label>Nombre</label><input id="cf-qn"></div><div><label>Apellido</label><input id="cf-qa"></div></div>
@@ -5253,7 +5319,10 @@ function pintarFamiliar() {
   $("cf-cancel").addEventListener("click", () => { cz.editando = null; pintarCensoPublico(); });
   if (!ya) {
     const buscar = () => buscarCenso($("cf-qn").value.trim(), $("cf-qa").value.trim(), $("cf-res"),
-      (p) => { guardarEstado(); const ap = unaccent($("cf-qa").value.trim()), idx = unaccent(p.nombre).indexOf(" " + ap.split(" ")[0]);
+      async (p) => { guardarEstado();
+        const { data: d } = await sb.rpc("censo_persona", { p_codigo: cz.codigo, p_id: p.id });
+        if (d?.yo) { const { cursos, tiempo_en_arco, ...datos } = d.yo; Object.assign(m, datos, { _nombre: p.nombre, tel_fin: p.tel_fin }); return pintarFamiliar(); }
+        const ap = unaccent($("cf-qa").value.trim()), idx = unaccent(p.nombre).indexOf(" " + ap.split(" ")[0]);
         Object.assign(m, { persona_id: p.id, _nombre: p.nombre, tel_fin: p.tel_fin, nombres: idx > 0 ? p.nombre.slice(0, idx) : p.nombre, apellidos: idx > 0 ? p.nombre.slice(idx + 1) : "" }); pintarFamiliar(); },
       "No está en la lista · agregar como nuevo/a",
       () => { guardarEstado(); Object.assign(m, { _nuevo: true, nombres: $("cf-qn").value.trim(), apellidos: $("cf-qa").value.trim() }); pintarFamiliar(); });
@@ -5264,7 +5333,7 @@ function pintarFamiliar() {
   hookSegSimple("cf-b");
   $("cf-ok").addEventListener("click", () => {
     guardarEstado();
-    const p = leerPersona("cf-", m); delete p._nuevo;
+    const p = leerPersona("cf-", m); delete p._nuevo; delete p._base;
     if (!p.nombres) return ($("cf-msg").textContent = "Escribe sus nombres.");
     if ($("cf-t").value.trim() && p.telefono.length !== 10) return ($("cf-msg").textContent = "El celular debe tener 10 dígitos (09…).");
     if (cz.editando.i === null) cz.familia.push(p); else cz.familia[cz.editando.i] = p;
@@ -5380,7 +5449,8 @@ async function revisarCenso(x) {
 // ===================================================================
 // AVISOS: notificaciones al teléfono + campana dentro de la app
 // ===================================================================
-const FUNCION_AVISOS = "notificar"; // Edge Function en Supabase
+const VERSION_APP = "23-nov · v3";
+const FUNCION_AVISOS = "swift-action"; // Edge Function en Supabase (se muestra como «notificar»)
 const av = { lista: [], noLeidas: 0, timer: null };
 const IR_A = [["", "Avisos"], ["domingo", "Este domingo"], ["igho", "Mi IGHO"], ["kidz", "Kidz"], ["worship", "Arco Worship"], ["formacion", "Formación Cristiana"], ["stand", "Stand de información"]];
 const pushSoportado = () => "serviceWorker" in navigator && "PushManager" in window && "Notification" in window;
@@ -5439,12 +5509,22 @@ async function estadoPush() {
   const sub = await reg?.pushManager.getSubscription();
   return sub && Notification.permission === "granted" ? "si" : "apagado";
 }
+// Explica en palabras simples por qué falló la función «notificar»
+async function errorFuncion(error, data) {
+  let st = error?.context?.status, det = data?.error || error?.message || "";
+  try { const j = await error.context.json(); det = j.error || j.message || det; } catch {}
+  if (st === 404) return "La función «notificar» todavía no existe en Supabase (Edge Functions → nombre exacto: notificar).";
+  if (st === 401 && !/Inicia sesión/.test(det)) return "En Supabase, abre la función «notificar» y apaga «Verify JWT with legacy secret».";
+  if (/ajustes_privados|relation .* does not exist|crear_recordatorios/.test(det)) return "Falta ejecutar 20_avisos.sql en Supabase.";
+  if (!st && /Failed to send|fetch/i.test(det)) return "No se pudo llamar a la función «notificar». ¿Está creada y desplegada en Supabase?";
+  return `Error de la función «notificar»${st ? " (" + st + ")" : ""}: ${det}`;
+}
 async function activarPush() {
   const reg = await registrarSW(); if (!reg) throw new Error("Este navegador no permite notificaciones.");
   const perm = await Notification.requestPermission();
   if (perm !== "granted") throw new Error("No se dio permiso para las notificaciones.");
   const { data, error } = await sb.functions.invoke(FUNCION_AVISOS, { body: { accion: "clave" } });
-  if (error || !data?.clave) throw new Error("No se pudo preparar el envío. ¿Ya se creó la función «notificar» en Supabase?");
+  if (error || !data?.clave) throw new Error(await errorFuncion(error, data));
   await navigator.serviceWorker.ready;
   let sub = await reg.pushManager.getSubscription();
   if (!sub) sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: bytesDeB64u(data.clave) });
@@ -5500,7 +5580,7 @@ async function abrirAvisos() {
   $("av-off")?.addEventListener("click", async () => { await quitarPushLocal(); abrirAvisos(); });
   $("av-prueba")?.addEventListener("click", async () => {
     const { data, error } = await sb.functions.invoke(FUNCION_AVISOS, { body: { accion: "prueba" } });
-    if (error || data?.error) return alert("No se pudo enviar: " + (data?.error || error.message));
+    if (error || data?.error) return alert(await errorFuncion(error, data));
     if (!data?.enviados) alert("No llegó a ningún teléfono. Desactiva y vuelve a activar las notificaciones.");
     cargarMisAvisos();
   });
@@ -5515,7 +5595,7 @@ async function abrirAvisos() {
     const r = await sb.functions.invoke(FUNCION_AVISOS, { body: { accion: "enviar", id } });
     $("av-enviar").disabled = false;
     await abrirAvisos();
-    $("av-msg").textContent = r.error ? "✓ Guardado en la app. No se pudo enviar a los teléfonos (revisa la función «notificar»)." : `✓ Enviado · llegó a ${r.data?.enviados ?? 0} teléfono(s). Todos lo ven en la campana de la app.`;
+    $("av-msg").textContent = r.error ? "✓ Guardado en la app (todos lo ven en la campana). No llegó a los teléfonos: " + (await errorFuncion(r.error, r.data)) : `✓ Enviado · llegó a ${r.data?.enviados ?? 0} teléfono(s). Todos lo ven en la campana de la app.`;
   });
   marcarLeidas();
 }
