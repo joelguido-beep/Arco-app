@@ -242,6 +242,14 @@
   .seg button.on { background: var(--orange); color: var(--ink-dark); }
   .nuevo { padding: 14px 0; border-bottom: 1px solid var(--surface-2); }
   .nuevo:last-child { border-bottom: 0; }
+  .fz-mes { display: grid; grid-template-columns: 38px 1fr 78px; gap: 10px; align-items: center; padding: 7px 0; cursor: pointer; }
+  .fz-l { color: var(--ink-2); font-size: 14px; }
+  .fz-bar { height: 14px; background: var(--surface-2); border-radius: 7px; overflow: hidden; }
+  .fz-bar span { display: block; height: 100%; background: var(--orange); border-radius: 7px; }
+  .fz-n { text-align: right; font-weight: 600; font-size: 14px; }
+  .fz-det { padding: 4px 0 10px 48px; }
+  .nuevo-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+  .nuevo-top .row-btns { flex-shrink: 0; }
   .sts { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0; }
   .st { background: var(--surface-2); color: var(--ink-2); border-radius: 999px; padding: 4px 10px; font-size: 12px; }
   .st.yes { background: rgba(203,217,138,.18); color: var(--green); }
@@ -735,9 +743,13 @@
   <section id="v-stand" class="hidden"><div class="top"><button class="back" data-go="home" aria-label="Volver"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button></div>
     <div class="page-title"><img class="title-logo ico c-green" data-logo="stand" alt="">Stand de información</div><div class="hello-sub">Anuncios de la semana e inscripciones</div><div id="st-body"></div></section>
 
+  <!-- ================= FINANZAS ================= -->
+  <section id="v-finanzas" class="hidden"><div class="top"><button class="back" data-go="home" aria-label="Volver"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button></div>
+    <div class="page-title">Finanzas</div><div class="hello-sub">Ingresos de Arco Ríos por mes y por semana · solo Consejo</div><div id="fz-body"></div></section>
+
   <!-- ================= AVISOS ================= -->
   <section id="v-avisos" class="hidden"><div class="top"><button class="back" data-go="home" aria-label="Volver"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button></div>
-    <div class="page-title">Avisos</div><div class="hello-sub" id="av-sub">Notificaciones de Arco Ríos · versión 23-nov v3</div><div id="av-body"></div></section>
+    <div class="page-title">Avisos</div><div class="hello-sub" id="av-sub">Notificaciones de Arco Ríos · versión 23-nov v4</div><div id="av-body"></div></section>
 
   <!-- ================= CENSO (enlace público, sin cuenta) ================= -->
   <section id="v-censo" class="hidden"><div class="top"><span class="pill"><span class="dot" id="cz-logo"></span>Arco Ríos</span></div>
@@ -903,6 +915,14 @@ const nombreCorto = (n, a) => `${(n || "").split(" ")[0]} ${(a || "").split(" ")
 const ETIQUETA_HOME = { worship: "Arco<br>Worship", domingo: "Este<br>domingo", formacion: "Formación<br>Cristiana", stand: "Stand de<br>información",
   consejo: "Reunión del<br>Consejo", tablero: "Tablero del<br>Consejo", difusion: "Mensajes por<br>WhatsApp", avisos: "Avisos y<br>notificaciones" };
 const DATOS_HOME = {
+  async finanzas() {
+    const anio = new Date().getFullYear();
+    const { data, error } = await sb.from("finanzas_ingresos").select("mes, total").eq("congregacion", "rios").eq("anio", anio);
+    if (error) return { num: "—", sub: "Falta ejecutar 23_igho_lugar_bienvenida_finanzas.sql" };
+    const pm = fzPorMes(data), meses = pm.filter((x) => x.t > 0), u = meses[meses.length - 1];
+    return { num: fzMoneda(meses.reduce((a, x) => a + x.t, 0), true), sub: `ingresos ${anio}${u ? ` · ${FZ_MESES[u.m - 1]} ${fzMoneda(u.t, true)}` : ""}`,
+      detail: meses.length ? columnas(meses.slice(-6).map((x) => ({ n: Math.round(x.t), l: FZ_MESES[x.m - 1].slice(0, 3) }))) : "" };
+  },
   async anfitriones() {
     const { data, error } = await sb.from("asistencia_domingo").select("fecha, total, nuevos").order("fecha", { ascending: false }).limit(8);
     if (error) throw error;
@@ -1010,7 +1030,7 @@ const DATOS_HOME = {
       detail: lista(data.slice(0, 3).map((x) => ({ a: corto(x.descripcion), b: x.fecha ? fmtDiaMes(x.fecha) : "", cls: x.fecha && x.fecha < hoy ? "warn" : "" }))) };
   },
 };
-const SIN_NUMERO = { tablero: true, admin: true, finanzas: true, difusion: true, avisos: true };
+const SIN_NUMERO = { tablero: true, admin: true, difusion: true, avisos: true };
 
 // Cada sección de la app: quién la ve y cómo se ve.
 const SECCIONES = [
@@ -1085,7 +1105,7 @@ document.addEventListener("click", (e) => {
 
 // ---------------- Navegación ----------------
 function show(view) {
-  for (const v of ["login", "home", "resumen", "soon", "anfitriones", "kidz", "padres", "domingo", "worship", "bienvenida", "igho", "clave", "admin", "tablero", "formacion", "stand", "difusion", "avisos", "censo"]) $("v-" + v).classList.toggle("hidden", v !== view);
+  for (const v of ["login", "home", "resumen", "soon", "anfitriones", "kidz", "padres", "domingo", "worship", "bienvenida", "igho", "clave", "admin", "tablero", "formacion", "stand", "difusion", "avisos", "censo", "finanzas"]) $("v-" + v).classList.toggle("hidden", v !== view);
   marcarSoloVer(view);
   document.body.classList.toggle("modo-tablero", view === "tablero");
   $("nav").classList.toggle("hidden", view === "login" || view === "clave" || view === "censo");
@@ -1112,6 +1132,7 @@ function abrir(id) {
   if (id === "stand") { show("stand"); return abrirStand(); }
   if (id === "difusion") { df.volver = null; return abrirDifusion(null); }
   if (id === "avisos") { show("avisos"); return abrirAvisos(); }
+  if (id === "finanzas") { if (!(ctx.esAncianoOAdmin || ctx.roles.has("finanzas"))) return show("home"); show("finanzas"); return abrirFinanzas($("fz-body")); }
   const s = SECCIONES.find((x) => x.id === id);
   $("soon-title").textContent = s.titulo;
   $("soon-text").textContent = "Esta sección se construirá en las próximas etapas. Ya tienes acceso a ella según tu rol.";
@@ -1198,7 +1219,7 @@ function pintarHome() {
   if (!visibles.length) { $("cards").innerHTML = `<div class="soon" style="margin:0 13px">Todavía no tienes un rol asignado. Pide a un administrador que te dé acceso.</div>`; return; }
   pintarPila($("cards"), visibles.map((s) => ({ key: s.id, go: s.id, color: s.color, logo: s.logo, label: ETIQUETA_HOME[s.id] || esc(s.titulo),
     num: SIN_NUMERO[s.id] ? null : undefined, sub: SIN_NUMERO[s.id] || !DATOS_HOME[s.id] ? esc(s.desc) : "",
-    detail: s.id === "finanzas" ? `<div class="pc-note">Muy pronto.</div>` : "" })));
+    detail: "" })));
   for (const s of visibles) {
     const f = DATOS_HOME[s.id]; if (!f) continue;
     f().then((d) => llenarTarjeta($("cards"), s.id, d)).catch((e) => { console.error(s.id, e); llenarTarjeta($("cards"), s.id, { num: "—", sub: esc(s.desc) }); });
@@ -2098,7 +2119,7 @@ async function abrirBienvenida() {
     </div>
     <div class="panel">
       <h4>Seguimiento</h4>
-      <div class="seg small" id="bv-fil">${[["todos", "Todos"], ["sin_clase", "Sin clase"], ["sin_igho", "Sin IGHO"]].map(([v, t]) => `<button data-v="${v}" class="${v === bv.filtro ? "on" : ""}">${t}</button>`).join("")}</div>
+      <div class="seg small" id="bv-fil">${[["todos", "Todos"], ["sin_clase", "Sin clase de bienvenida"], ["sin_igho", "Sin IGHO"]].map(([v, t]) => `<button data-v="${v}" class="${v === bv.filtro ? "on" : ""}">${t}</button>`).join("")}</div>
       <div id="bv-list" class="loading">Cargando…</div>
     </div>`;
   $("bv-c").addEventListener("change", () => $("bv-inv-wrap").classList.toggle("hidden", $("bv-c").value !== "invitado"));
@@ -2135,20 +2156,165 @@ async function cargarNuevos() {
     <div class="nuevo">
       <div class="nuevo-top"><div><b>${esc(n.nombres)} ${esc(n.apellidos || "")}</b>
         <div class="muted">${fmtCorta.format(fromYmd(n.primera_visita))} · ${esc(como[n.como_llego] || "")}${n.invitado_por ? ` (${esc(n.invitado_por)})` : ""} · IGHO: ${esc(interes[n.interes_igho] || "—")}</div>
-        <div>${telHtml(n.telefono)}</div></div></div>
+        <div>${telHtml(n.telefono)}</div>${n.notas ? `<div class="knota">${esc(n.notas)}</div>` : ""}</div>
+        <div class="row-btns solo-edit"><button class="btn-sec mini" data-bv-ed="${n.persona_id}">Editar</button><button class="x" data-bv-del="${n.persona_id}" aria-label="Borrar" title="Borrar">×</button></div></div>
+      <div id="bv-ed-${n.persona_id}"></div>
       <div class="sts">${ok(true, "En la base")}${ok(!!n.igho_nombre, n.igho_nombre ? "IGHO " + esc(n.igho_nombre) : "Sin IGHO")}${ok(n.asistio_igho, "Asistió a IGHO")}</div>
       <label class="check"><input type="checkbox" data-clase="${n.persona_id}" ${n.clase_bienvenida ? "checked" : ""}> Asistió a "Bienvenido a la familia"${n.fecha_clase ? ` · ${fmtCorta.format(fromYmd(n.fecha_clase))}` : ""}</label>
     </div>`).join("");
+  cont.querySelectorAll("[data-bv-del]").forEach((b) => b.addEventListener("click", async () => {
+    const n = data.find((x) => x.persona_id === b.dataset.bvDel); if (!n) return;
+    if (!confirm(`¿Borrar a ${n.nombres} ${n.apellidos || ""} de Bienvenida?\n\nÚsalo si se registró por error o dos veces. Si la persona no está en el censo, en un IGHO ni en ninguna otra lista, también se borra de la base.`)) return;
+    const { data: r, error } = await sb.rpc("borrar_nuevo", { p_persona: n.persona_id });
+    if (error) return alert(error.message + (/borrar_nuevo/.test(error.message) ? " (falta ejecutar 23_igho_lugar_bienvenida_finanzas.sql)" : ""));
+    if (r && r.persona_borrada === false) alert(`${n.nombres} salió de Bienvenida. Se queda en la base porque ya aparece en otras listas (IGHO, censo, familia…).`);
+    cargarNuevos();
+  }));
+  cont.querySelectorAll("[data-bv-ed]").forEach((b) => b.addEventListener("click", () => {
+    const n = data.find((x) => x.persona_id === b.dataset.bvEd), box = $("bv-ed-" + n.persona_id);
+    if (box.innerHTML) return (box.innerHTML = "");
+    const edad = n.anio_nacimiento_aprox ? new Date().getFullYear() - n.anio_nacimiento_aprox : "";
+    let inter = n.interes_igho || "si";
+    box.innerHTML = `<div class="panel" style="margin:10px 0;background:var(--surface-2)">
+      <div class="two"><div><label>Nombres</label><input id="be-n" value="${esc(n.nombres || "")}"></div><div><label>Apellidos</label><input id="be-a" value="${esc(n.apellidos || "")}"></div></div>
+      <label>Teléfono</label><input id="be-t" type="tel" inputmode="tel" value="${esc(n.telefono || "")}">
+      <div class="two"><div><label>Sexo</label><select id="be-s"><option value="">—</option><option value="femenino" ${n.sexo === "femenino" ? "selected" : ""}>Femenino</option><option value="masculino" ${n.sexo === "masculino" ? "selected" : ""}>Masculino</option></select></div>
+        <div><label>Edad</label><input id="be-e" type="number" inputmode="numeric" min="0" value="${edad}"></div></div>
+      <label>Primera visita</label><input id="be-f" type="date" value="${esc(n.primera_visita || "")}" max="${ymd(new Date())}">
+      <label>¿Cómo llegó a Arco?</label><select id="be-c">${opciones(COMO, n.como_llego || "otro")}</select>
+      <div id="be-inv-wrap" class="${n.como_llego === "invitado" ? "" : "hidden"}"><label>¿Quién lo invitó?</label><input id="be-i" value="${esc(n.invitado_por || "")}"></div>
+      <label>¿Le interesa unirse a un IGHO?</label>
+      <div class="seg" id="be-int">${INTERES.map(([v, t]) => `<button type="button" data-v="${v}" class="${v === inter ? "on" : ""}">${t}</button>`).join("")}</div>
+      <label>Notas</label><textarea id="be-notas">${esc(n.notas || "")}</textarea>
+      <div class="row-btns"><button class="btn-primary" id="be-ok" style="width:auto;margin:0;padding:12px 18px">Guardar cambios</button><button class="btn-sec" id="be-x">Cancelar</button></div>
+      <div class="ok err" id="be-msg"></div></div>`;
+    $("be-c").addEventListener("change", () => $("be-inv-wrap").classList.toggle("hidden", $("be-c").value !== "invitado"));
+    $("be-int").querySelectorAll("button").forEach((x) => x.addEventListener("click", () => { inter = x.dataset.v; $("be-int").querySelectorAll("button").forEach((y) => y.classList.toggle("on", y === x)); }));
+    $("be-x").addEventListener("click", () => (box.innerHTML = ""));
+    $("be-ok").addEventListener("click", async () => {
+      const msg = $("be-msg"), telEsc = $("be-t").value.trim(), tel = telEsc.replace(/\D/g, "");
+      if (!$("be-n").value.trim()) return (msg.textContent = "Escribe el nombre.");
+      if (telEsc && tel.length !== 10) return (msg.textContent = "El celular debe tener 10 dígitos (09…).");
+      $("be-ok").disabled = true;
+      const { error } = await sb.rpc("editar_nuevo", { p_persona: n.persona_id, p_nombres: $("be-n").value, p_apellidos: $("be-a").value, p_telefono: tel,
+        p_sexo: $("be-s").value, p_edad: $("be-e").value !== "" ? +$("be-e").value : null, p_como_llego: $("be-c").value,
+        p_invitado_por: $("be-c").value === "invitado" ? $("be-i").value.trim() || null : null, p_interes_igho: inter,
+        p_notas: $("be-notas").value.trim() || null, p_primera_visita: $("be-f").value || null });
+      $("be-ok").disabled = false;
+      if (error) return (msg.textContent = error.message + (/editar_nuevo/.test(error.message) ? " (falta ejecutar 23_igho_lugar_bienvenida_finanzas.sql)" : ""));
+      cargarNuevos();
+    });
+  }));
   cont.querySelectorAll("[data-clase]").forEach((c) => c.addEventListener("change", async () => {
     const { error } = await sb.from("nuevos").update({ clase_bienvenida: c.checked, fecha_clase: c.checked ? ymd(new Date()) : null }).eq("persona_id", c.dataset.clase);
     if (error) { alert(error.message); c.checked = !c.checked; } else cargarNuevos();
   }));
 }
 
+// =================== FINANZAS · INGRESOS ===================
+// finanzas_ingresos: tipo 'semana' (1–5), 'ajuste' o 'mes' (solo total del mes). Gastos: cuando llegue el informe.
+const FZ_MESES = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+const fzMoneda = (n, corto) => "$" + Number(n || 0).toLocaleString("en-US", { minimumFractionDigits: corto ? 0 : 2, maximumFractionDigits: corto ? 0 : 2 });
+const fzPorMes = (rows) => FZ_MESES.map((_, i) => ({ m: i + 1, t: (rows || []).filter((r) => r.mes === i + 1).reduce((a, r) => a + Number(r.total || 0), 0) }));
+const fz = { anio: new Date().getFullYear(), abierto: null };
+async function abrirFinanzas(body) {
+  body.innerHTML = '<div class="loading">Cargando…</div>';
+  const { data, error } = await sb.from("finanzas_ingresos").select("*").eq("congregacion", "rios").eq("anio", fz.anio).order("mes").order("tipo").order("semana");
+  if (error) { body.innerHTML = `<div class="soon">${esc(error.message)}${/finanzas_ingresos/.test(error.message) ? "<br>Falta ejecutar 23_igho_lugar_bienvenida_finanzas.sql en Supabase." : ""}</div>`; return; }
+  const rows = data || [], pm = fzPorMes(rows), conDatos = pm.filter((x) => x.t > 0);
+  const total = conDatos.reduce((a, x) => a + x.t, 0), prom = conDatos.length ? total / conDatos.length : 0;
+  const mx = Math.max(...pm.map((x) => x.t), 1);
+  const semanas = rows.filter((r) => r.tipo === "semana");
+  const promSem = semanas.length ? semanas.reduce((a, r) => a + Number(r.total), 0) / semanas.length : 0;
+  const detalleMes = (m) => {
+    const rs = rows.filter((r) => r.mes === m);
+    if (!rs.length) return '<div class="muted">Sin datos.</div>';
+    return rs.map((r) => `<div class="li"><div><b>${r.tipo === "semana" ? "Semana " + r.semana : r.tipo === "ajuste" ? "Ajustes" : "Total del mes"}</b>
+      <div class="muted">${r.diezmo != null ? `Diezmo ${fzMoneda(r.diezmo)} · Ofrenda ${fzMoneda(r.ofrenda)}` : r.tipo === "mes" ? "Sin detalle por semana" : "Sin detalle diezmo / ofrenda"}${r.nota ? " · " + esc(r.nota) : ""}</div></div>
+      <div class="row-btns"><b>${fzMoneda(r.total)}</b><button class="x" data-fz-del="${r.id}" aria-label="Borrar">×</button></div></div>`).join("");
+  };
+  const hoy = new Date();
+  body.innerHTML = `
+    <div class="row-btns" style="justify-content:center;margin:4px 0 12px"><button class="btn-sec mini" id="fz-prev">‹ ${fz.anio - 1}</button><b style="font-size:20px;margin:0 10px">${fz.anio}</b><button class="btn-sec mini" id="fz-next">${fz.anio + 1} ›</button></div>
+    <div class="total-card"><div class="l">Ingresos ${fz.anio} · Arco Ríos</div><div class="n" style="font-size:38px">${fzMoneda(total)}</div>
+      <div class="det">Promedio por mes ${fzMoneda(prom, true)} · ${conDatos.length} meses${semanas.length ? ` · promedio por semana ${fzMoneda(promSem, true)}` : ""}</div></div>
+    <div class="panel"><h4>Por mes</h4><div class="hint">Toca un mes para ver sus semanas.</div>
+      ${pm.map((x) => `<div class="fz-mes" data-fz-mes="${x.m}"><div class="fz-l">${FZ_MESES[x.m - 1].slice(0, 3)}</div><div class="fz-bar"><span style="width:${(x.t / mx) * 100}%"></span></div><div class="fz-n">${x.t ? fzMoneda(x.t, true) : "—"}</div></div>
+        ${fz.abierto === x.m ? `<div class="fz-det">${detalleMes(x.m)}</div>` : ""}`).join("")}</div>
+    <div class="panel"><h4>Registrar ingreso</h4><div class="hint">Lo del domingo de cada semana. Si ya existe esa semana, se reemplaza.</div>
+      <div class="two"><div><label>Mes</label><select id="fz-m">${opciones(FZ_MESES.map((t, i) => [String(i + 1), t]), String(fz.anio === hoy.getFullYear() ? hoy.getMonth() + 1 : 1))}</select></div>
+        <div><label>¿Qué es?</label><select id="fz-tipo">${opciones([["semana", "Semana"], ["ajuste", "Ajustes del mes"], ["mes", "Total del mes (sin semanas)"]], "semana")}</select></div></div>
+      <div id="fz-sem-w"><label>Semana</label><div class="seg" id="fz-sem">${[1, 2, 3, 4, 5].map((n) => `<button type="button" data-v="${n}" class="${n === 1 ? "on" : ""}">${n}</button>`).join("")}</div></div>
+      <div class="two"><div><label>Diezmo</label><input id="fz-d" type="number" inputmode="decimal" step="0.01" min="0" placeholder="0.00"></div>
+        <div><label>Ofrenda</label><input id="fz-o" type="number" inputmode="decimal" step="0.01" min="0" placeholder="0.00"></div></div>
+      <label>Total (si no tienes diezmo y ofrenda por separado)</label><input id="fz-t" type="number" inputmode="decimal" step="0.01" min="0" placeholder="Se suma solo">
+      <label>Nota (opcional)</label><input id="fz-nota" placeholder="Ej.: 1–7 de diciembre">
+      <button class="btn-primary" id="fz-ok">Guardar</button><div class="ok" id="fz-msg"></div></div>
+    <div class="panel"><h4>Gastos</h4><div class="muted">Se agregan cuando llegue el informe de gastos (por categoría y por semana).</div></div>`;
+  let sem = 1;
+  body.querySelector("#fz-prev").addEventListener("click", () => { fz.anio--; fz.abierto = null; abrirFinanzas(body); });
+  body.querySelector("#fz-next").addEventListener("click", () => { fz.anio++; fz.abierto = null; abrirFinanzas(body); });
+  body.querySelectorAll("[data-fz-mes]").forEach((b) => b.addEventListener("click", () => { fz.abierto = fz.abierto === +b.dataset.fzMes ? null : +b.dataset.fzMes; abrirFinanzas(body); }));
+  body.querySelectorAll("[data-fz-del]").forEach((b) => b.addEventListener("click", async (e) => {
+    e.stopPropagation(); if (!confirm("¿Borrar este registro?")) return;
+    const { error } = await sb.from("finanzas_ingresos").delete().eq("id", +b.dataset.fzDel); if (error) return alert(error.message); abrirFinanzas(body);
+  }));
+  const tipo = body.querySelector("#fz-tipo");
+  tipo.addEventListener("change", () => body.querySelector("#fz-sem-w").classList.toggle("hidden", tipo.value !== "semana"));
+  body.querySelectorAll("#fz-sem button").forEach((b) => b.addEventListener("click", () => { sem = +b.dataset.v; body.querySelectorAll("#fz-sem button").forEach((x) => x.classList.toggle("on", x === b)); }));
+  body.querySelector("#fz-ok").addEventListener("click", async () => {
+    const msg = body.querySelector("#fz-msg"); msg.classList.remove("err");
+    const v = (id) => { const x = body.querySelector(id).value; return x === "" ? null : Math.round(parseFloat(x) * 100) / 100; };
+    const d = v("#fz-d"), o = v("#fz-o"), t = v("#fz-t") ?? (d != null || o != null ? (d || 0) + (o || 0) : null);
+    if (t == null) { msg.classList.add("err"); msg.textContent = "Escribe el diezmo y la ofrenda, o el total."; return; }
+    const fila = { congregacion: "rios", anio: fz.anio, mes: +body.querySelector("#fz-m").value, tipo: tipo.value, semana: tipo.value === "semana" ? sem : 0,
+      diezmo: d, ofrenda: o, total: t, nota: body.querySelector("#fz-nota").value.trim() || null, creado_por_nombre: ctx.nombreCompleto };
+    body.querySelector("#fz-ok").disabled = true;
+    const { error } = await sb.from("finanzas_ingresos").upsert(fila, { onConflict: "congregacion,anio,mes,tipo,semana" });
+    body.querySelector("#fz-ok").disabled = false;
+    if (error) { msg.classList.add("err"); msg.textContent = error.message; return; }
+    fz.abierto = fila.mes; abrirFinanzas(body);
+  });
+}
+
 // =================== MI IGHO ===================
+// Dónde y cuándo se reúne un IGHO (dirección, horario y uno o más enlaces de Google Maps)
+function textoLugarIgho(g) {
+  if (!g || !(g.horario || g.direccion || g.mapas?.length)) return "";
+  const m = g.mapas || [];
+  return `\n\n🏠 *${g.nombre}*${g.horario ? `\n🗓 ${g.horario}` : ""}${g.direccion ? `\n📍 ${g.direccion}` : ""}`
+    + (m.length === 1 ? `\n🗺 Ubicación: ${m[0]}` : m.map((u, i) => `\n🗺 Ubicación ${i + 1}: ${u}`).join(""));
+}
+function lugarIghoHtml(g) {
+  if (!g || !("direccion" in g)) return "";
+  const m = g.mapas || [], hay = g.horario || g.direccion || m.length;
+  return `<div class="panel" id="ig-lugar"><div class="kclase-h"><h4>Dónde y cuándo se reúne</h4><button class="btn-sec mini solo-edit" id="ig-lugar-ed">Editar</button></div>
+    ${hay ? `${g.horario ? `<div><b>${esc(g.horario)}</b></div>` : ""}${g.direccion ? `<div class="muted" style="margin-top:4px">${esc(g.direccion)}</div>` : ""}
+      ${m.length ? `<div class="row-btns" style="margin-top:8px">${m.map((u, i) => `<a class="btn-sec mini" href="${esc(u)}" target="_blank" rel="noopener">🗺 Ver mapa${m.length > 1 ? " " + (i + 1) : ""}</a>`).join("")}</div>` : ""}`
+      : '<div class="muted">Todavía no hay dirección. Agrégala para que el Stand pueda mandarla por WhatsApp.</div>'}
+    <div id="ig-lugar-form" class="hidden" style="margin-top:10px">
+      <label>Día y hora</label><input id="ig-lh" placeholder="Ej.: Martes · 8:00 pm" value="${esc(g.horario || "")}">
+      <label>Dirección y referencias</label><textarea id="ig-ld" placeholder="Calle, referencia, dónde parquear…">${esc(g.direccion || "")}</textarea>
+      <label>Enlaces de Google Maps (uno por línea; si se turnan entre casas, pon los dos)</label><textarea id="ig-lm" placeholder="https://maps.app.goo.gl/…">${esc(m.join("\n"))}</textarea>
+      <button class="btn-primary" id="ig-lugar-ok">Guardar</button><div class="ok err" id="ig-lugar-msg"></div>
+    </div></div>`;
+}
+function conectarLugarIgho() {
+  $("ig-lugar-ed")?.addEventListener("click", () => $("ig-lugar-form").classList.toggle("hidden"));
+  $("ig-lugar-ok")?.addEventListener("click", async () => {
+    const mapas = $("ig-lm").value.split(/\s+/).map((x) => x.trim()).filter(Boolean);
+    if (mapas.some((u) => !/^https?:\/\//.test(u))) return ($("ig-lugar-msg").textContent = "Cada enlace debe empezar con https://");
+    $("ig-lugar-ok").disabled = true;
+    const { error } = await sb.rpc("guardar_lugar_igho", { p_igho: ig.sel, p_direccion: $("ig-ld").value, p_horario: $("ig-lh").value, p_mapas: mapas });
+    $("ig-lugar-ok").disabled = false;
+    if (error) return ($("ig-lugar-msg").textContent = error.message);
+    abrirIgho();
+  });
+}
 const ig = { lista: [], sel: null, tab: "miembros", miembros: [], fecha: ymd(new Date()) };
 async function abrirIgho() {
-  const { data, error } = await sb.from("igho").select("id, nombre, supervisor_nombre").eq("activo", true).order("nombre");
+  let { data, error } = await sb.from("igho").select("id, nombre, supervisor_nombre, direccion, horario, mapas").eq("activo", true).order("nombre");
+  if (error && /direccion|horario|mapas/.test(error.message)) ({ data, error } = await sb.from("igho").select("id, nombre, supervisor_nombre").eq("activo", true).order("nombre"));
   if (error) { $("ig-body").innerHTML = `<div class="soon">${esc(error.message)}</div>`; return; }
   ig.lista = data;
   if (!data.length) { $("ig-body").innerHTML = `<div class="soon">No tienes un IGHO asignado todavía. Pide a un administrador que te asigne.</div>`; $("ig-sel-wrap").innerHTML = ""; return; }
@@ -2184,10 +2350,11 @@ function pintarMiembros() {
       ${ig.interes.map((x) => { const w = waLink(x.telefono); return `<div class="nuevo"><div class="kclase-h"><b>${esc(x.nombre)}</b>${x.contactado_en ? '<span class="st yes">✓ Contactado</span>' : '<span class="st">Pendiente</span>'}</div>
         <div class="muted">${fmtCorta.format(new Date(x.creado_en))}${x.inscrito_por_nombre ? " · Stand: " + esc(x.inscrito_por_nombre) : ""}</div>
         ${x.notas ? `<div class="knota">${esc(x.notas)}</div>` : ""}
-        <div class="row-btns" style="margin-top:8px">${w ? `<a class="btn-sec mini wa-mini" href="${w}?text=${encodeURIComponent(`Hola ${x.nombre.split(" ")[0]}, soy ${ctx.nombre}, líder del IGHO ${ig.lista.find((g) => g.id === ig.sel)?.nombre || ""} de Arco Ríos. ¡Me contaron que quieres conocer nuestra iglesia de hogar! 🏠`)}" target="_blank" rel="noopener">WhatsApp</a>` : ""}
+        <div class="row-btns" style="margin-top:8px">${w ? `<a class="btn-sec mini wa-mini" href="${w}?text=${encodeURIComponent(`Hola ${x.nombre.split(" ")[0]}, soy ${ctx.nombre}, líder del IGHO ${ig.lista.find((g) => g.id === ig.sel)?.nombre || ""} de Arco Ríos. ¡Me contaron que quieres conocer nuestra iglesia de hogar! 🏠${textoLugarIgho(ig.lista.find((g) => g.id === ig.sel))}`)}" target="_blank" rel="noopener">WhatsApp</a>` : ""}
           ${x.contactado_en ? "" : `<button class="btn-sec mini" data-contacto="${x.id}">Ya le contacté</button>`}
-          ${x.persona_id && !yaEsta(x) ? `<button class="btn-sec mini" data-unir="${x.id}">Agregar al IGHO</button>` : yaEsta(x) ? '<span class="muted">Ya es miembro</span>' : ""}</div></div>`; }).join("")}</div>` : "";
-  $("ig-body").innerHTML = `${interesHtml}${cumplesIghoHtml(ig.miembros)}
+          ${x.persona_id && !yaEsta(x) ? `<button class="btn-sec mini" data-unir="${x.id}">Agregar al IGHO</button>` : yaEsta(x) ? '<span class="muted">Ya es miembro</span>' : ""}
+          <button class="x solo-edit" data-borra-int="${x.id}" aria-label="Borrar inscripción" title="Borrar (prueba o error)">×</button></div></div>`; }).join("")}</div>` : "";
+  $("ig-body").innerHTML = `${interesHtml}${lugarIghoHtml(ig.lista.find((g) => g.id === ig.sel))}${cumplesIghoHtml(ig.miembros)}
     <div class="panel">
       <h4>Miembros (${ig.miembros.length})</h4><div class="hint">Toca un nombre para editar su ficha${ig.cubre ? ". Marca personas para moverlas a otro IGHO." : ""}</div>
       ${ig.miembros.map((p) => `<div class="li"><div>${ig.cubre ? `<input type="checkbox" class="ig-mk" data-mk="${p.id}" aria-label="Marcar"> ` : ""}<button class="link name-btn" data-editar="${p.id}">${esc(p.nombres)} ${esc(p.apellidos || "")}${cumpleIds.has(p.id) ? " 🎂" : ""}</button><div>${telHtml(p.telefono)}</div></div><div class="row-btns"><button class="btn-sec mini" data-editar="${p.id}">Editar</button><button class="x" data-quitar="${p.id}" aria-label="Quitar del IGHO">×</button></div></div>`).join("") || `<div class="muted">Este IGHO no tiene miembros todavía.</div>`}
@@ -2207,6 +2374,14 @@ function pintarMiembros() {
     </div>`;
   $("ig-body").querySelectorAll("[data-editar]").forEach((b) => b.addEventListener("click", () => editarMiembro(b.dataset.editar)));
   const contactado = (id) => sb.from("igho_interesados").update({ contactado_en: new Date().toISOString(), contactado_por: ctx.nombreCompleto }).eq("id", id);
+  $("ig-body").querySelectorAll("[data-borra-int]").forEach((b) => b.addEventListener("click", async () => {
+    const x = ig.interes.find((y) => y.id === +b.dataset.borraInt); if (!x) return;
+    if (!confirm(`¿Borrar la inscripción de ${x.nombre}?\n\nÚsalo si fue una prueba o un error. Si esa persona solo existía por esta inscripción, también se borra de la base.`)) return;
+    const { error } = await sb.rpc("borrar_interes_igho", { p_id: x.id });
+    if (error) return alert(error.message + (/borrar_interes_igho/.test(error.message) ? " (falta ejecutar 23_igho_lugar_bienvenida_finanzas.sql)" : ""));
+    cargarIgho();
+  }));
+  conectarLugarIgho();
   $("ig-body").querySelectorAll("[data-contacto]").forEach((b) => b.addEventListener("click", async () => { const { error } = await contactado(+b.dataset.contacto); if (error) return alert(error.message); cargarIgho(); }));
   $("ig-body").querySelectorAll("[data-unir]").forEach((b) => b.addEventListener("click", async () => {
     const x = ig.interes.find((y) => y.id === +b.dataset.unir); if (!x || !confirm(`¿Agregar a ${x.nombre} como miembro de este IGHO?`)) return;
@@ -3812,7 +3987,7 @@ function pintarSeccion() {
   const s = tb.seccion;
   $("tb-h1").textContent = TB_MENU.find((m) => m[0] === s)?.[1] || "Tablero del Consejo";
   $("tb-filtros").classList.toggle("hidden", s === "consejo");
-  const f = { tablero: secResumen, asistencia: secAsistencia, ighos: secIghos, familias: secFamilias, nuevos: secNuevos, kidz: secKidz, consejo: secConsejo, finanzas: secPronto }[s];
+  const f = { tablero: secResumen, asistencia: secAsistencia, ighos: secIghos, familias: secFamilias, nuevos: secNuevos, kidz: secKidz, consejo: secConsejo, finanzas: () => { $("tb-main").innerHTML = '<div id="fz-tb" style="max-width:760px"></div>'; abrirFinanzas($("fz-tb")); } }[s];
   f(c);
   if (s === "consejo") return;   // la Reunión del Consejo maneja sus propios botones
   $("tb-main").querySelectorAll("[data-ir]").forEach((b) => b.addEventListener("click", () => abrirTablero(b.dataset.ir)));
@@ -4665,7 +4840,7 @@ async function abrirStand() {
   const listaHtml = sel.tipo === "igho"
     ? `<div class="panel"><h4>Quieren ir a un IGHO · hoy (${interesHoy.length})</h4>
         ${interesHoy.map((x) => `<div class="li"><div><b>${esc(x.nombre)}</b><div class="muted">${esc(ighosSt.find((g) => g.id === x.igho_id)?.nombre || "")}${x.inscrito_por_nombre ? " · " + esc(x.inscrito_por_nombre) : ""}</div></div>
-          <span class="muted">${fmtHora.format(new Date(x.creado_en))}</span></div>`).join("") || '<div class="muted">Nadie todavía.</div>'}</div>`
+          <div class="row-btns"><span class="muted">${fmtHora.format(new Date(x.creado_en))}</span><button class="x solo-edit" data-borra-int="${x.id}" aria-label="Borrar inscripción" title="Borrar (prueba o error)">×</button></div></div>`).join("") || '<div class="muted">Nadie todavía.</div>'}</div>`
     : sel.act
     ? `<div class="panel"><div class="kclase-h"><h4>${esc(sel.nombre)} (${regsSel.length})</h4>${puedeCerrar ? `<button class="btn-sec mini solo-edit" id="st-cerrar">Cerrar inscripción</button>` : ""}</div>
         ${regsSel.map((x) => { const w = waLink(x.telefono); return `<div class="li"><div><b>${esc(x.nombre)}</b>${x.fecha_nacimiento ? ` <span class="muted">· ${edadTexto(x.fecha_nacimiento)}</span>` : ""}
@@ -4690,13 +4865,23 @@ async function abrirStand() {
     const { error } = await sb.from("stand_actividades").update({ abierta: false }).eq("id", sel.act.id); if (error) return alert(error.message);
     st_.sel = null; abrirStand();
   });
+  body.querySelectorAll("[data-borra-int]").forEach((b) => b.addEventListener("click", async () => {
+    const x = interesHoy.find((y) => y.id === +b.dataset.borraInt); if (!x) return;
+    if (!confirm(`¿Borrar la inscripción de ${x.nombre}?\n\nÚsalo si fue una prueba o un error. También se quita el aviso que recibió el líder.`)) return;
+    const { error } = await sb.rpc("borrar_interes_igho", { p_id: x.id });
+    if (error) return alert(error.message + (/borrar_interes_igho/.test(error.message) ? " (falta ejecutar 23_igho_lugar_bienvenida_finanzas.sql)" : ""));
+    abrirStand();
+  }));
   body.querySelectorAll("[data-quita]").forEach((b) => b.addEventListener("click", async () => {
     if (!confirm("¿Quitar a esta persona de la lista?")) return;
     const { error } = await sb.from("stand_registros").delete().eq("id", +b.dataset.quita); if (error) return alert(error.message); abrirStand();
   }));
 
   $("st-ig")?.addEventListener("change", (e) => { const g = ighosSt.find((x) => x.id === e.target.value);
-    $("st-ig-det").textContent = g ? `Líder: ${g.lider || "sin líder registrado"}${g.lider_con_app ? " · recibirá un aviso en la app" : " · no usa la app: te daremos su WhatsApp"}` : ""; });
+    $("st-ig-det").innerHTML = g ? `Líder: ${esc(g.lider || "sin líder registrado")}${g.lider_con_app ? " · recibirá un aviso en la app" : " · no usa la app: te daremos su WhatsApp"}`
+      + (g.horario ? `<br><b>${esc(g.horario)}</b>` : "") + (g.direccion ? `<br>${esc(g.direccion)}` : "")
+      + (g.mapas?.length ? `<br>${g.mapas.map((u, i) => `<a href="${esc(u)}" target="_blank" rel="noopener">🗺 Ver mapa${g.mapas.length > 1 ? " " + (i + 1) : ""}</a>`).join(" · ")}` : "")
+      + ("mapas" in g && !g.mapas?.length ? "<br>Este IGHO todavía no tiene mapa: el mensaje irá sin ubicación." : "") : ""; });
   // Búsqueda
   let t;
   $("st-q")?.addEventListener("input", (e) => { st_.persona = null; clearTimeout(t); t = setTimeout(async () => {
@@ -4731,12 +4916,12 @@ async function abrirStand() {
       if (r?.personas) sb.functions.invoke(FUNCION_AVISOS, { body: { accion: "enviar_interes", id: r.aviso } }).catch(() => {});
       const wl = waLink(g.lider_tel), wp = waLink(telFinal);
       const paraLider = `Hola ${(g.lider || "").split(" ")[0]}, te escribimos del Stand de Arco Ríos: ${nombre}${telFinal ? " (" + telFinal + ")" : ""} quiere conocer tu IGHO ${g.nombre}. ¿Puedes contactarle? 🙏`;
-      const paraPersona = `Hola ${nombre.split(" ")[0]}, gracias por tu interés en las Iglesias de hogar de Arco Ríos. ${g.lider ? g.lider.split(" ")[0] + ", líder de " + g.nombre + "," : "El líder del IGHO"} te va a contactar pronto. 🏠`;
+      const paraPersona = `Hola ${nombre.split(" ")[0]}, gracias por tu interés en las Iglesias de hogar de Arco Ríos. ${g.lider ? g.lider.split(" ")[0] + ", líder de " + g.nombre + "," : "El líder del IGHO"} te va a contactar pronto.${textoLugarIgho(g)}${g.lider && g.lider_tel ? `\n👤 Líder: ${g.lider} · ${g.lider_tel}` : ""}\n\n¡Te esperamos! 🙌`;
       return abrirStand().then(() => {
         $("st-listo").innerHTML = `<div class="total-card"><div class="l">✓ Listo</div><div class="n" style="font-size:26px">${esc(nombre)}</div>
             <div class="det">${esc(g.nombre)} · ${r?.personas ? "el líder recibió un aviso en la app" : "el líder no usa la app todavía"}</div></div>
           ${!r?.personas && wl ? `<a class="btn-primary wa-btn" href="${wl}?text=${encodeURIComponent(paraLider)}" target="_blank" rel="noopener">Avisar al líder por WhatsApp</a>` : ""}
-          ${wp ? `<a class="btn-sec wa-sec" style="display:block;text-align:center;text-decoration:none" href="${wp}?text=${encodeURIComponent(paraPersona)}" target="_blank" rel="noopener">Mensaje a ${esc(nombre.split(" ")[0])} por WhatsApp</a>` : ""}`;
+          ${wp ? `<a class="btn-sec wa-sec" style="display:block;text-align:center;text-decoration:none" href="${wp}?text=${encodeURIComponent(paraPersona)}" target="_blank" rel="noopener">${g.mapas?.length ? "Enviar la ubicación del IGHO" : "Mensaje"} a ${esc(nombre.split(" ")[0])} por WhatsApp</a>` : ""}`;
         $("st-listo").scrollIntoView({ block: "center" });
       });
     }
@@ -5449,7 +5634,7 @@ async function revisarCenso(x) {
 // ===================================================================
 // AVISOS: notificaciones al teléfono + campana dentro de la app
 // ===================================================================
-const VERSION_APP = "23-nov · v3";
+const VERSION_APP = "23-nov · v4";
 const FUNCION_AVISOS = "swift-action"; // Edge Function en Supabase (se muestra como «notificar»)
 const av = { lista: [], noLeidas: 0, timer: null };
 const IR_A = [["", "Avisos"], ["domingo", "Este domingo"], ["igho", "Mi IGHO"], ["kidz", "Kidz"], ["worship", "Arco Worship"], ["formacion", "Formación Cristiana"], ["stand", "Stand de información"]];

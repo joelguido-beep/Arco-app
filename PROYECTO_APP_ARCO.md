@@ -1,6 +1,6 @@
 # App Iglesia Arco Ríos: project summary (to start a new chat)
 
-Attach this file when you start a new chat. The code lives in GitHub: **`joelguido-beep/Arco-app`** (branch `main`, served by GitHub Pages at https://joelguido-beep.github.io/Arco-app/). The Claude GitHub App is installed, so Claude can clone the repo and push changes directly (no need to attach `index.html`). Current version: **23-nov v3** (shown under the title of the Avisos page; constant `VERSION_APP` in index.html; update both on each release).
+Attach this file when you start a new chat. The code lives in GitHub: **`joelguido-beep/Arco-app`** (branch `main`, served by GitHub Pages at https://joelguido-beep.github.io/Arco-app/). The Claude GitHub App is installed, so Claude can clone the repo and push changes directly (no need to attach `index.html`). Current version: **23-nov v4** (shown under the title of the Avisos page; constant `VERSION_APP` in index.html; update both on each release).
 
 ## What it is
 A web app in Spanish for Arco Ríos (Cuenca). It's a single `index.html` file hosted on **GitHub Pages**, and the data lives in **Supabase** (project `lmitwnfvelwbbkjkvmtb`).
@@ -40,6 +40,7 @@ A web app in Spanish for Arco Ríos (Cuenca). It's a single `index.html` file ho
 22. `20_avisos.sql`: notificaciones, notificaciones_usuarios (inbox + read), push_suscripciones, ajustes_privados, puede_avisar(), destinatarios_aviso(destino), crear_aviso(), servicio_del_domingo(fecha), crear_recordatorios_servicio(fecha), pg_cron job `recordatorio-siervos` (Sunday 01:00 UTC = Saturday 20:00 Ecuador) calling `notificar`
 23. `21_censo_rellenar.sql`: censo_persona(codigo, id) (anon): when someone picks «Es esta persona», returns their data, courses, tiempo en Arco, address and family (household + parentescos) so the form comes prefilled
 24. `22_stand_igho.sql`: igho_interesados, stand_ighos(), stand_igho_interes() (creates the person if new, notifies the IGHO leader: notificaciones.tipo 'igho'); function action `enviar_interes`
+25. `23_igho_lugar_bienvenida_finanzas.sql`: igho.direccion / horario / mapas text[] (fills the 22 IGHO by leader phone, then leader name; last query lists IGHO left without address), guardar_lugar_igho(); stand_ighos() now returns direccion/horario/mapas; borrar_persona_si_suelta() (deletes a person only if no IGHO and no row in any table that references personas); borrar_interes_igho() (also removes the leader's notice); nuevos_seguimiento view + sexo, anio_nacimiento_aprox (spouses can read); editar_nuevo(), borrar_nuevo(); finanzas_ingresos (Consejo/admin/finanzas; tipo semana/ajuste/mes) + Ríos 2026 income from the sheet (Jan–Jun monthly, Jul–Oct weekly)
 
 ## Roles
 - `admin`, `anciano` (shown as **Miembro del Consejo**), `secretaria`, `finanzas`
@@ -113,6 +114,13 @@ Kidz with QR: camera check-in/check-out (photo confirmation, allergies, parent n
 - Census by link: `…/Arco-app/?censo=<codigo>` opens without login. Step 1 search yourself (name + surname; the list shows IGHO and last 3 phone digits) or «soy nuevo/a»; step 2 your data, already filled from the base (21_censo_rellenar.sql), to check and correct; step 3 the family already registered (each with «Revisar»); step 3 add family (relationship, lives with me, search or new). Answers wait in Administración → Censo: shows old → new values, lets you join a «new» person to someone already in the base, then Aplicar or Descartar. Mi IGHO → Censo: the link, WhatsApp share, who already answered.
 - Avisos: bell on home (unread count) + banner with the latest unread aviso; Avisos page (activate phone notifications, test, my avisos). Admin and Consejo send to Toda la iglesia / equipo / Consejo y cónyuges / Líderes IGHO / Padres de Kidz / one ministry, and choose which page it opens. Saturday 20:00 automatic «Mañana sirves en Arco» from Worship set list, Kidz turnos and Anuncios. iPhone: notifications only after «Agregar a pantalla de inicio». New files next to index.html: `sw.js`, `manifest.json`, `icon-192.png`, `icon-512.png`, `badge-96.png`.
 
+## IGHO places, Bienvenida edits, income (23 Nov 2026, v4)
+- Each IGHO has day/time, address and one or more Google Maps links (David Cabrera's rotates between two houses). Mi IGHO shows a «Dónde y cuándo se reúne» panel the leader or Consejo can edit.
+- Stand → IGHO: choosing the IGHO shows day/time, address and map; the WhatsApp to the person now carries the IGHO name, day/time, address, map link(s) and the leader's name + phone. The leader's WhatsApp from «Quieren unirse» also includes the location.
+- Delete an IGHO sign-up (×): in Mi IGHO → Quieren unirse (leader/Consejo) and in the Stand's today list. Removes the leader's notice too; the person is deleted from the base only if they exist nowhere else.
+- Bienvenida: Editar (name, phone, sex, age, first visit, how they came, IGHO interest, notes) and × Borrar on each person; filter renamed «Sin clase de bienvenida».
+- Finanzas page (home card shows the year's income): year total, monthly bars, tap a month for its weeks (diezmo/ofrenda when known), form to record a week / adjustments / a month total. Also in the Tablero → Finanzas. Gastos pending the expense report.
+
 ## Status (23 Nov 2026, end of day)
 - Notifications work on Joel's Android (function `swift-action` deployed with notificar.ts, Verify JWT off).
 - To confirm: `21_censo_rellenar.sql` and `22_stand_igho.sql` run in Supabase; cron job `recordatorio-siervos` points to `/functions/v1/swift-action` (check: `select command from cron.job where jobname = 'recordatorio-siervos';`).
@@ -122,7 +130,9 @@ Kidz with QR: camera check-in/check-out (photo confirmation, allergies, parent n
 - Decide: should Consejo spouses see Reunión del Consejo? (now hidden)
 - Decide: add a privacy check to the census link (last 4 phone digits or birth year before showing someone's data)
 - Weekly schedule for Anfitriones / Bienvenida / Stand so they also get the Saturday reminder
-- Finances (monthly report by week, expense categories, elders only)
+- Finances: income done (v4); add expenses by category when the expense report arrives. October week 1 is $0 in the sheet and November has no Ríos figures yet
+- Confirm Germán Cabrera's IGHO day (the list had both Martes and Jueves 20:00; set to Martes) and Josué Merchán's map link (two different links were sent; used the second)
+- Import Sunday attendance (the attendance file wasn't attached on 23 Nov)
 - Decide: import past Sunday attendance from the "Counsel Dashboard" sheet; move preaching / events into the app
 - Check two imported task dates: "Audicion en Enero Febrero" is dated 17-Ene-2027 in the sheet; "10-21-0206" was read as 21 Oct 2026
 - Review the 49 census records flagged in `para_revisar.csv`
