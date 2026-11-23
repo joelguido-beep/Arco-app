@@ -1,6 +1,6 @@
 # App Iglesia Arco Ríos: project summary (to start a new chat)
 
-Attach this file when you start a new chat. The code lives in GitHub: **`joelguido-beep/Arco-app`** (branch `main`, served by GitHub Pages at https://joelguido-beep.github.io/Arco-app/). The Claude GitHub App is installed, so Claude can clone the repo and push changes directly (no need to attach `index.html`). Current version: **23-nov v6** (shown under the title of the Avisos page; constant `VERSION_APP` in index.html; update both on each release).
+Attach this file when you start a new chat. The code lives in GitHub: **`joelguido-beep/Arco-app`** (branch `main`, served by GitHub Pages at https://joelguido-beep.github.io/Arco-app/). The Claude GitHub App is installed, so Claude can clone the repo and push changes directly (no need to attach `index.html`). Current version: **23-nov v7** (shown under the title of the Avisos page; constant `VERSION_APP` in index.html; update both on each release).
 
 ## What it is
 A web app in Spanish for Arco Ríos (Cuenca). It's a single `index.html` file hosted on **GitHub Pages**, and the data lives in **Supabase** (project `lmitwnfvelwbbkjkvmtb`).
@@ -124,7 +124,7 @@ Kidz with QR: camera check-in/check-out (photo confirmation, allergies, parent n
 - Finanzas page (home card shows the year's income): year total, monthly bars, tap a month for its weeks (diezmo/ofrenda when known), form to record a week / adjustments / a month total. Also in the Tablero → Finanzas. Gastos pending the expense report.
 
 ## IGHO editor (23 Nov 2026, v5)
-- Mi IGHO → «Editar IGHO» (Consejo/admin): name, leader (search or new person), day/time, address, map links. Changing the leader offers the access step (crear_lider_igho). Leaders still edit only day/time/address/maps. Admin has «+ Nuevo IGHO» (e.g. Josué Merchán's, which wasn't in the base).
+- Mi IGHO → «Editar IGHO» (Consejo/admin): name, leader (search or new person), day/time, address, map links. Changing the leader offers the access step (crear_lider_igho). «Celular del líder» field (v7) saves personas.telefono of the leader (used for the WhatsApp to the leader). Leaders still edit only day/time/address/maps. Admin has «+ Nuevo IGHO» (e.g. Josué Merchán's, which wasn't in the base).
 
 ## Bienvenida → IGHO (23 Nov 2026, v6)
 - Registering a new person with IGHO interest Sí / Tal vez shows «¿A qué IGHO?». Choosing one saves the interest (leader gets the app notice, note «Persona nueva (Bienvenida)») and shows the same ✓ Listo card as the Stand (ighoListoHtml): WhatsApp to the person with day/time, address, map and leader; WhatsApp to the leader (now always offered, in the Stand too).
