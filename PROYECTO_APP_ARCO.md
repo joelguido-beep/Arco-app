@@ -1,6 +1,6 @@
 # App Iglesia Arco Ríos: project summary (to start a new chat)
 
-Attach this file and the latest `index.html` when you start a new chat. The repository is `joelguido-beep/Arco-app`.
+Attach this file when you start a new chat. The code lives in GitHub: **`joelguido-beep/Arco-app`** (branch `main`, served by GitHub Pages at https://joelguido-beep.github.io/Arco-app/). The Claude GitHub App is installed, so Claude can clone the repo and push changes directly (no need to attach `index.html`). Current version: **23-nov v3** (shown under the title of the Avisos page; constant `VERSION_APP` in index.html; update both on each release).
 
 ## What it is
 A web app in Spanish for Arco Ríos (Cuenca). It's a single `index.html` file hosted on **GitHub Pages**, and the data lives in **Supabase** (project `lmitwnfvelwbbkjkvmtb`).
@@ -113,8 +113,15 @@ Kidz with QR: camera check-in/check-out (photo confirmation, allergies, parent n
 - Census by link: `…/Arco-app/?censo=<codigo>` opens without login. Step 1 search yourself (name + surname; the list shows IGHO and last 3 phone digits) or «soy nuevo/a»; step 2 your data, already filled from the base (21_censo_rellenar.sql), to check and correct; step 3 the family already registered (each with «Revisar»); step 3 add family (relationship, lives with me, search or new). Answers wait in Administración → Censo: shows old → new values, lets you join a «new» person to someone already in the base, then Aplicar or Descartar. Mi IGHO → Censo: the link, WhatsApp share, who already answered.
 - Avisos: bell on home (unread count) + banner with the latest unread aviso; Avisos page (activate phone notifications, test, my avisos). Admin and Consejo send to Toda la iglesia / equipo / Consejo y cónyuges / Líderes IGHO / Padres de Kidz / one ministry, and choose which page it opens. Saturday 20:00 automatic «Mañana sirves en Arco» from Worship set list, Kidz turnos and Anuncios. iPhone: notifications only after «Agregar a pantalla de inicio». New files next to index.html: `sw.js`, `manifest.json`, `icon-192.png`, `icon-512.png`, `badge-96.png`.
 
+## Status (23 Nov 2026, end of day)
+- Notifications work on Joel's Android (function `swift-action` deployed with notificar.ts, Verify JWT off).
+- To confirm: `21_censo_rellenar.sql` and `22_stand_igho.sql` run in Supabase; cron job `recordatorio-siervos` points to `/functions/v1/swift-action` (check: `select command from cron.job where jobname = 'recordatorio-siervos';`).
+
 ## Pending
-- Test notifications on a real Android and iPhone; check the first Saturday reminder (Supabase → Edge Functions → notificar → Logs)
+- Test notifications on an iPhone (Safari → Agregar a pantalla de inicio first); check the first Saturday reminder (Supabase → Edge Functions → swift-action → Logs, Saturday 20:00)
+- Decide: should Consejo spouses see Reunión del Consejo? (now hidden)
+- Decide: add a privacy check to the census link (last 4 phone digits or birth year before showing someone's data)
+- Weekly schedule for Anfitriones / Bienvenida / Stand so they also get the Saturday reminder
 - Finances (monthly report by week, expense categories, elders only)
 - Decide: import past Sunday attendance from the "Counsel Dashboard" sheet; move preaching / events into the app
 - Check two imported task dates: "Audicion en Enero Febrero" is dated 17-Ene-2027 in the sheet; "10-21-0206" was read as 21 Oct 2026
