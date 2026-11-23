@@ -1,0 +1,124 @@
+# App Iglesia Arco Ríos: project summary (to start a new chat)
+
+Attach this file and the latest `index.html` when you start a new chat. The repository is `joelguido-beep/Arco-app`.
+
+## What it is
+A web app in Spanish for Arco Ríos (Cuenca). It's a single `index.html` file hosted on **GitHub Pages**, and the data lives in **Supabase** (project `lmitwnfvelwbbkjkvmtb`).
+- Supabase URL: `https://lmitwnfvelwbbkjkvmtb.supabase.co`
+- Publishable key (safe to keep in the app): `sb_publishable_hCMTSR9Rnacl85NXiQpn5Q_L9JlmJ3m`
+- Never put the service_role / secret key in the app.
+- Edge Functions: **`notificar`** (code: `notificar.ts`, "Verify JWT" off): sends push notifications (Avisos and the Saturday reminder). VAPID keys create themselves the first time and live in `ajustes_privados` with the cron secret.
+- Edge Function: named **`hyper-api`** in Supabase (code: `admin-usuarios.ts`), with "Verify JWT with legacy secret" turned **off**. Admin actions check the admin role in code; `registro_padre` is public (parents create their own account); `crear_lider_igho` is allowed for admin or the Consejo member who covers that IGHO, and only gives the `lider_igho` role to that IGHO's registered leader.
+
+## Design
+- Dark background `#1b1b1d`, main color **orange `#F47B20`**, white Arco logo on orange.
+- Rounded colored cards, pill-shaped buttons, a fixed bottom menu. Font: Outfit.
+- Phone first. A desktop version for reports is still pending.
+
+## Database (SQL files run in this order)
+1. `01_esquema.sql`: personas, igho, ministerios, cursos, censos, perfiles, usuarios_roles, reuniones_igho, asistencia_igho, and RLS
+2. `02_datos_censo_2026.sql`: 405 people / 22 IGHOs from the January 2026 census
+3. Grants for `authenticated` (run by hand)
+4. `03_anfitriones.sql`: conteo_anfitriones, conteo_kidz, asistencia_domingo view, notas_anfitriones
+5. `04_domingo_worship_bienvenida_igho.sql`: Sunday program, worship v1, nuevos (Bienvenida), IGHO functions
+6. `05_admin.sql`: lista_usuarios, guardar_roles, IGHO leaders can edit their members
+7. `06_consejo_worship.sql`: cobertura_consejo, PDFs in Storage ("canciones" bucket), series, teams
+8. Grants for `service_role` (run by hand; the Edge Function needs them)
+9. `07_persona_nueva.sql`: crear_persona (replaced by 08)
+10. `08_persona_nueva_worship.sql`: crear_persona for admin, Consejo and Worship leaders
+11. `09_worship_ausencias.sql`: worship_ausencias ("No puedo ese domingo"), lidera_worship(), mi_persona()
+12. `10_kidz.sql`: kidz_clases (2–3, 4–7, 8–11, S78 12–15), kidz_familias, kidz_ninos, kidz_checkins, kidz_siervos_dia, kidz_planes, kidz_turnos, kidz_notas_padres, kidz_anuncios, kidz_escanear(), trigger that fills conteo_kidz, private "kidz" photo bucket
+13. `11_familias_multiplicar.sql`: hogares, persona_hogar, parentescos, sugerencias_descartadas, kidz_familias.hogar_id, fam_* functions (admin/secretaría edit; census suggestions); igho.igho_madre_id + fecha_inicio, persona_igho_historial (trigger on personas.igho_id), multiplicar_igho, mover_a_igho, cambiar_cobertura, consejo_lista, tablero_cobertura, visitas_igho; secretaría can read personas/igho
+14. `12_anuncios_formacion.sql`: ministries anuncios / formacion / stand; conteo_anfitriones.manteles; anuncios_domingo + anuncios_items (+ anuncios_equipo()); fc_ofertas, fc_inscripciones, fc_buscar_personas, fc_inscribir (creates the person if new), fc_estado (completing a course class adds it to persona_cursos)
+15. `13_consejo_cobertura.sql`: visitas_igho.personas/origen, cobertura_de_igho(), registrar_visitas_cobertura() (coverage + spouse in IGHO attendance → Consejo visit); consejo_tareas, consejo_notas, consejo_decisiones (decisions: Consejo adds, only admin corrects, original text kept); imports the 73 tasks from the council sheet the first time
+16. `14_anuncios_v2.sql`: anuncios_domingo.anunciantes (several people, e.g. a couple) + anunciantes_nombres; anuncios_items.nota (note for the announcer, not read aloud); anuncios_fijos (recordatorio / importante / inicio / final, shown every Sunday); seeds the weekly items and 22-Nov's two new ones
+17. `15_worship_areas_predica.sql`: worship_equipos.area (alabanza / consola / multimedia) + teams "Consola" and "Multimedia"; predica_archivos (sermon slides per Sunday: file or link, note for Multimedia, "descargado por"), sube_predica(), ve_predica(), predica_descargada(); private "predicas" Storage bucket (50 MB per file)
+18. `16_difusion_formacion.sql`: cursos.color + se_ofrece, adds Alpha Matrimonios (codes: alpha_matrimonios, raices, herencia_1, herencia_2, legado); fc_ofertas.modalidad ('semanal' | 'intensivo') + sesiones date[] + grupo; puede_difusion(), difusion_lista() (kidz / no_bautizados / sin_curso / inscritos / lideres_igho); difusion_envios (log of messages sent)
+19. `17_cumpleanos.sql`: mi_cumpleanos() and guardar_mi_cumpleanos(fecha) (a user reads / saves their own birth date through their perfil → persona)
+20. `18_conyuges_stand.sql`: conyuges_consejo + es_conyuge_consejo() + marcar_conyuge_consejo(); a read policy "conyuge del consejo ve" on every table except consejo_*, difusion_envios, usuarios_roles, perfiles, cobertura_consejo, finanz*; storage read for canciones/kidz/predicas; edita_familias() and puede_difusion() now admin only; stand_actividades, anuncios_items.stand_actividad_id, stand_registros, en_ministerio(), lidera_ministerio(), edita_anuncios(), equipo_stand(), stand_buscar_ninos()
+21. `19_censo_publico.sql`: censo_campanas (one row per census, random `codigo` for the link), censo_respuestas (staging, jsonb), anon RPCs censo_info / censo_buscar / censo_enviar, censo_respondieron(igho), censo_aplicar (admin: updates or creates people, censos row, hogar, parentescos, cursos), censo_descartar, censo_abrir_cerrar
+22. `20_avisos.sql`: notificaciones, notificaciones_usuarios (inbox + read), push_suscripciones, ajustes_privados, puede_avisar(), destinatarios_aviso(destino), crear_aviso(), servicio_del_domingo(fecha), crear_recordatorios_servicio(fecha), pg_cron job `recordatorio-siervos` (Sunday 01:00 UTC = Saturday 20:00 Ecuador) calling `notificar`
+
+## Roles
+- `admin`, `anciano` (shown as **Miembro del Consejo**), `secretaria`, `finanzas`
+- **Cónyuge del Consejo**: not a rol_t value but a row in `conyuges_consejo` (checkbox in Administración → Editar). Sees every page except Finanzas, Tablero, Reunión del Consejo, Mensajes por WhatsApp and Administración. Pages are read-only («👁 Solo lectura», class `solo-ver`) unless they also have the matching role (e.g. Líder de Kidz edits Kidz). Mi IGHO: all IGHOs readable, editable only their own.
+- Only `admin` sees Administración (incl. Familias) and Mensajes por WhatsApp (the WhatsApp shortcuts in Kidz and Formación are hidden for everyone else).
+- `lider_ministerio` / `servidor` (shown as "Líder" / "Siervo") + ministry (anfitriones, kidz, bienvenida, worship, anuncios, formacion, stand). In Anuncios the Siervo level is shown as **Anunciante**.
+- Anuncios: Líder (Andrés Salas), Consejo and secretaría write each Sunday's announcements and choose who gives them; the Anunciante sees them first in Este domingo.
+- Formación Cristiana: Líder creates classes/events and marks who completed; David Pazmiño covers it (Consejo coverage → Formación Cristiana). Stand de información: siervos register people to open classes/events.
+- `lider_igho` + igho
+- Admins and council members see everything; each council member's Resumen shows their own coverage (cobertura).
+- A service team member only sees their own team's page + Este domingo.
+- Login: cell number (stored as `09XXXXXXXX@arcorios.app`) or email, with a temporary password that must be changed on first login.
+- Parents: sign up themselves from the login screen ("¿Eres papá o mamá?"). A parent = a user linked to a row in `kidz_familias` (no role); they see only "Mis niños".
+- Kidz: siervo = check-in/out, registro, Mi servicio. Líder (and Consejo/admin) = also En vivo, Domingo (turnos + actividades), Anuncios, Datos.
+
+## Done
+Login, home page by role, Resumen (personalized per council member), Anfitriones count, Este domingo, Worship (PDFs with bulk upload that splits title/artist, series, teams, set list builder, custom instruments, "No puedo ese domingo" notices), Bienvenida, Mi IGHO (members, editing, attendance), Administración (incl. adding a new person not in the census).
+Kidz with QR: camera check-in/check-out (photo confirmation, allergies, parent note, authorized pickup list), siervo QR with assignment + activities, live view by class, family registration with photo, shareable QR image, parent app (kids' QR, note for teachers, announcements), stats (attendance per Sunday, by class, frequency, kids missing 4+ weeks). Kidz count fills conteo_kidz automatically.
+
+## Also done (21 Nov 2026)
+- Administración → Familias (admin + secretaría): households, roles, "hijo de" links across households, Kidz family link, tree view, census suggestions (Sí / No).
+- Multiplicar IGHO (Mi IGHO and the Tablero, for admin or the covering Consejo member): new leader (search or new person), members move with their household, coverage, one-step save with history; last step gives the new leader access (WhatsApp card). Mover marcados a otro IGHO; Cambiar cobertura for several IGHO.
+- Tablero del Consejo (desktop, opens automatically for Consejo/admin on screens ≥1100px; also a home card): 12 cards, Sunday chart (each Sunday, month average, period average), people per coverage (bars instead of the mockup's donut, for legibility), IGHO table (reported x/4, visits), Necesitan seguimiento, IGHO tree, family tree; filters (Este mes / 3 meses / año / Personalizado, coverage) and Imprimir / PDF. Sections: Asistencia, IGHO y cobertura (detail, visits, multiply, move), Personas y familias, Nuevos, Kidz.
+- "Pendientes del Consejo" card replaced by "Necesitan seguimiento" until council tasks move into the app.
+
+## Also done (21 Nov 2026, second round)
+- Este domingo → Anuncios panel (numbered list, who gives them, "Te toca dar los anuncios"), editor with copy from last Sunday.
+- Formación Cristiana page (classes/events, registrations, WhatsApp reminders, Completó / Se retiró) and Stand de información page (pick class, search or new person, WhatsApp confirmation, today's list). Resumen shows a Formación panel to whoever covers it.
+- Anfitriones: Manteles para lavar counter (not added to the total).
+- Logos: Kidz and Arco Worship on their cards and pages; the Kidz QR image now carries the Kidz logo.
+
+## Also done (21 Nov 2026, third round)
+- Mi IGHO → Asistencia: the Consejo member who covers the IGHO and their spouse (from the family tree) appear as "Visita de cobertura". They are not members; marking them records a Consejo visit that the Tablero counts.
+- Reunión del Consejo (Tablero menu + home card): Pendientes (add, complete, notes, "Ya no aplica" instead of deleting, search), Decisiones (date, Consejo / Consejo ampliado, tema), Acta (by date: decisions, new tasks, completed, notes; accent-insensitive search with highlights; print). Tablero card 6 is "Pendientes del Consejo" again.
+- Logos: Mi IGHO (house) and Formación Cristiana seal on their cards and pages.
+
+## Anuncios (22 Nov 2026)
+- Each Sunday shows: yellow Recordatorio and red Importante boxes, then the fixed announcements «al inicio» (Bienvenida, Iglesias de hogar), the week's new ones (marked «Nuevo»), then the fixed ones «al final» (Oración, Final), numbered in one list.
+- The weekly editor only holds the new ones; «Editar lo que se anuncia cada semana» edits the fixed set (with an Activo switch to pause one).
+
+## Worship teams and sermon slides (22 Nov 2026)
+- Each Worship team has an area: Alabanza (Equipo A, Equipo B), Consola (sound), Multimedia (screens/slides). Equipos tab groups them by area; new teams choose their area.
+- Armar lista: 3. Equipo de alabanza (A/B), 4. Consola, 5. Multimedia. Changing A↔B keeps Consola and Multimedia. One job per person per Sunday; the function (Consola, Multimedia, Proyección…) decides which section it shows in.
+- New "Prédica" tab (everyone in Worship + Consejo): the preaching elder (Consejo/admin) or a Worship leader uploads slides, video, PDF (≤50 MB each) or pastes a Drive/Canva link, with a note for Multimedia. Multimedia taps Descargar (keeps the original file name); the file shows "✓ Descargado por …" so the preacher knows it arrived.
+- Este domingo has a "Subir diapositivas de la prédica" button for Consejo/admin; Resumen's Worship panel warns when the slides are missing.
+
+## Stacked-card home and Resumen (23 Nov 2026)
+- Home: big header ("Hola, Joel" + gray date), then one full-width colored card per section the user can see, with a big live number (attendance, Kidz, nuevos, Worship songs, next Sunday's date + preacher, Formación, Stand, IGHO reported x/total or the leader's members, people, Consejo pendientes). Tablero, Administración and Finanzas show an arrow instead of a number.
+- Cards start stacked (title + number visible, the rest as thin edges) and spread open as you scroll; a small header slides in at the top. If all cards fit on screen (e.g. a siervo with 2 cards) they don't stack.
+- Resumen uses the same cards: IGHO you cover, attendance, Kidz, nuevos, Worship, Formación, whole church, people per IGHO, time in Arco.
+- Component: pintarPila / llenarTarjeta / medirPila / aplicarPilas; per-card data in DATOS_HOME.
+
+## WhatsApp messages and the five courses (23 Nov 2026)
+- New page "Mensajes por WhatsApp" (home card). Lists: Padres de Kidz (by class, or only those who came in the last 8 weeks), No bautizados (by IGHO), No han tomado una clase (pick the course; option "only those who did the previous course"; leaves out people who have it or are already enrolled), Inscritos en una clase, Líderes de IGHO. Admin / Consejo / secretaría see all; Kidz líder → parents; Formación líder → class lists.
+- Message with {nombre} (first name; Kidz uses the parents' names); one message per phone (people sharing a phone get one message with both names). Send one by one (opens WhatsApp with the text ready, then "next"), or for a WhatsApp broadcast list: download contacts (.vcf), copy message, copy numbers. Each send is logged in difusion_envios.
+- Shortcuts: Kidz → Anuncios ("Mensaje por WhatsApp a los padres", a WhatsApp button on each announcement and right after publishing); a class page → "Invitar a quienes no han tomado…" and "Mensaje a los inscritos".
+- Formación Cristiana: "+ Abrir clases" picks one or more of Alpha Matrimonios, Raíces, Herencia I, Herencia II, Legado (each with its book-cover color and emblem). Each is 7 semanas (the first date fills all 7 weekly dates, each editable) or Intensivo (pick the Friday → Friday + Saturday). One fc_ofertas row per course, sharing a grupo. Events are separate ("+ Nuevo evento"). The class page lists the 7 dates or the intensive weekend.
+
+## Birthdays and the card stack (23 Nov 2026)
+- personas.fecha_nacimiento existed but the census only gave age (anio_nacimiento_aprox), so most adults have no date yet. The home page asks each user once ("¿Cuándo es tu cumpleaños?", "Ahora no" hides it for 30 days); IGHO leaders can add it in Editar ficha; Kidz children already have it.
+- On your birthday the app opens with confetti and a "¡Feliz cumpleaños!" card (once per day; a banner on home lets you replay it).
+- Mi IGHO: "Cumpleaños esta semana" panel (Monday–Sunday, age, hoy / mañana / fue el…), 🎂 next to the name, count of members missing a date; the leader's home IGHO card lists them too.
+- Kidz check-in: if the child had a birthday in the last 7 days (or today) → banner + confetti. If the child is registered in a class younger than their age → "¿Pasa a la clase de los grandes?" (Sí, cambiar updates kidz_ninos.clase_id and today's check-in; "Todavía no" isn't asked again until the next birthday on that device).
+- Home stack: starts a little lower; the opening distance now depends on where the stack starts, so the first card is fully open before it reaches the top.
+
+## Spouses, Stand, census link, notifications (23 Nov 2026, second round)
+- Cónyuge del Consejo (see Roles). Generic view-only guard: a capture click handler blocks anything that isn't navigation (`SV_PERMITIDO`), CSS hides save buttons and `.solo-edit` panels.
+- Anuncios editor: each new announcement has «Inscripciones en el Stand: No / Sí · personas / Sí · niños». That creates a `stand_actividades` row; copying the announcement to the next Sunday keeps the same list. Panel shows a green «Inscripciones en el Stand» tag.
+- Stand de información: summary of this Sunday's announcements (tap to expand; «Inscribir» on the ones with sign-ups), then one pick list with the Stand activities and Formación classes. Niños: search Kidz children or type name, birth date, parent, phone. List of who signed up (leader can close the sign-up or remove someone).
+- Logos: Stand (info icon) and Bienvenida (add-person icon) from The Noun Project, Anfitriones (two people in a circle).
+- Census by link: `…/Arco-app/?censo=<codigo>` opens without login. Step 1 search yourself (name + surname; shows IGHO and last 3 phone digits only) or «soy nuevo/a»; step 2 your data (blank fields don't change anything); step 3 add family (relationship, lives with me, search or new). Answers wait in Administración → Censo: shows old → new values, lets you join a «new» person to someone already in the base, then Aplicar or Descartar. Mi IGHO → Censo: the link, WhatsApp share, who already answered.
+- Avisos: bell on home (unread count) + banner with the latest unread aviso; Avisos page (activate phone notifications, test, my avisos). Admin and Consejo send to Toda la iglesia / equipo / Consejo y cónyuges / Líderes IGHO / Padres de Kidz / one ministry, and choose which page it opens. Saturday 20:00 automatic «Mañana sirves en Arco» from Worship set list, Kidz turnos and Anuncios. iPhone: notifications only after «Agregar a pantalla de inicio». New files next to index.html: `sw.js`, `manifest.json`, `icon-192.png`, `icon-512.png`, `badge-96.png`.
+
+## Pending
+- Test notifications on a real Android and iPhone; check the first Saturday reminder (Supabase → Edge Functions → notificar → Logs)
+- Finances (monthly report by week, expense categories, elders only)
+- Decide: import past Sunday attendance from the "Counsel Dashboard" sheet; move preaching / events into the app
+- Check two imported task dates: "Audicion en Enero Febrero" is dated 17-Ene-2027 in the sheet; "10-21-0206" was read as 21 Oct 2026
+- Review the 49 census records flagged in `para_revisar.csv`
+
+## How to update
+- SQL: Supabase → SQL Editor → New query → Run (each file once).
+- App: GitHub → repository → Add file → Upload files → `index.html` (plus `sw.js`, `manifest.json` and the icons when they change) → Commit.
+- Edge Function: Supabase → Edge Functions → open the function → Code → paste → Deploy.
