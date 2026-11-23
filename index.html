@@ -749,7 +749,7 @@
 
   <!-- ================= AVISOS ================= -->
   <section id="v-avisos" class="hidden"><div class="top"><button class="back" data-go="home" aria-label="Volver"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button></div>
-    <div class="page-title">Avisos</div><div class="hello-sub" id="av-sub">Notificaciones de Arco Ríos · versión 23-nov v8</div><div id="av-body"></div></section>
+    <div class="page-title">Avisos</div><div class="hello-sub" id="av-sub">Notificaciones de Arco Ríos · versión 23-nov v9</div><div id="av-body"></div></section>
 
   <!-- ================= CENSO (enlace público, sin cuenta) ================= -->
   <section id="v-censo" class="hidden"><div class="top"><span class="pill"><span class="dot" id="cz-logo"></span>Arco Ríos</span></div>
@@ -1460,17 +1460,37 @@ async function cargarHistorial() {
     ${data.map((d) => `<div class="li"><span>${fmtCorta.format(fromYmd(d.fecha))} · ${d.total} personas</span><button class="x" data-anf-del="${d.fecha}" aria-label="Borrar conteo">×</button></div>`).join("")}`);
   cont.querySelectorAll("[data-anf-del]").forEach((b) => b.addEventListener("click", () => borrarConteoDomingo(b.dataset.anfDel, cargarHistorial)));
 }
-// Borra el conteo de un domingo (Anfitriones) y, si se elige, el de Kidz con sus check-ins
+// Borra lo contado ese día: el conteo de Anfitriones y/o el de Kidz (con sus check-ins)
 async function borrarConteoDomingo(fecha, despues) {
   const f = fmtLarga.format(fromYmd(fecha));
-  if (!confirm(`¿Borrar el conteo de Anfitriones del ${f}?`)) return;
-  const { data: kz } = await sb.from("conteo_kidz").select("ninos").eq("fecha", fecha).maybeSingle();
-  const conKidz = kz && confirm(`Ese domingo también tiene conteo de Kidz (${kz.ninos} niños).\n\n¿Borrar también el conteo de Kidz y los check-ins de ese día?\n(Aceptar = sí, Cancelar = solo Anfitriones)`);
-  let { data: bo, error } = await sb.from("conteo_anfitriones").delete().eq("fecha", fecha).select("fecha");
-  if (!error && !bo?.length) error = { message: "No se borró (sin permiso)." };
-  if (!error && conKidz) ({ error } = await sb.from("kidz_checkins").delete().eq("fecha", fecha));
-  if (!error && conKidz) ({ error } = await sb.from("conteo_kidz").delete().eq("fecha", fecha));
-  if (error) return alert(error.message + (/policy|permission|permiso/i.test(error.message) ? " (falta ejecutar 26_admin_borrar.sql)" : ""));
+  const [an, kz] = await Promise.all([sb.from("conteo_anfitriones").select("adultos, ninos_auditorio").eq("fecha", fecha).maybeSingle(),
+    sb.from("conteo_kidz").select("ninos, servidores").eq("fecha", fecha).maybeSingle()]);
+  const [{ count: ck }] = await Promise.all([sb.from("kidz_checkins").select("id", { count: "exact", head: true }).eq("fecha", fecha)]);
+  const hayA = !!an.data, hayK = !!kz.data || ck > 0;
+  if (!hayA && !hayK) { alert("Ese día ya no tiene conteos."); return despues && despues(); }
+  let borrarA = hayA, borrarK = hayK;
+  if (hayA && hayK) {
+    if (!confirm(`${f}:\n· Anfitriones: ${an.data.adultos} adultos\n· Kidz: ${kz.data?.ninos ?? ck} niños (${ck || 0} check-ins)\n\n¿Borrar los dos?`)) {
+      borrarA = confirm("¿Borrar solo el conteo de Anfitriones?");
+      borrarK = !borrarA && confirm("¿Borrar solo el conteo de Kidz y sus check-ins?");
+      if (!borrarA && !borrarK) return;
+    }
+  } else if (!confirm(hayA ? `¿Borrar el conteo de Anfitriones del ${f} (${an.data.adultos} adultos)?`
+      : `${f} solo tiene conteo de Kidz: ${kz.data?.ninos ?? ck} niños (${ck || 0} check-ins).\n\n¿Borrar el conteo de Kidz y sus check-ins?`)) return;
+  let error = null;
+  if (borrarK) {
+    ({ error } = await sb.from("kidz_checkins").delete().eq("fecha", fecha));
+    if (!error) ({ error } = await sb.from("conteo_kidz").delete().eq("fecha", fecha));
+  }
+  if (!error && borrarA) {
+    const r = await sb.from("conteo_anfitriones").delete().eq("fecha", fecha).select("fecha");
+    error = r.error || (!r.data?.length ? { message: "No se borró el conteo de Anfitriones (sin permiso)." } : null);
+  }
+  if (!error && borrarK) {   // confirmar que Kidz quedó vacío
+    const [{ count: c1 }, { data: k2 }] = await Promise.all([sb.from("kidz_checkins").select("id", { count: "exact", head: true }).eq("fecha", fecha), sb.from("conteo_kidz").select("fecha").eq("fecha", fecha).maybeSingle()]);
+    if (c1 > 0 || k2) error = { message: "No se borró el conteo de Kidz (sin permiso)." };
+  }
+  if (error) return alert(error.message + (/permiso|policy|permission/i.test(error.message) ? " Revisa que 26_admin_borrar.sql se haya ejecutado." : ""));
   despues && despues();
 }
 
@@ -2790,11 +2810,7 @@ async function adBorrar() {
     L.innerHTML = `<h4>Conteos del domingo (${fechas.length})</h4>` + (fechas.map((f) => { const x = (a.data || []).find((y) => y.fecha === f), z = (kz.data || []).find((y) => y.fecha === f);
       return fila(f, fmtLarga.format(fromYmd(f)), [x ? `Anfitriones: ${x.adultos} adultos, ${x.ninos_auditorio || 0} niños auditorio${x.nuevos ? `, ${x.nuevos} nuevos` : ""}${x.registrado_nombre ? " · " + esc(x.registrado_nombre) : ""}` : "Sin conteo de Anfitriones", z ? `Kidz: ${z.ninos} niños, ${z.servidores || 0} siervos` : ""].filter(Boolean).join("<br>")); }).join("") || '<div class="muted">No hay conteos.</div>');
     return conectar(async (f) => {
-      if ((a.data || []).some((y) => y.fecha === f)) return borrarConteoDomingo(f, adBorrar);
-      if (!confirm(`¿Borrar el conteo de Kidz y los check-ins del ${fmtLarga.format(fromYmd(f))}?`)) return;
-      let { error } = await sb.from("kidz_checkins").delete().eq("fecha", f);
-      if (!error) error = await borrar("conteo_kidz", "fecha", f);
-      error ? falta(error) : adBorrar();
+      borrarConteoDomingo(f, adBorrar);
     });
   }
   if (k === "igho") {
@@ -5890,7 +5906,7 @@ async function revisarCenso(x) {
 // ===================================================================
 // AVISOS: notificaciones al teléfono + campana dentro de la app
 // ===================================================================
-const VERSION_APP = "23-nov · v8";
+const VERSION_APP = "23-nov · v9";
 const FUNCION_AVISOS = "swift-action"; // Edge Function en Supabase (se muestra como «notificar»)
 const av = { lista: [], noLeidas: 0, timer: null };
 const IR_A = [["", "Avisos"], ["domingo", "Este domingo"], ["igho", "Mi IGHO"], ["kidz", "Kidz"], ["worship", "Arco Worship"], ["formacion", "Formación Cristiana"], ["stand", "Stand de información"]];
