@@ -749,7 +749,7 @@
 
   <!-- ================= AVISOS ================= -->
   <section id="v-avisos" class="hidden"><div class="top"><button class="back" data-go="home" aria-label="Volver"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button></div>
-    <div class="page-title">Avisos</div><div class="hello-sub" id="av-sub">Notificaciones de Arco Ríos · versión 23-nov v9</div><div id="av-body"></div></section>
+    <div class="page-title">Avisos</div><div class="hello-sub" id="av-sub">Notificaciones de Arco Ríos · versión 23-nov v10</div><div id="av-body"></div></section>
 
   <!-- ================= CENSO (enlace público, sin cuenta) ================= -->
   <section id="v-censo" class="hidden"><div class="top"><span class="pill"><span class="dot" id="cz-logo"></span>Arco Ríos</span></div>
@@ -5906,7 +5906,7 @@ async function revisarCenso(x) {
 // ===================================================================
 // AVISOS: notificaciones al teléfono + campana dentro de la app
 // ===================================================================
-const VERSION_APP = "23-nov · v9";
+const VERSION_APP = "23-nov · v10";
 const FUNCION_AVISOS = "swift-action"; // Edge Function en Supabase (se muestra como «notificar»)
 const av = { lista: [], noLeidas: 0, timer: null };
 const IR_A = [["", "Avisos"], ["domingo", "Este domingo"], ["igho", "Mi IGHO"], ["kidz", "Kidz"], ["worship", "Arco Worship"], ["formacion", "Formación Cristiana"], ["stand", "Stand de información"]];
@@ -6024,12 +6024,20 @@ async function abrirAvisos() {
       <label>Al tocarlo abre</label><select id="av-ir">${opciones(IR_A, "")}</select>
       <button class="btn-primary" id="av-enviar">Enviar aviso</button><div class="ok" id="av-msg"></div></div>` : ""}
     <div class="panel"><h4>Mis avisos</h4>
-      ${av.lista.map((x) => `<div class="av-item ${x.leida ? "" : "nueva"}"><b>${esc(x.titulo)}</b>${x.cuerpo ? `<div class="txt">${esc(x.cuerpo)}</div>` : ""}
+      ${av.lista.map((x) => `<div class="av-item ${x.leida ? "" : "nueva"}">${ctx.roles.has("admin") ? `<button class="x" data-av-del="${x.id}" style="float:right" aria-label="Borrar aviso">×</button>` : ""}<b>${esc(x.titulo)}</b>${x.cuerpo ? `<div class="txt">${esc(x.cuerpo)}</div>` : ""}
         <div class="meta">${esc(x.creado_por_nombre || "")} · ${fmtCorta.format(new Date(x.creado_en))} ${fmtHora.format(new Date(x.creado_en))}${x.ir_a && SECCIONES.some((y) => y.id === x.ir_a && y.ve(ctx)) ? ` · <button class="link" data-go="${esc(x.ir_a)}">Abrir</button>` : ""}</div></div>`).join("")
         || '<div class="muted">Todavía no tienes avisos.</div>'}</div>
     ${hist.length ? `<div class="panel"><h4>Avisos enviados</h4>${hist.map((n) => { const leidas = (n.notificaciones_usuarios || []).filter((u) => u.leida_en).length;
       return `<div class="li"><div><b>${esc(n.titulo)}</b><div class="muted">${esc((DESTINOS.find(([k]) => k === n.destino) || [, n.destino])[1])} · ${fmtCorta.format(new Date(n.creado_en))} · ${esc(n.creado_por_nombre || "")}</div>
-        <div class="muted">${n.personas} personas · ${n.push_enviados} teléfonos · ${leidas} lo vieron en la app</div></div></div>`; }).join("")}</div>` : ""}`;
+        <div class="muted">${n.personas} personas · ${n.push_enviados} teléfonos · ${leidas} lo vieron en la app</div></div>${ctx.roles.has("admin") ? `<button class="x" data-av-del="${n.id}" aria-label="Borrar aviso">×</button>` : ""}</div>`; }).join("")}</div>` : ""}`;
+  body.querySelectorAll("[data-av-del]").forEach((b) => b.addEventListener("click", async () => {
+    if (!confirm("¿Borrar este aviso? Desaparece de la campanita de todos los que lo recibieron.\n(Si ya llegó como notificación al teléfono, esa no se puede quitar.)")) return;
+    const id = +b.dataset.avDel;
+    let { error } = await sb.from("notificaciones_usuarios").delete().eq("notificacion_id", id);
+    if (!error) { const r = await sb.from("notificaciones").delete().eq("id", id).select("id"); error = r.error || (!r.data?.length ? { message: "No se borró (sin permiso). Revisa que 26_admin_borrar.sql se haya ejecutado." } : null); }
+    if (error) return alert(error.message);
+    await cargarMisAvisos(); abrirAvisos();
+  }));
   $("av-on")?.addEventListener("click", async () => {
     $("av-on").disabled = true;
     try { await activarPush(); abrirAvisos(); } catch (e) { $("av-on").disabled = false; alert(e.message); }
