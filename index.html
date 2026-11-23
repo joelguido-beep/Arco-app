@@ -749,7 +749,7 @@
 
   <!-- ================= AVISOS ================= -->
   <section id="v-avisos" class="hidden"><div class="top"><button class="back" data-go="home" aria-label="Volver"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button></div>
-    <div class="page-title">Avisos</div><div class="hello-sub" id="av-sub">Notificaciones de Arco Ríos · versión 23-nov v4</div><div id="av-body"></div></section>
+    <div class="page-title">Avisos</div><div class="hello-sub" id="av-sub">Notificaciones de Arco Ríos · versión 23-nov v5</div><div id="av-body"></div></section>
 
   <!-- ================= CENSO (enlace público, sin cuenta) ================= -->
   <section id="v-censo" class="hidden"><div class="top"><span class="pill"><span class="dot" id="cz-logo"></span>Arco Ríos</span></div>
@@ -2288,40 +2288,136 @@ function textoLugarIgho(g) {
 function lugarIghoHtml(g) {
   if (!g || !("direccion" in g)) return "";
   const m = g.mapas || [], hay = g.horario || g.direccion || m.length;
-  return `<div class="panel" id="ig-lugar"><div class="kclase-h"><h4>Dónde y cuándo se reúne</h4><button class="btn-sec mini solo-edit" id="ig-lugar-ed">Editar</button></div>
+  return `<div class="panel" id="ig-lugar"><div class="kclase-h"><h4>Dónde y cuándo se reúne</h4><button class="btn-sec mini solo-edit" id="ig-lugar-ed">${ctx.esAncianoOAdmin ? "Editar IGHO" : "Editar"}</button></div>
+    ${ctx.esAncianoOAdmin ? `<div class="muted">Líder: ${esc(g.lider || "sin líder")}</div>` : ""}
     ${hay ? `${g.horario ? `<div><b>${esc(g.horario)}</b></div>` : ""}${g.direccion ? `<div class="muted" style="margin-top:4px">${esc(g.direccion)}</div>` : ""}
       ${m.length ? `<div class="row-btns" style="margin-top:8px">${m.map((u, i) => `<a class="btn-sec mini" href="${esc(u)}" target="_blank" rel="noopener">🗺 Ver mapa${m.length > 1 ? " " + (i + 1) : ""}</a>`).join("")}</div>` : ""}`
       : '<div class="muted">Todavía no hay dirección. Agrégala para que el Stand pueda mandarla por WhatsApp.</div>'}
-    <div id="ig-lugar-form" class="hidden" style="margin-top:10px">
-      <label>Día y hora</label><input id="ig-lh" placeholder="Ej.: Martes · 8:00 pm" value="${esc(g.horario || "")}">
-      <label>Dirección y referencias</label><textarea id="ig-ld" placeholder="Calle, referencia, dónde parquear…">${esc(g.direccion || "")}</textarea>
-      <label>Enlaces de Google Maps (uno por línea; si se turnan entre casas, pon los dos)</label><textarea id="ig-lm" placeholder="https://maps.app.goo.gl/…">${esc(m.join("\n"))}</textarea>
-      <button class="btn-primary" id="ig-lugar-ok">Guardar</button><div class="ok err" id="ig-lugar-msg"></div>
-    </div></div>`;
+    <div id="ig-lugar-form"></div></div>`;
 }
 function conectarLugarIgho() {
-  $("ig-lugar-ed")?.addEventListener("click", () => $("ig-lugar-form").classList.toggle("hidden"));
-  $("ig-lugar-ok")?.addEventListener("click", async () => {
+  $("ig-lugar-ed")?.addEventListener("click", () => {
+    const g = ig.lista.find((x) => x.id === ig.sel);
+    if ($("ig-lugar-form").innerHTML) return ($("ig-lugar-form").innerHTML = "");
+    formIgho(g, $("ig-lugar-form"));
+  });
+}
+// Formulario del IGHO. Consejo/admin: nombre, líder y lugar. Líder: solo lugar. g = null → IGHO nuevo (admin).
+function formIgho(g, cont) {
+  const nuevo = !g, completo = ctx.esAncianoOAdmin;
+  if (nuevo) { cont = $("ig-body"); document.querySelectorAll("#ig-tabs").forEach((t) => t.classList.add("hidden")); }
+  const st = { lider: g?.lider_persona_id ? { id: g.lider_persona_id, nombre: g.lider || "" } : null };
+  const m = g?.mapas || [];
+  cont.innerHTML = `${nuevo ? '<div class="panel"><h4>Nuevo IGHO</h4>' : '<div style="margin-top:12px">'}
+    ${completo ? `<label>Nombre del IGHO</label><input id="if-nom" value="${esc(g?.nombre || "")}" placeholder="Normalmente el nombre del líder">
+      <label>Líder</label><div id="if-lid">${st.lider ? `<div class="li"><b>${esc(st.lider.nombre || "—")}</b><button type="button" class="btn-sec mini" id="if-cambiar">Cambiar</button></div>` : ""}</div>
+      <div id="if-busca" class="${st.lider ? "hidden" : ""}"><input id="if-q" placeholder="Buscar al líder por nombre o celular" autocomplete="off"><div id="if-res"></div>
+        <div class="hint" style="margin-top:8px">¿No está en la base? Escribe sus datos:</div>
+        <div class="two"><div><input id="if-n" placeholder="Nombres" autocomplete="off"></div><div><input id="if-a" placeholder="Apellidos" autocomplete="off"></div></div>
+        <input id="if-t" placeholder="Celular (09…)" inputmode="tel" autocomplete="off"></div>` : ""}
+    <label>Día y hora</label><input id="ig-lh" placeholder="Ej.: Martes · 8:00 pm" value="${esc(g?.horario || "")}">
+    <label>Dirección y referencias</label><textarea id="ig-ld" placeholder="Calle, referencia, dónde parquear…">${esc(g?.direccion || "")}</textarea>
+    <label>Enlaces de Google Maps (uno por línea; si se turnan entre casas, pon los dos)</label><textarea id="ig-lm" placeholder="https://maps.app.goo.gl/…">${esc(m.join("\n"))}</textarea>
+    <div class="row-btns"><button class="btn-primary" id="ig-lugar-ok" style="width:auto;margin:0;padding:12px 18px">${nuevo ? "Crear IGHO" : "Guardar"}</button><button class="btn-sec" id="if-x">Cancelar</button></div>
+    <div class="ok err" id="ig-lugar-msg"></div></div>`;
+  const volver = () => { document.querySelectorAll("#ig-tabs").forEach((t) => t.classList.remove("hidden")); abrirIgho(); };
+  $("if-x").addEventListener("click", () => (nuevo ? volver() : (cont.innerHTML = "")));
+  $("if-cambiar")?.addEventListener("click", () => { st.lider = null; $("if-lid").innerHTML = ""; $("if-busca").classList.remove("hidden"); $("if-q").focus(); });
+  let t;
+  $("if-q")?.addEventListener("input", (e) => { clearTimeout(t); t = setTimeout(async () => {
+    const q = e.target.value.trim(); if (q.length < 2) return ($("if-res").innerHTML = "");
+    const { data } = await sb.rpc("buscar_personas", { q });
+    $("if-res").innerHTML = (data || []).map((p, i) => `<div class="li"><div><b>${esc(p.nombre)}</b><div class="muted">${p.tel ? esc(p.tel) + " · " : ""}${p.igho ? "IGHO " + esc(p.igho) : "Sin IGHO"}</div></div><button type="button" class="btn-sec mini" data-p="${i}">Elegir</button></div>`).join("") || '<div class="muted">No se encontró. Escribe sus datos abajo.</div>';
+    $("if-res").querySelectorAll("[data-p]").forEach((b) => b.addEventListener("click", () => {
+      const p = data[+b.dataset.p]; st.lider = { id: p.id, nombre: p.nombre.trim() };
+      $("if-lid").innerHTML = `<div class="li"><b>${esc(st.lider.nombre)}</b><button type="button" class="btn-sec mini" id="if-cambiar">Cambiar</button></div>`;
+      $("if-busca").classList.add("hidden"); $("if-res").innerHTML = ""; $("if-q").value = "";
+      $("if-cambiar").addEventListener("click", () => { st.lider = null; $("if-lid").innerHTML = ""; $("if-busca").classList.remove("hidden"); });
+      if ($("if-nom") && !$("if-nom").value.trim()) $("if-nom").value = nombreCorto(st.lider.nombre.split(" ").slice(0, 1).join(" "), st.lider.nombre.split(" ").slice(1).join(" "));
+    }));
+  }, 300); });
+  $("ig-lugar-ok").addEventListener("click", async () => {
+    const msg = $("ig-lugar-msg"); msg.textContent = "";
     const mapas = $("ig-lm").value.split(/\s+/).map((x) => x.trim()).filter(Boolean);
-    if (mapas.some((u) => !/^https?:\/\//.test(u))) return ($("ig-lugar-msg").textContent = "Cada enlace debe empezar con https://");
+    if (mapas.some((u) => !/^https?:\/\//.test(u))) return (msg.textContent = "Cada enlace debe empezar con https://");
+    if (!completo) {
+      $("ig-lugar-ok").disabled = true;
+      const { error } = await sb.rpc("guardar_lugar_igho", { p_igho: ig.sel, p_direccion: $("ig-ld").value, p_horario: $("ig-lh").value, p_mapas: mapas });
+      $("ig-lugar-ok").disabled = false;
+      return error ? (msg.textContent = error.message) : abrirIgho();
+    }
+    const nom = $("if-nom").value.trim();
+    if (!nom) return (msg.textContent = "Escribe el nombre del IGHO.");
     $("ig-lugar-ok").disabled = true;
-    const { error } = await sb.rpc("guardar_lugar_igho", { p_igho: ig.sel, p_direccion: $("ig-ld").value, p_horario: $("ig-lh").value, p_mapas: mapas });
+    // líder nuevo que no está en la base
+    if (!st.lider && $("if-n").value.trim()) {
+      const tel = normalizarTelefono($("if-t").value);
+      if ($("if-t").value.trim() && tel.length !== 10) { $("ig-lugar-ok").disabled = false; return (msg.textContent = "El celular debe tener 10 dígitos (09…)."); }
+      const { data: id, error } = await sb.rpc("crear_persona", { p_nombres: $("if-n").value.trim(), p_apellidos: $("if-a").value.trim(), p_telefono: tel });
+      if (error) { $("ig-lugar-ok").disabled = false; return (msg.textContent = error.message); }
+      st.lider = { id, nombre: `${$("if-n").value.trim()} ${$("if-a").value.trim()}`.trim() };
+    }
+    const args = { p_nombre: nom, p_lider: st.lider?.id || null, p_direccion: $("ig-ld").value, p_horario: $("ig-lh").value, p_mapas: mapas };
+    const falta = (e) => e.message + (/editar_igho|crear_igho/.test(e.message) ? " (falta ejecutar 24_igho_editar_asistencia.sql)" : "");
+    if (nuevo) {
+      const { data: id, error } = await sb.rpc("crear_igho", args);
+      $("ig-lugar-ok").disabled = false;
+      if (error) return (msg.textContent = falta(error));
+      ig.sel = id;
+      if (st.lider) return accesoLiderIgho(id, st.lider, cont, volver, `✓ IGHO creado: ${nom}`);
+      return volver();
+    }
+    const { data: r, error } = await sb.rpc("editar_igho", { p_igho: g.id, ...args });
     $("ig-lugar-ok").disabled = false;
-    if (error) return ($("ig-lugar-msg").textContent = error.message);
+    if (error) return (msg.textContent = falta(error));
+    if (r?.lider_cambio && st.lider && !r.es_lider_app) return accesoLiderIgho(g.id, st.lider, cont, () => abrirIgho(), `✓ Guardado. Nuevo líder: ${st.lider.nombre}`);
     abrirIgho();
   });
 }
+// Dar acceso a la app al líder de un IGHO (mismo paso que al multiplicar)
+async function accesoLiderIgho(ighoId, lider, cont, volver, titulo) {
+  const { data: tiene } = await sb.rpc("persona_tiene_cuenta", { p_persona: lider.id });
+  const { data: per } = await sb.from("personas").select("telefono").eq("id", lider.id).maybeSingle();
+  cont.innerHTML = `<div class="panel"><h4>${esc(titulo)}</h4><div class="hint">Acceso de ${esc(lider.nombre)} a la app como líder de este IGHO.</div>
+      ${tiene ? '<div class="hint">Ya tiene cuenta: escribe el celular o correo con el que entra a la app.</div>' : ""}
+      <label>Usuario (celular o correo)</label><input id="al-u" value="${esc(normalizarTelefono(per?.telefono || ""))}" placeholder="09…" autocomplete="off">
+      <button class="btn-primary" id="al-ok">${tiene ? "Darle el rol de líder de este IGHO" : "Crear su cuenta de líder"}</button>
+      <div class="ok err" id="al-msg"></div><div id="al-clave"></div>
+      <button class="btn-sec" style="width:100%;margin-top:10px" id="al-fin">Listo</button></div>`;
+  $("al-fin").addEventListener("click", () => { document.querySelectorAll("#ig-tabs").forEach((t) => t.classList.remove("hidden")); volver(); });
+  $("al-ok").addEventListener("click", async () => {
+    const msg = $("al-msg"); msg.textContent = "";
+    const u = $("al-u").value.trim();
+    if (!u.includes("@") && normalizarTelefono(u).length !== 10) return (msg.textContent = "Escribe un celular de 10 dígitos (09…) o un correo.");
+    $("al-ok").disabled = true;
+    try {
+      const r = await llamarAdmin({ accion: "crear_lider_igho", igho_id: ighoId, email: aEmail(u) });
+      $("al-ok").classList.add("hidden");
+      if (r.ya_tenia) { $("al-clave").innerHTML = `<div class="ig-foot">✓ Listo. Al abrir la app verá este IGHO en «Mi IGHO».</div>`; return; }
+      $("al-clave").innerHTML = tarjetaClave(lider.nombre, u.includes("@") ? u.toLowerCase() : normalizarTelefono(u), r.clave, per?.telefono || (u.includes("@") ? "" : u));
+      hookCopiar($("al-clave"));
+    } catch (e) { msg.textContent = e.message; $("al-ok").disabled = false; }
+  });
+}
+
 const ig = { lista: [], sel: null, tab: "miembros", miembros: [], fecha: ymd(new Date()) };
 async function abrirIgho() {
-  let { data, error } = await sb.from("igho").select("id, nombre, supervisor_nombre, direccion, horario, mapas").eq("activo", true).order("nombre");
+  let { data, error } = await sb.from("igho").select("id, nombre, supervisor_nombre, lider_persona_id, direccion, horario, mapas").eq("activo", true).order("nombre");
   if (error && /direccion|horario|mapas/.test(error.message)) ({ data, error } = await sb.from("igho").select("id, nombre, supervisor_nombre").eq("activo", true).order("nombre"));
   if (error) { $("ig-body").innerHTML = `<div class="soon">${esc(error.message)}</div>`; return; }
   ig.lista = data;
+  if (ctx.esAncianoOAdmin) {   // nombre del líder de cada IGHO (para el editor)
+    const ids = [...new Set(data.map((g) => g.lider_persona_id).filter(Boolean))];
+    const { data: ls } = ids.length ? await sb.from("personas").select("id, nombres, apellidos").in("id", ids) : { data: [] };
+    data.forEach((g) => { const l = (ls || []).find((x) => x.id === g.lider_persona_id); g.lider = l ? `${l.nombres} ${l.apellidos || ""}`.trim() : ""; });
+  }
   if (!data.length) { $("ig-body").innerHTML = `<div class="soon">No tienes un IGHO asignado todavía. Pide a un administrador que te asigne.</div>`; $("ig-sel-wrap").innerHTML = ""; return; }
   if (!ig.sel || !data.find((x) => x.id === ig.sel)) ig.sel = data[0].id;
   $("ig-sel-wrap").innerHTML = data.length > 1
     ? `<select id="ig-sel" class="ok-ver">${opciones(data.map((x) => [x.id, x.nombre]), ig.sel)}</select>`
     : `<div class="hello-sub">${esc(data[0].nombre)}${data[0].supervisor_nombre ? ` · Cobertura: ${esc(data[0].supervisor_nombre)}` : ""}</div>`;
+  if (ctx.roles.has("admin")) $("ig-sel-wrap").insertAdjacentHTML("beforeend", `<button class="btn-sec mini" id="ig-nuevo" style="margin-top:8px">+ Nuevo IGHO</button>`);
+  $("ig-nuevo")?.addEventListener("click", () => formIgho(null));
   if ($("ig-sel")) $("ig-sel").addEventListener("change", (e) => { ig.sel = e.target.value; cargarIgho(); });
   cargarIgho();
 }
@@ -5634,7 +5730,7 @@ async function revisarCenso(x) {
 // ===================================================================
 // AVISOS: notificaciones al teléfono + campana dentro de la app
 // ===================================================================
-const VERSION_APP = "23-nov · v4";
+const VERSION_APP = "23-nov · v5";
 const FUNCION_AVISOS = "swift-action"; // Edge Function en Supabase (se muestra como «notificar»)
 const av = { lista: [], noLeidas: 0, timer: null };
 const IR_A = [["", "Avisos"], ["domingo", "Este domingo"], ["igho", "Mi IGHO"], ["kidz", "Kidz"], ["worship", "Arco Worship"], ["formacion", "Formación Cristiana"], ["stand", "Stand de información"]];
