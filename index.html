@@ -733,7 +733,7 @@
   </section>
   <section id="v-admin" class="hidden"><div class="top"><button class="back" data-go="home" aria-label="Volver"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button></div>
     <div class="page-title">Administración</div><div class="hello-sub" id="ad-sub">Acceso a la app, roles y familias</div>
-    <div class="tabs scroll" id="ad-tabs"><button data-tab="usuarios" class="on">Con acceso</button><button data-tab="dar">Dar acceso</button><button data-tab="familias">Familias</button><button data-tab="censo">Censo</button></div>
+    <div class="tabs scroll" id="ad-tabs"><button data-tab="usuarios" class="on">Con acceso</button><button data-tab="dar">Dar acceso</button><button data-tab="familias">Familias</button><button data-tab="censo">Censo</button><button data-tab="borrar">Borrar datos</button></div>
     <div id="ad-body"></div></section>
 
   <section id="v-formacion" class="hidden"><div class="top"><button class="back" data-go="home" aria-label="Volver"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button></div>
@@ -749,7 +749,7 @@
 
   <!-- ================= AVISOS ================= -->
   <section id="v-avisos" class="hidden"><div class="top"><button class="back" data-go="home" aria-label="Volver"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button></div>
-    <div class="page-title">Avisos</div><div class="hello-sub" id="av-sub">Notificaciones de Arco Ríos · versión 23-nov v7</div><div id="av-body"></div></section>
+    <div class="page-title">Avisos</div><div class="hello-sub" id="av-sub">Notificaciones de Arco Ríos · versión 23-nov v8</div><div id="av-body"></div></section>
 
   <!-- ================= CENSO (enlace público, sin cuenta) ================= -->
   <section id="v-censo" class="hidden"><div class="top"><span class="pill"><span class="dot" id="cz-logo"></span>Arco Ríos</span></div>
@@ -1456,6 +1456,22 @@ async function cargarHistorial() {
   if (error) { cont.textContent = error.message; return; }
   if (!data.length) { cont.textContent = "Todavía no hay conteos guardados."; return; }
   cont.innerHTML = barras(data.map((d) => ({ nombre: fmtCorta.format(fromYmd(d.fecha)), n: d.total })));
+  if (ctx.roles.has("admin")) cont.insertAdjacentHTML("beforeend", `<div class="hint" style="margin-top:10px">Administrador: borra aquí un conteo de prueba (o en Administración → Borrar datos).</div>
+    ${data.map((d) => `<div class="li"><span>${fmtCorta.format(fromYmd(d.fecha))} · ${d.total} personas</span><button class="x" data-anf-del="${d.fecha}" aria-label="Borrar conteo">×</button></div>`).join("")}`);
+  cont.querySelectorAll("[data-anf-del]").forEach((b) => b.addEventListener("click", () => borrarConteoDomingo(b.dataset.anfDel, cargarHistorial)));
+}
+// Borra el conteo de un domingo (Anfitriones) y, si se elige, el de Kidz con sus check-ins
+async function borrarConteoDomingo(fecha, despues) {
+  const f = fmtLarga.format(fromYmd(fecha));
+  if (!confirm(`¿Borrar el conteo de Anfitriones del ${f}?`)) return;
+  const { data: kz } = await sb.from("conteo_kidz").select("ninos").eq("fecha", fecha).maybeSingle();
+  const conKidz = kz && confirm(`Ese domingo también tiene conteo de Kidz (${kz.ninos} niños).\n\n¿Borrar también el conteo de Kidz y los check-ins de ese día?\n(Aceptar = sí, Cancelar = solo Anfitriones)`);
+  let { data: bo, error } = await sb.from("conteo_anfitriones").delete().eq("fecha", fecha).select("fecha");
+  if (!error && !bo?.length) error = { message: "No se borró (sin permiso)." };
+  if (!error && conKidz) ({ error } = await sb.from("kidz_checkins").delete().eq("fecha", fecha));
+  if (!error && conKidz) ({ error } = await sb.from("conteo_kidz").delete().eq("fecha", fecha));
+  if (error) return alert(error.message + (/policy|permission|permiso/i.test(error.message) ? " (falta ejecutar 26_admin_borrar.sql)" : ""));
+  despues && despues();
 }
 
 // ===================================================================
@@ -2743,10 +2759,105 @@ async function abrirAdmin(tab) {
   if (ad.tab === "familias") return abrirFamilias("ad-body");
   if (ad.tab === "censo") return adCenso();
   if (!ighosAdmin.length) { const { data } = await sb.from("igho").select("id, nombre").eq("activo", true).order("nombre"); ighosAdmin = data || []; }
+  if (ad.tab === "borrar") return adBorrar();
   if (ad.tab === "usuarios") return pintarUsuarios();
   return pintarDarAcceso();
 }
 document.querySelectorAll("#ad-tabs button").forEach((b) => b.addEventListener("click", () => abrirAdmin(b.dataset.tab)));
+
+// ---- Administración → Borrar datos (solo admin) ----
+const AD_BORRAR = [["domingo", "Conteos del domingo"], ["igho", "Reuniones de IGHO"], ["visitas", "Visitas de cobertura"], ["formacion", "Inscritos en clases"],
+  ["avisos", "Avisos enviados"], ["whatsapp", "Registro de WhatsApp"], ["personas", "Personas"]];
+async function adBorrar() {
+  ad.borrar ||= "domingo";
+  const body = $("ad-body"), k = ad.borrar;
+  body.innerHTML = `<div class="panel"><h4>Borrar datos equivocados o de prueba</h4>
+      <div class="hint">Borrar no se puede deshacer. En Bienvenida, Stand, Mi IGHO (inscripciones), Kidz, Worship, Anuncios y Finanzas ya tienes la × en cada registro.</div>
+      <div class="pick" id="adb-k">${AD_BORRAR.map(([v, t]) => `<button type="button" data-k="${v}" class="${v === k ? "on" : ""}">${t}</button>`).join("")}</div></div>
+    <div class="panel" id="adb-list"><div class="loading">Cargando…</div></div>`;
+  body.querySelectorAll("#adb-k [data-k]").forEach((b) => b.addEventListener("click", () => { ad.borrar = b.dataset.k; adBorrar(); }));
+  const L = $("adb-list"), fila = (id, txt, sub) => `<div class="li"><div><b>${txt}</b>${sub ? `<div class="muted">${sub}</div>` : ""}</div><button class="x" data-del="${esc(String(id))}" aria-label="Borrar">×</button></div>`;
+  const falta = (e) => alert(e.message + (/policy|permission|permiso|admin_borrar/i.test(e.message) ? " (falta ejecutar 26_admin_borrar.sql)" : ""));
+  const conectar = (fn) => L.querySelectorAll("[data-del]").forEach((b) => b.addEventListener("click", () => fn(b.dataset.del)));
+  const nomIgho = (id) => ighosAdmin.find((g) => g.id === id)?.nombre || "IGHO";
+  const fh = (t) => t ? fmtCorta.format(new Date(t)) + " " + fmtHora.format(new Date(t)) : "";
+  // Supabase no da error si la regla de borrado falta: revisamos que sí se borró
+  const borrar = async (tabla, col, val) => { const { data, error } = await sb.from(tabla).delete().eq(col, val).select(col); return error || (!data?.length ? { message: "No se borró (sin permiso)." } : null); };
+  if (k === "domingo") {
+    const [a, kz] = await Promise.all([sb.from("conteo_anfitriones").select("*").order("fecha", { ascending: false }).limit(80), sb.from("conteo_kidz").select("fecha, ninos, servidores").order("fecha", { ascending: false }).limit(80)]);
+    if (a.error) return (L.innerHTML = esc(a.error.message));
+    const fechas = [...new Set([...(a.data || []).map((x) => x.fecha), ...(kz.data || []).map((x) => x.fecha)])].sort().reverse();
+    L.innerHTML = `<h4>Conteos del domingo (${fechas.length})</h4>` + (fechas.map((f) => { const x = (a.data || []).find((y) => y.fecha === f), z = (kz.data || []).find((y) => y.fecha === f);
+      return fila(f, fmtLarga.format(fromYmd(f)), [x ? `Anfitriones: ${x.adultos} adultos, ${x.ninos_auditorio || 0} niños auditorio${x.nuevos ? `, ${x.nuevos} nuevos` : ""}${x.registrado_nombre ? " · " + esc(x.registrado_nombre) : ""}` : "Sin conteo de Anfitriones", z ? `Kidz: ${z.ninos} niños, ${z.servidores || 0} siervos` : ""].filter(Boolean).join("<br>")); }).join("") || '<div class="muted">No hay conteos.</div>');
+    return conectar(async (f) => {
+      if ((a.data || []).some((y) => y.fecha === f)) return borrarConteoDomingo(f, adBorrar);
+      if (!confirm(`¿Borrar el conteo de Kidz y los check-ins del ${fmtLarga.format(fromYmd(f))}?`)) return;
+      let { error } = await sb.from("kidz_checkins").delete().eq("fecha", f);
+      if (!error) error = await borrar("conteo_kidz", "fecha", f);
+      error ? falta(error) : adBorrar();
+    });
+  }
+  if (k === "igho") {
+    const { data, error } = await sb.from("reuniones_igho").select("id, igho_id, fecha, asistencia_igho(count)").order("fecha", { ascending: false }).limit(100);
+    if (error) return (L.innerHTML = esc(error.message));
+    L.innerHTML = `<h4>Reuniones de IGHO (últimas ${data.length})</h4>` + (data.map((r) => fila(r.id, `${esc(nomIgho(r.igho_id))} · ${fmtCorta.format(fromYmd(r.fecha))}`, `${r.asistencia_igho?.[0]?.count ?? 0} asistentes marcados`)).join("") || '<div class="muted">No hay reuniones.</div>');
+    return conectar(async (id) => {
+      const r = data.find((x) => String(x.id) === id); if (!confirm(`¿Borrar la reunión de ${nomIgho(r.igho_id)} del ${fmtCorta.format(fromYmd(r.fecha))} y su asistencia?`)) return;
+      let { error } = await sb.from("asistencia_igho").delete().eq("reunion_id", r.id);
+      if (!error) error = await borrar("reuniones_igho", "id", r.id);
+      error ? falta(error) : adBorrar();
+    });
+  }
+  if (k === "visitas") {
+    const { data, error } = await sb.from("visitas_igho").select("*").order("fecha", { ascending: false }).limit(100);
+    if (error) return (L.innerHTML = esc(error.message));
+    L.innerHTML = `<h4>Visitas de cobertura (${data.length})</h4>` + (data.map((v) => fila(v.id, `${esc(nomIgho(v.igho_id))} · ${fmtCorta.format(fromYmd(v.fecha))}`, esc(v.nombre || "") + (v.notas ? " · " + esc(v.notas) : ""))).join("") || '<div class="muted">No hay visitas.</div>');
+    return conectar(async (id) => { if (!confirm("¿Borrar esta visita?")) return; const error = await borrar("visitas_igho", "id", id); error ? falta(error) : adBorrar(); });
+  }
+  if (k === "formacion") {
+    const [i, o] = await Promise.all([sb.from("fc_inscripciones").select("*").order("creado_en", { ascending: false }).limit(150), sb.from("fc_ofertas").select("id, nombre")]);
+    if (i.error) return (L.innerHTML = esc(i.error.message));
+    const of = (id) => (o.data || []).find((x) => x.id === id)?.nombre || "";
+    L.innerHTML = `<h4>Inscritos en clases y eventos (${i.data.length})</h4>` + (i.data.map((x) => fila(x.id, esc(x.nombre || ""), `${esc(of(x.oferta_id))} · ${fh(x.creado_en)}${x.inscrito_por_nombre ? " · " + esc(x.inscrito_por_nombre) : ""}`)).join("") || '<div class="muted">Nadie inscrito.</div>');
+    return conectar(async (id) => { if (!confirm("¿Borrar esta inscripción?")) return; const error = await borrar("fc_inscripciones", "id", id); error ? falta(error) : adBorrar(); });
+  }
+  if (k === "avisos") {
+    const { data, error } = await sb.from("notificaciones").select("id, titulo, tipo, destino, creado_en, creado_por_nombre").order("creado_en", { ascending: false }).limit(100);
+    if (error) return (L.innerHTML = esc(error.message));
+    const tipo = { aviso: "Aviso", servicio: "Recordatorio de servicio", igho: "Aviso a líder de IGHO" };
+    L.innerHTML = `<h4>Avisos (${data.length})</h4><div class="hint">Al borrarlo desaparece de la campanita de todos.</div>` + (data.map((n) => fila(n.id, esc(n.titulo || ""), `${tipo[n.tipo] || esc(n.tipo)} · ${fh(n.creado_en)}${n.creado_por_nombre ? " · " + esc(n.creado_por_nombre) : ""}`)).join("") || '<div class="muted">No hay avisos.</div>');
+    return conectar(async (id) => {
+      if (!confirm("¿Borrar este aviso para todos?")) return;
+      let { error } = await sb.from("notificaciones_usuarios").delete().eq("notificacion_id", id);
+      if (!error) error = await borrar("notificaciones", "id", id);
+      error ? falta(error) : adBorrar();
+    });
+  }
+  if (k === "whatsapp") {
+    const { data, error } = await sb.from("difusion_envios").select("*").order("creado_en", { ascending: false }).limit(100);
+    if (error) return (L.innerHTML = esc(error.message));
+    L.innerHTML = `<h4>Mensajes por WhatsApp enviados (${data.length})</h4><div class="hint">Solo borra el registro en la app; los mensajes ya enviados no se pueden quitar de WhatsApp.</div>` + (data.map((d) => fila(d.id, esc((d.mensaje || "").slice(0, 60)) + ((d.mensaje || "").length > 60 ? "…" : ""), `${esc(d.tipo || "")} · ${d.personas ?? ""} personas · ${fh(d.creado_en)}${d.enviado_por_nombre ? " · " + esc(d.enviado_por_nombre) : ""}`)).join("") || '<div class="muted">No hay envíos.</div>');
+    return conectar(async (id) => { if (!confirm("¿Borrar este registro?")) return; const error = await borrar("difusion_envios", "id", id); error ? falta(error) : adBorrar(); });
+  }
+  if (k === "personas") {
+    L.innerHTML = `<h4>Personas</h4><div class="hint">Si la persona no aparece en ninguna otra parte se borra de la base. Si tiene historia (censo, asistencia, familia…), se desactiva: sale de su IGHO y de las listas, pero no se pierde su historia.</div>
+      <input id="adb-q" placeholder="Buscar por nombre o celular" autocomplete="off"><div id="adb-res"></div>`;
+    let t;
+    $("adb-q").addEventListener("input", (e) => { clearTimeout(t); t = setTimeout(async () => {
+      const q = e.target.value.trim(); if (q.length < 2) return ($("adb-res").innerHTML = "");
+      const { data } = await sb.rpc("buscar_personas", { q });
+      $("adb-res").innerHTML = (data || []).map((p) => fila(p.id, esc(p.nombre), `${p.tel ? esc(p.tel) + " · " : ""}${p.igho ? "IGHO " + esc(p.igho) : "Sin IGHO"}`)).join("") || '<div class="muted">No se encontró.</div>';
+      $("adb-res").querySelectorAll("[data-del]").forEach((b) => b.addEventListener("click", async () => {
+        const p = data.find((x) => x.id === b.dataset.del);
+        if (!confirm(`¿Borrar a ${p.nombre}?`)) return;
+        const { data: r, error } = await sb.rpc("admin_borrar_persona", { p: p.id });
+        if (error) return falta(error);
+        alert(r === "borrada" ? `${p.nombre} se borró de la base.` : `${p.nombre} tiene historia en la app, así que se desactivó (ya no aparece en las listas ni en su IGHO).`);
+        $("adb-q").dispatchEvent(new Event("input"));
+      }));
+    }, 300); });
+  }
+}
 
 async function pintarUsuarios() {
   const body = $("ad-body");
@@ -5779,7 +5890,7 @@ async function revisarCenso(x) {
 // ===================================================================
 // AVISOS: notificaciones al teléfono + campana dentro de la app
 // ===================================================================
-const VERSION_APP = "23-nov · v7";
+const VERSION_APP = "23-nov · v8";
 const FUNCION_AVISOS = "swift-action"; // Edge Function en Supabase (se muestra como «notificar»)
 const av = { lista: [], noLeidas: 0, timer: null };
 const IR_A = [["", "Avisos"], ["domingo", "Este domingo"], ["igho", "Mi IGHO"], ["kidz", "Kidz"], ["worship", "Arco Worship"], ["formacion", "Formación Cristiana"], ["stand", "Stand de información"]];
