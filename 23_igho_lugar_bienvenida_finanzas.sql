@@ -12,9 +12,9 @@ alter table igho add column if not exists direccion text;
 alter table igho add column if not exists horario   text;
 alter table igho add column if not exists mapas     text[];   -- uno o más enlaces de Google Maps
 
-drop table if exists _ub;
-create table _ub (tel text, nom text, ape text, direccion text, horario text, mapas text[]);
-insert into _ub values
+-- Un solo comando: busca cada IGHO por el celular del líder y, si no coincide,
+-- por nombre y primer apellido del líder (sin tildes)
+with u (tel, nom, ape, direccion, horario, mapas) as (values
  ('0960214898','Josue','Merchan','"Plaza Roma" · Estocolmo y Copenhague','Jueves · 8:00 pm',
    array['https://maps.app.goo.gl/sKEZYBvJFnaMMLbv8']),
  ('0987525802','David','Luna','Antonio Ricaurte · Subida a Ricaurte (Camino Ricaurte)','Jueves · 8:00 a 10:00 pm · jóvenes de 12 a 14 años',
@@ -58,22 +58,20 @@ insert into _ub values
  ('0997132173','Juan Carlos','León','Calle Estocolmo y París. Calle de tierra, la segunda casa','Martes · 8:00 pm',
    array['https://maps.app.goo.gl/y5gEF73EweRxPc2v5']),
  ('0991165847','Eugenio','Pesantez','Calle La Privada bloque 3 / 1-32 (C-5). Ingreso por González Suárez. Urbanización Río Sol','Martes · 8:00 pm',
-   array['https://maps.app.goo.gl/pstMqGVENS2JH7an7']);
-
--- a) por el celular del líder (lo más seguro)
-update igho g set direccion = u.direccion, horario = u.horario, mapas = u.mapas
-from _ub u, personas p
-where p.id = g.lider_persona_id and g.activo
-  and right(regexp_replace(coalesce(p.telefono, ''), '\D', '', 'g'), 9) = right(u.tel, 9);
-
--- b) si no coincidió el celular: por nombre y primer apellido del líder (sin tildes)
-update igho g set direccion = u.direccion, horario = u.horario, mapas = u.mapas
-from _ub u, personas p
-where p.id = g.lider_persona_id and g.activo and g.mapas is null
-  and translate(lower(split_part(p.nombres, ' ', 1)), 'áéíóúüñ', 'aeiouun') = translate(lower(split_part(u.nom, ' ', 1)), 'áéíóúüñ', 'aeiouun')
-  and translate(lower(split_part(coalesce(p.apellidos, ''), ' ', 1)), 'áéíóúüñ', 'aeiouun') = translate(lower(u.ape), 'áéíóúüñ', 'aeiouun');
-
-drop table if exists _ub;
+   array['https://maps.app.goo.gl/pstMqGVENS2JH7an7'])
+),
+m as (
+  select distinct on (g.id) g.id, u.direccion, u.horario, u.mapas
+  from igho g
+  join personas p on p.id = g.lider_persona_id
+  join u on right(regexp_replace(coalesce(p.telefono, ''), '\D', '', 'g'), 9) = right(u.tel, 9)
+         or (translate(lower(split_part(p.nombres, ' ', 1)), 'áéíóúüñ', 'aeiouun') = translate(lower(split_part(u.nom, ' ', 1)), 'áéíóúüñ', 'aeiouun')
+             and translate(lower(split_part(coalesce(p.apellidos, ''), ' ', 1)), 'áéíóúüñ', 'aeiouun') = translate(lower(u.ape), 'áéíóúüñ', 'aeiouun'))
+  where g.activo
+  order by g.id, (right(regexp_replace(coalesce(p.telefono, ''), '\D', '', 'g'), 9) = right(u.tel, 9)) desc
+)
+update igho g set direccion = m.direccion, horario = m.horario, mapas = m.mapas
+from m where m.id = g.id;
 
 -- El líder (o el Consejo) puede corregir dirección, horario y mapas desde Mi IGHO
 create or replace function public.guardar_lugar_igho(p_igho uuid, p_direccion text, p_horario text, p_mapas text[])
