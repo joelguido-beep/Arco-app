@@ -13,7 +13,7 @@ alter table igho add column if not exists horario   text;
 alter table igho add column if not exists mapas     text[];   -- uno o más enlaces de Google Maps
 
 drop table if exists _ub;
-create temp table _ub (tel text, nom text, ape text, direccion text, horario text, mapas text[]);
+create table _ub (tel text, nom text, ape text, direccion text, horario text, mapas text[]);
 insert into _ub values
  ('0960214898','Josue','Merchan','"Plaza Roma" · Estocolmo y Copenhague','Jueves · 8:00 pm',
    array['https://maps.app.goo.gl/sKEZYBvJFnaMMLbv8']),
