@@ -73,7 +73,7 @@
   .c-grey { background: var(--grey); } .c-lilac { background: var(--lilac); } .c-sky { background: var(--sky); }
 
   /* ---------- Tarjetas apiladas (inicio y resumen) ---------- */
-  .big-hdr { margin: 4px 0 26px; }
+  .big-hdr { margin: 4px 0 48px; }
   .big-t { font-size: 42px; font-weight: 600; line-height: 1.02; letter-spacing: -1.2px; }
   .big-d { font-size: 42px; font-weight: 600; line-height: 1.08; letter-spacing: -1.2px; color: #5a5a55; }
   .pila { position: relative; margin: 0 -13px; isolation: isolate; }
@@ -527,6 +527,23 @@
   .df-pasos { margin: 0 0 12px 18px; font-size: 14px; line-height: 1.5; color: var(--ink-2); } .df-pasos b { color: var(--ink); }
   .df-sin summary { cursor: pointer; color: var(--yellow); font-size: 14px; margin-top: 12px; }
   #v-difusion .check { margin: 10px 0 4px; }
+
+  /* ----- Cumpleaños ----- */
+  .confeti { position: fixed; inset: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 200; }
+  .cumple-modal { position: fixed; inset: 0; z-index: 190; background: rgba(0,0,0,.55); display: grid; place-items: center; padding: 24px; }
+  .cumple-card { background: var(--orange); color: var(--ink-dark); border-radius: 30px; padding: 28px 24px 22px; text-align: center; max-width: 360px; width: 100%; animation: cumplePop .45s cubic-bezier(.2,1.4,.4,1); }
+  .cumple-emoji { font-size: 64px; line-height: 1; } .cumple-t { font-size: 30px; font-weight: 700; line-height: 1.1; margin: 12px 0 10px; letter-spacing: -.5px; }
+  .cumple-s { font-size: 16px; line-height: 1.45; margin-bottom: 8px; } .cumple-card .btn-primary { background: var(--ink-dark); color: var(--ink); }
+  @keyframes cumplePop { from { transform: scale(.6); opacity: 0; } to { transform: none; opacity: 1; } }
+  .cumple-hoy { display: block; width: 100%; text-align: left; font: inherit; border: 0; background: linear-gradient(120deg, #f6c64e, #F47B20); color: var(--ink-dark); border-radius: 22px; padding: 14px 18px; margin: -30px 0 22px; font-size: 18px; }
+  .cumple-hoy span { display: block; font-size: 13px; opacity: .7; margin-top: 2px; }
+  .cumple-pide { background: var(--surface); border-radius: 22px; padding: 16px 18px; margin: -30px 0 22px; }
+  .cumple-pide b { display: block; font-size: 17px; } .cumple-pide > span { display: block; color: var(--ink-2); font-size: 13px; margin: 4px 0 10px; }
+  .cumple-pide input { margin: 0; } .cumple-pide .btn-sec { margin-top: 10px; } .cumple-pide.ok-c { color: var(--green); }
+  .cumple-panel .li.hoy b { color: var(--yellow); }
+  .sr-cumple { background: linear-gradient(120deg, #f6c64e, #F47B20); color: var(--ink-dark); border-radius: 18px; padding: 12px 14px; margin-top: 12px; font-size: 16px; }
+  .sr-cumple span { display: block; font-size: 13px; opacity: .75; }
+  .sr-pasa { border: 2px solid var(--orange); } .sr-pasa strong { font-weight: 700; color: var(--ink); } .sr-pasa.ok { border-color: var(--green); color: var(--green); }
 </style>
 </head>
 <body>
@@ -568,6 +585,7 @@
       <div class="avatar" id="avatar">·</div>
     </div>
     <div class="big-hdr"><div class="big-t" id="hello">Hola</div><div class="big-d" id="hoy-txt"></div></div>
+    <div id="cumple-box"></div>
     <div class="pila" id="cards"></div>
   </section>
 
@@ -796,12 +814,15 @@ function medirPila(cont) {
   const grandes = Math.max(0, Math.min(n, Math.floor((libre - n * PILA.SLIVER) / (PILA.PEEK - PILA.SLIVER))));
   let s = 0; cards.forEach((c, i) => { stacked.push(s); s += Math.min(i < grandes ? PILA.PEEK : PILA.SLIVER, h[i] - PILA.OVER); });
   cont._delta = cards.map((c, i) => Math.min(0, stacked[i] - natural[i]));
+  cont._top = docTop;
   aplicarPilas();
 }
 function aplicarPilas() {
-  const R = innerHeight * 0.6, p = Math.min(1, Math.max(0, window.scrollY / R)), e = 1 - (1 - p) * (1 - p);
+  // Se abren por completo antes de que la primera tarjeta llegue arriba (debajo del encabezado pequeño)
   for (const cont of pilas) {
     if (!cont.offsetParent || !cont._delta) continue;
+    const R = Math.max(140, Math.min(innerHeight * 0.6, (cont._top || 300) - 110));
+    const p = Math.min(1, Math.max(0, window.scrollY / R)), e = 1 - (1 - p) * (1 - p);
     [...cont.children].forEach((c, i) => { const d = (cont._delta[i] || 0) * (1 - e); c.style.transform = d ? `translateY(${d.toFixed(1)}px)` : ""; });
   }
   const mini = $("mini-hdr");
@@ -910,11 +931,13 @@ const DATOS_HOME = {
           + (faltan.length ? `<div class="pc-pills">${faltan.slice(0, 8).map((x) => `<span>${esc(x.nombre)}</span>`).join("")}${faltan.length > 8 ? `<span>+${faltan.length - 8}</span>` : ""}</div>` : "") };
     }
     const ids = ctx.ighoIds; if (!ids.length) return { num: "—", sub: "Sin IGHO asignado" };
-    const [g, p, r] = await Promise.all([sb.from("igho").select("id, nombre").in("id", ids), sb.from("personas").select("id", { count: "exact", head: true }).in("igho_id", ids).eq("activo", true),
+    const [g, p, r] = await Promise.all([sb.from("igho").select("id, nombre").in("id", ids), sb.from("personas").select("id, nombres, apellidos, fecha_nacimiento").in("igho_id", ids).eq("activo", true),
       sb.from("reuniones_igho").select("fecha, asistencia_igho(count)").in("igho_id", ids).order("fecha", { ascending: false }).limit(8)]);
     const rs = r.data || [], esta = rs.some((x) => fromYmd(x.fecha) >= desde);
-    return { num: p.count || 0, sub: `miembros · ${esc((g.data || []).map((x) => x.nombre).join(", "))}`,
+    const cumples = cumplesDeLaSemana(p.data || []);
+    return { num: (p.data || []).length, sub: `miembros · ${esc((g.data || []).map((x) => x.nombre).join(", "))}${cumples.length ? ` · 🎂 ${cumples.length}` : ""}`,
       detail: columnas([...rs].reverse().map((x) => ({ n: x.asistencia_igho?.[0]?.count ?? 0, l: fmtDiaMes(x.fecha) })))
+        + (cumples.length ? lista(cumples.map((x) => ({ a: `🎂 ${esc(x.nombres.split(" ")[0])} ${esc((x.apellidos || "").split(" ")[0])}`, b: `cumple ${x.edad} · ${esc(cuandoCumple(x.dia))}` }))) : "")
         + `<div class="pc-note">${esta ? "✓ Ya registraste la asistencia de esta semana." : "⚠ Falta registrar la asistencia de esta semana."}</div>` };
   },
   async resumen() {
@@ -1070,6 +1093,7 @@ function pintarHome() {
   const hoyTxt = new Intl.DateTimeFormat("es-EC", { weekday: "long", day: "numeric", month: "short" }).format(new Date()).replace(/[.,]/g, "").replace(/ de /g, " ").replace(/^\w/, (c) => c.toUpperCase());
   $("hoy-txt").textContent = hoyTxt;
 
+  revisarMiCumple().catch((e) => console.warn(e));
   const visibles = SECCIONES.filter((s) => s.ve(ctx));
   if (!visibles.length) { $("cards").innerHTML = `<div class="soon" style="margin:0 13px">Todavía no tienes un rol asignado. Pide a un administrador que te dé acceso.</div>`; return; }
   pintarPila($("cards"), visibles.map((s) => ({ key: s.id, go: s.id, color: s.color, logo: s.logo, label: ETIQUETA_HOME[s.id] || esc(s.titulo),
@@ -2039,7 +2063,7 @@ document.querySelectorAll("#ig-tabs button").forEach((b) => b.addEventListener("
 async function cargarIgho() {
   document.querySelectorAll("#ig-tabs button").forEach((b) => b.classList.toggle("on", b.dataset.tab === ig.tab));
   $("ig-body").innerHTML = '<div class="loading">Cargando…</div>';
-  const { data, error } = await sb.from("personas").select("id, nombres, apellidos, telefono").eq("igho_id", ig.sel).eq("activo", true).order("nombres");
+  const { data, error } = await sb.from("personas").select("id, nombres, apellidos, telefono, fecha_nacimiento").eq("igho_id", ig.sel).eq("activo", true).order("nombres");
   if (error) { $("ig-body").innerHTML = `<div class="soon">${esc(error.message)}</div>`; return; }
   ig.miembros = data;
   ig.cubre = ctx.esAncianoOAdmin ? await cubroIgho(ig.sel).catch(() => false) : false;
@@ -2047,10 +2071,11 @@ async function cargarIgho() {
   if (ig.tab === "miembros") pintarMiembros(); else if (ig.tab === "asistencia") pintarAsistencia(); else pintarCensoIgho();
 }
 function pintarMiembros() {
-  $("ig-body").innerHTML = `
+  const cumpleIds = new Set(cumplesDeLaSemana(ig.miembros).map((p) => p.id));
+  $("ig-body").innerHTML = `${cumplesIghoHtml(ig.miembros)}
     <div class="panel">
       <h4>Miembros (${ig.miembros.length})</h4><div class="hint">Toca un nombre para editar su ficha${ig.cubre ? ". Marca personas para moverlas a otro IGHO." : ""}</div>
-      ${ig.miembros.map((p) => `<div class="li"><div>${ig.cubre ? `<input type="checkbox" class="ig-mk" data-mk="${p.id}" aria-label="Marcar"> ` : ""}<button class="link name-btn" data-editar="${p.id}">${esc(p.nombres)} ${esc(p.apellidos || "")}</button><div>${telHtml(p.telefono)}</div></div><div class="row-btns"><button class="btn-sec mini" data-editar="${p.id}">Editar</button><button class="x" data-quitar="${p.id}" aria-label="Quitar del IGHO">×</button></div></div>`).join("") || `<div class="muted">Este IGHO no tiene miembros todavía.</div>`}
+      ${ig.miembros.map((p) => `<div class="li"><div>${ig.cubre ? `<input type="checkbox" class="ig-mk" data-mk="${p.id}" aria-label="Marcar"> ` : ""}<button class="link name-btn" data-editar="${p.id}">${esc(p.nombres)} ${esc(p.apellidos || "")}${cumpleIds.has(p.id) ? " 🎂" : ""}</button><div>${telHtml(p.telefono)}</div></div><div class="row-btns"><button class="btn-sec mini" data-editar="${p.id}">Editar</button><button class="x" data-quitar="${p.id}" aria-label="Quitar del IGHO">×</button></div></div>`).join("") || `<div class="muted">Este IGHO no tiene miembros todavía.</div>`}
       ${ig.cubre ? `<div class="ig-acc"><button class="btn-sec" id="ig-mover">Mover marcados a otro IGHO</button><button class="btn-primary" id="ig-mult" style="width:auto;margin:0;padding:12px 18px;font-size:15px">Multiplicar este IGHO</button></div>` : ""}
     </div>
     <div class="panel">
@@ -2392,7 +2417,7 @@ async function editarMiembro(id) {
   body.innerHTML = '<div class="loading">Cargando…</div>';
   if (!cursosCat) { const { data } = await sb.from("cursos").select("id, nombre").order("orden"); cursosCat = data || []; }
   const [p, pc] = await Promise.all([
-    sb.from("personas").select("id, nombres, apellidos, telefono, sexo, estado_civil, bautizado").eq("id", id).single(),
+    sb.from("personas").select("id, nombres, apellidos, telefono, sexo, estado_civil, bautizado, fecha_nacimiento").eq("id", id).single(),
     sb.from("persona_cursos").select("curso_id").eq("persona_id", id),
   ]);
   if (p.error) { body.innerHTML = `<div class="soon">${esc(p.error.message)}</div>`; return; }
@@ -2403,6 +2428,7 @@ async function editarMiembro(id) {
     <label>Teléfono</label><input id="em-t" type="tel" inputmode="tel" value="${esc(x.telefono || "")}">
     <div class="two"><div><label>Sexo</label><select id="em-s">${opciones([["", "—"], ["femenino", "Femenino"], ["masculino", "Masculino"]], x.sexo || "")}</select></div>
       <div><label>Estado civil</label><select id="em-c">${opciones(CIVIL, x.estado_civil || "")}</select></div></div>
+    <label>Fecha de nacimiento</label><input id="em-fn" type="date" max="${ymd(new Date())}" value="${esc(x.fecha_nacimiento || "")}">
     <label>¿Bautizado/a?</label>
     <div class="seg" id="em-b">${[["si", "Sí"], ["no", "No"]].map(([v, l]) => `<button type="button" data-v="${v}" class="${(x.bautizado ? "si" : x.bautizado === false ? "no" : "") === v ? "on" : ""}">${l}</button>`).join("")}</div>
     <label>Clases de Formación Cristiana</label>
@@ -2420,6 +2446,7 @@ async function editarMiembro(id) {
     let r = await sb.from("personas").update({
       nombres: $("em-n").value.trim(), apellidos: $("em-a").value.trim() || null, telefono: normalizarTelefono($("em-t").value) || null,
       sexo: $("em-s").value || null, estado_civil: $("em-c").value || null, bautizado: b === "si" ? true : b === "no" ? false : null,
+      fecha_nacimiento: $("em-fn").value || null, ...($("em-fn").value ? { anio_nacimiento_aprox: +$("em-fn").value.slice(0, 4) } : {}),
       actualizado_en: new Date().toISOString(),
     }).eq("id", id);
     const marcados = new Set([...body.querySelectorAll("[data-curso]")].filter((c) => c.checked).map((c) => +c.dataset.curso));
@@ -2684,13 +2711,14 @@ async function procesarCodigo(codigo, modo, conCamara = false) {
   mostrarResultado(`<div class="sr-card">${fotoHtml(r.foto_path, r.nombre, "kfoto xl")}${estado}
     <div class="sr-titulo">${esc(r.apodo || r.nombre)}</div>
     <div class="sr-sub">${esc(r.nombre)} · ${r.edad} años</div>
-    <div class="sr-clase">${esc(r.clase || "Sin clase para su edad")}</div>${aviso}
+    <div class="sr-clase">${esc(r.clase || "Sin clase para su edad")}</div>${aviso}<div id="sr-extra"></div>
     ${r.alergias ? `<div class="sr-box warn"><b>Alergias / cuidados</b>${esc(r.alergias)}</div>` : ""}
     ${r.nota ? `<div class="sr-box"><b>Nota de los padres</b>${esc(r.nota)}</div>` : ""}
     <div class="hint" style="margin:10px 0 0">¿Es el niño de la foto?</div>
     <button class="btn-primary" id="sr-ok">Sí, es correcto</button>
     ${r.estado === "entrada" ? `<button class="btn-sec danger" style="width:100%" id="sr-deshacer">No es este niño · deshacer</button>` : ""}</div>`, conCamara);
   enganchar();
+  if (r.estado !== "ya_salio") kidzExtrasAlEscanear(c, r).catch((e) => console.warn(e));
   $("sr-deshacer")?.addEventListener("click", async () => {
     await sb.from("kidz_checkins").delete().eq("id", r.checkin_id);
     seguirEscaneando(conCamara);
@@ -4027,6 +4055,138 @@ async function editarFijos() {
     });
   };
   pintar();
+}
+
+
+// ===================================================================
+// CUMPLEAÑOS: confeti el día de tu cumpleaños, cumpleaños de la semana
+// en Mi IGHO, y en Kidz al escanear.
+// ===================================================================
+const fmtCumpleDia = new Intl.DateTimeFormat("es-EC", { weekday: "long", day: "numeric", month: "long" });
+const hoy0 = () => { const d = new Date(); d.setHours(0, 0, 0, 0); return d; };
+// Fecha del cumpleaños en un año dado (29 de febrero → 28 si el año no es bisiesto)
+const cumpleEn = (fnac, anio) => { const [, m, d] = fnac.split("-").map(Number); const x = new Date(anio, m - 1, d); if (x.getMonth() !== m - 1) x.setDate(0); return x; };
+const diasHasta = (a, b) => Math.round((b - a) / 86400000);
+// Lunes y domingo de esta semana
+const semanaActual = () => { const h = hoy0(), l = new Date(h); l.setDate(h.getDate() - ((h.getDay() + 6) % 7)); const d = new Date(l); d.setDate(l.getDate() + 6); return [l, d]; };
+// Cumpleaños de esta semana (lunes a domingo): [{ ...persona, dia: Date, edad }]
+function cumplesDeLaSemana(personas) {
+  const [l, d] = semanaActual();
+  return personas.filter((p) => p.fecha_nacimiento).flatMap((p) => {
+    return [l.getFullYear(), d.getFullYear()].filter((a, i, arr) => arr.indexOf(a) === i).map((a) => ({ ...p, dia: cumpleEn(p.fecha_nacimiento, a), edad: a - +p.fecha_nacimiento.slice(0, 4) }));
+  }).filter((x) => x.dia >= l && x.dia <= d).sort((a, b) => a.dia - b.dia);
+}
+const cuandoCumple = (dia) => { const n = diasHasta(hoy0(), dia); return n === 0 ? "hoy" : n === 1 ? "mañana" : n === -1 ? "ayer" : (n < 0 ? "fue el " : "el ") + fmtCumpleDia.format(dia).split(",")[0]; };
+
+// ---------- Confeti ----------
+function confeti(ms = 4500) {
+  if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
+  const cv = document.createElement("canvas"); cv.className = "confeti"; document.body.appendChild(cv);
+  const dpr = devicePixelRatio || 1, W = (cv.width = innerWidth * dpr), H = (cv.height = innerHeight * dpr), ctx2 = cv.getContext("2d");
+  const colores = ["#F47B20", "#f6c64e", "#cbd98a", "#9fd3e6", "#c7b6f2", "#ec5b4f", "#ffffff"];
+  const piezas = Array.from({ length: 160 }, () => ({ x: Math.random() * W, y: -Math.random() * H * 0.6, w: (6 + Math.random() * 8) * dpr, h: (8 + Math.random() * 10) * dpr,
+    vx: (Math.random() - 0.5) * 2.4 * dpr, vy: (2.2 + Math.random() * 3.2) * dpr, r: Math.random() * 6, vr: (Math.random() - 0.5) * 0.3, c: colores[(Math.random() * colores.length) | 0] }));
+  const t0 = performance.now();
+  const paso = (t) => {
+    const fin = t - t0 > ms; ctx2.clearRect(0, 0, W, H); let vivos = 0;
+    for (const p of piezas) {
+      p.x += p.vx + Math.sin((t + p.r * 400) / 400) * 0.8 * dpr; p.y += p.vy; p.r += p.vr;
+      if (p.y > H + 20) { if (fin) continue; p.y = -20; p.x = Math.random() * W; }
+      vivos++; ctx2.save(); ctx2.translate(p.x, p.y); ctx2.rotate(p.r); ctx2.fillStyle = p.c; ctx2.fillRect(-p.w / 2, -p.h / 2, p.w, p.h * Math.abs(Math.cos(p.r))); ctx2.restore();
+    }
+    if (vivos) requestAnimationFrame(paso); else cv.remove();
+  };
+  requestAnimationFrame(paso);
+}
+
+// ---------- Mi cumpleaños (al abrir la app) ----------
+const guardaLocal = (k, v) => { try { v === null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch {} };
+const leeLocal = (k) => { try { return localStorage.getItem(k); } catch { return null; } };
+async function revisarMiCumple() {
+  const box = $("cumple-box"); if (!box) return;
+  box.innerHTML = "";
+  const { data, error } = await sb.rpc("mi_cumpleanos");
+  if (error || !data?.[0]?.tiene_persona) return;
+  const fnac = data[0].fecha, h = hoy0();
+  if (fnac) {
+    const c = cumpleEn(fnac, h.getFullYear());
+    if (diasHasta(h, c) !== 0) return;
+    const edad = h.getFullYear() - +fnac.slice(0, 4);
+    box.innerHTML = `<button class="cumple-hoy" id="cumple-hoy">🎂 <b>¡Feliz cumpleaños, ${esc(ctx.nombre)}!</b><span>${edad} años · toca para celebrar otra vez</span></button>`;
+    $("cumple-hoy").addEventListener("click", () => felicitar(edad));
+    const k = `cumple-visto-${ctx.user.id}-${h.getFullYear()}`;
+    if (!leeLocal(k)) { guardaLocal(k, "1"); felicitar(edad); }
+    return;
+  }
+  // No tenemos su fecha: se la pedimos (se puede posponer 30 días)
+  const pospuesto = +leeLocal(`cumple-luego-${ctx.user.id}`) || 0;
+  if (Date.now() < pospuesto) return;
+  box.innerHTML = `<div class="cumple-pide"><b>🎂 ¿Cuándo es tu cumpleaños?</b><span>Para celebrarte ese día. Solo lo ven tu líder de IGHO y el Consejo.</span>
+    <input type="date" id="cp-f" max="${ymd(h)}"><div class="two"><button class="btn-sec" id="cp-luego">Ahora no</button><button class="btn-primary" id="cp-ok" style="margin:10px 0 0">Guardar</button></div>
+    <div class="ok err" id="cp-msg"></div></div>`;
+  $("cp-luego").addEventListener("click", () => { guardaLocal(`cumple-luego-${ctx.user.id}`, String(Date.now() + 30 * 86400000)); box.innerHTML = ""; pilas.forEach(medirPila); });
+  $("cp-ok").addEventListener("click", async () => {
+    const f = $("cp-f").value; if (!f) return ($("cp-msg").textContent = "Elige la fecha.");
+    const { error } = await sb.rpc("guardar_mi_cumpleanos", { p_fecha: f });
+    if (error) return ($("cp-msg").textContent = error.message);
+    box.innerHTML = `<div class="cumple-pide ok-c">✓ ¡Gracias! Lo guardamos.</div>`;
+    setTimeout(() => { revisarMiCumple(); pilas.forEach(medirPila); }, 1500);
+  });
+  pilas.forEach(medirPila);
+}
+function felicitar(edad) {
+  confeti();
+  const m = document.createElement("div"); m.className = "cumple-modal";
+  m.innerHTML = `<div class="cumple-card"><div class="cumple-emoji">🎂</div><div class="cumple-t">¡Feliz cumpleaños,<br>${esc(ctx.nombre)}!</div>
+    <div class="cumple-s">Toda la familia de Arco Ríos celebra tus ${edad} años. ¡Que Dios te bendiga mucho!</div>
+    <button class="btn-primary" id="cumple-x">¡Gracias!</button></div>`;
+  document.body.appendChild(m);
+  m.addEventListener("click", (e) => { if (e.target === m || e.target.id === "cumple-x") m.remove(); });
+}
+
+// ---------- Mi IGHO: cumpleaños de esta semana ----------
+function cumplesIghoHtml(miembros, conPendientes = true) {
+  const sem = cumplesDeLaSemana(miembros), sinFecha = miembros.filter((p) => !p.fecha_nacimiento).length;
+  if (!sem.length && !(conPendientes && sinFecha)) return "";
+  return `<div class="panel cumple-panel"><h4>🎂 Cumpleaños esta semana</h4>
+    ${sem.map((p) => `<div class="li ${diasHasta(hoy0(), p.dia) === 0 ? "hoy" : ""}"><div><b>${esc(p.nombres)} ${esc((p.apellidos || "").split(" ")[0])}</b>
+      <div class="muted">${p.edad} años · ${esc(fmtCumpleDia.format(p.dia))}</div></div><span class="st ${diasHasta(hoy0(), p.dia) === 0 ? "yes" : ""}">${esc(cuandoCumple(p.dia))}</span></div>`).join("") || '<div class="muted">Nadie cumple años esta semana.</div>'}
+    ${conPendientes && sinFecha ? `<div class="hint" style="margin:10px 0 0">${sinFecha} ${sinFecha === 1 ? "miembro no tiene" : "miembros no tienen"} fecha de cumpleaños. Toca su nombre abajo para agregarla.</div>` : ""}</div>`;
+}
+
+// ---------- Kidz: cumpleaños y cambio de clase al escanear ----------
+async function kidzExtrasAlEscanear(codigo, r) {
+  const { data: n } = await sb.from("kidz_ninos").select("id, nombres, apodo, fecha_nacimiento, clase_id").eq("qr", codigo.slice(5)).maybeSingle();
+  if (!n?.fecha_nacimiento) return;
+  await cargarClases();
+  const h = hoy0(), edad = edadDe(n.fecha_nacimiento), nombre = n.apodo || n.nombres.split(" ")[0];
+  const caja = $("sr-extra"); if (!caja) return;
+  let html = "";
+  // Cumpleaños en los últimos 7 días (o hoy)
+  const c = cumpleEn(n.fecha_nacimiento, h.getFullYear()), dd = diasHasta(c, h);
+  if (dd >= 0 && dd <= 7) {
+    html += `<div class="sr-cumple">🎂 <b>${dd === 0 ? `¡${esc(nombre)} cumple ${edad} años hoy!` : `¡${esc(nombre)} cumplió ${edad} años ${dd === 1 ? "ayer" : "el " + fmtCumpleDia.format(c).split(",")[0]}!`}</b><span>Celébrenlo en la clase.</span></div>`;
+    confeti(3000);
+  }
+  // ¿Ya le toca la clase de los grandes?
+  const actual = kd.clases.find((x) => x.id === n.clase_id), porEdad = kd.clases.find((x) => x.id === clasePorEdad(n.fecha_nacimiento));
+  const noAhora = leeLocal(`kz-clase-no-${n.id}-${edad}`);
+  if (actual && porEdad && porEdad.id !== actual.id && porEdad.edad_min > actual.edad_max && !noAhora) {
+    html += `<div class="sr-box sr-pasa" id="sr-pasa"><b>¿Pasa a la clase de los grandes?</b>
+      <span>${esc(nombre)} ya tiene ${edad} años y está en la clase <strong>${esc(actual.nombre)}</strong>. ¿Lo pasamos a <strong>${esc(porEdad.nombre)}</strong>?</span>
+      <div class="two" style="margin-top:10px"><button class="btn-sec" id="sr-pasa-no" style="margin:0">Todavía no</button><button class="btn-primary" id="sr-pasa-si" style="margin:0;font-size:16px">Sí, cambiar</button></div></div>`;
+  }
+  if (!html) return;
+  caja.innerHTML = html;
+  $("sr-pasa-no")?.addEventListener("click", () => { guardaLocal(`kz-clase-no-${n.id}-${edad}`, "1"); $("sr-pasa").remove(); });
+  $("sr-pasa-si")?.addEventListener("click", async () => {
+    $("sr-pasa-si").disabled = true;
+    let { error } = await sb.from("kidz_ninos").update({ clase_id: porEdad.id }).eq("id", n.id);
+    if (!error && r?.checkin_id) ({ error } = await sb.from("kidz_checkins").update({ clase_id: porEdad.id }).eq("id", r.checkin_id));
+    if (error) { $("sr-pasa-si").disabled = false; return alert("No se pudo cambiar: " + error.message); }
+    $("sr-pasa").outerHTML = `<div class="sr-box sr-pasa ok">✓ ${esc(nombre)} ahora está en la clase <strong>${esc(porEdad.nombre)}</strong>. Llévalo a esa clase.</div>`;
+    const cl = document.querySelector("#scan-res .sr-clase"); if (cl) cl.textContent = porEdad.nombre;
+  });
 }
 
 // ===================================================================
