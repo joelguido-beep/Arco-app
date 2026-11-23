@@ -1,6 +1,6 @@
 # App Iglesia Arco Ríos: project summary (to start a new chat)
 
-Attach this file when you start a new chat. The code lives in GitHub: **`joelguido-beep/Arco-app`** (branch `main`, served by GitHub Pages at https://joelguido-beep.github.io/Arco-app/). The Claude GitHub App is installed, so Claude can clone the repo and push changes directly (no need to attach `index.html`). Current version: **23-nov v5** (shown under the title of the Avisos page; constant `VERSION_APP` in index.html; update both on each release).
+Attach this file when you start a new chat. The code lives in GitHub: **`joelguido-beep/Arco-app`** (branch `main`, served by GitHub Pages at https://joelguido-beep.github.io/Arco-app/). The Claude GitHub App is installed, so Claude can clone the repo and push changes directly (no need to attach `index.html`). Current version: **23-nov v6** (shown under the title of the Avisos page; constant `VERSION_APP` in index.html; update both on each release).
 
 ## What it is
 A web app in Spanish for Arco Ríos (Cuenca). It's a single `index.html` file hosted on **GitHub Pages**, and the data lives in **Supabase** (project `lmitwnfvelwbbkjkvmtb`).
@@ -42,6 +42,7 @@ A web app in Spanish for Arco Ríos (Cuenca). It's a single `index.html` file ho
 24. `22_stand_igho.sql`: igho_interesados, stand_ighos(), stand_igho_interes() (creates the person if new, notifies the IGHO leader: notificaciones.tipo 'igho'); function action `enviar_interes`
 25. `23_igho_lugar_bienvenida_finanzas.sql`: igho.direccion / horario / mapas text[] (fills the 22 IGHO by leader phone, then leader name; last query lists IGHO left without address), guardar_lugar_igho(); stand_ighos() now returns direccion/horario/mapas; borrar_persona_si_suelta() (deletes a person only if no IGHO and no row in any table that references personas); borrar_interes_igho() (also removes the leader's notice); nuevos_seguimiento view + sexo, anio_nacimiento_aprox (spouses can read); editar_nuevo(), borrar_nuevo(); finanzas_ingresos (Consejo/admin/finanzas; tipo semana/ajuste/mes) + Ríos 2026 income from the sheet (Jan–Jun monthly, Jul–Oct weekly)
 26. `24_igho_editar_asistencia.sql`: editar_igho() (Consejo/admin: name, leader, place; removes the old leader's lider_igho role), crear_igho() (admin); re-applies IGHO addresses with leader NAME first, then phone (David/Josué Luna share a phone); Jamie Díaz replaces Andrés Torres as leader (Octavio Paz y J. Donoso, Martes 20:00); Ríos Sunday attendance 2026 from the sheet into conteo_anfitriones (children → ninos_auditorio; nuevos Jan–Apr; skips Sundays already counted in the app or with a Kidz count). Sur numbers are NOT imported.
+27. `25_bienvenida_igho.sql`: puede_conectar_igho() (Stand team, Bienvenida, Consejo/admin); stand_ighos(), stand_igho_interes() and borrar_interes_igho() now allow Bienvenida too
 
 ## Roles
 - `admin`, `anciano` (shown as **Miembro del Consejo**), `secretaria`, `finanzas`
@@ -124,6 +125,10 @@ Kidz with QR: camera check-in/check-out (photo confirmation, allergies, parent n
 
 ## IGHO editor (23 Nov 2026, v5)
 - Mi IGHO → «Editar IGHO» (Consejo/admin): name, leader (search or new person), day/time, address, map links. Changing the leader offers the access step (crear_lider_igho). Leaders still edit only day/time/address/maps. Admin has «+ Nuevo IGHO» (e.g. Josué Merchán's, which wasn't in the base).
+
+## Bienvenida → IGHO (23 Nov 2026, v6)
+- Registering a new person with IGHO interest Sí / Tal vez shows «¿A qué IGHO?». Choosing one saves the interest (leader gets the app notice, note «Persona nueva (Bienvenida)») and shows the same ✓ Listo card as the Stand (ighoListoHtml): WhatsApp to the person with day/time, address, map and leader; WhatsApp to the leader (now always offered, in the Stand too).
+- Seguimiento: people with interest and no IGHO have an «IGHO» button to do the same later.
 
 ## Status (23 Nov 2026, end of day)
 - Notifications work on Joel's Android (function `swift-action` deployed with notificar.ts, Verify JWT off).
