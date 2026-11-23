@@ -1,6 +1,6 @@
 # App Iglesia Arco Ríos: project summary (to start a new chat)
 
-Attach this file when you start a new chat. The code lives in GitHub: **`joelguido-beep/Arco-app`** (branch `main`, served by GitHub Pages at https://joelguido-beep.github.io/Arco-app/). The Claude GitHub App is installed, so Claude can clone the repo and push changes directly (no need to attach `index.html`). Current version: **23-nov v8** (shown under the title of the Avisos page; constant `VERSION_APP` in index.html; update both on each release).
+Attach this file when you start a new chat. The code lives in GitHub: **`joelguido-beep/Arco-app`** (branch `main`, served by GitHub Pages at https://joelguido-beep.github.io/Arco-app/). The Claude GitHub App is installed, so Claude can clone the repo and push changes directly (no need to attach `index.html`). Current version: **23-nov v11** (shown under the title of the Avisos page; constant `VERSION_APP` in index.html; update both on each release).
 
 ## What it is
 A web app in Spanish for Arco Ríos (Cuenca). It's a single `index.html` file hosted on **GitHub Pages**, and the data lives in **Supabase** (project `lmitwnfvelwbbkjkvmtb`).
@@ -133,6 +133,10 @@ Kidz with QR: camera check-in/check-out (photo confirmation, allergies, parent n
 
 ## Admin delete (23 Nov 2026, v8)
 - Administración → «Borrar datos»: Conteos del domingo (Anfitriones, optionally Kidz count + check-ins of that day), Reuniones de IGHO (with attendance), Visitas de cobertura, Inscritos en clases, Avisos (removes from everyone's bell), Registro de WhatsApp, Personas (admin_borrar_persona). Anfitriones history also shows × for admin. Deletes check that a row was actually removed (RLS silently deletes 0 rows).
+
+## Avisos delete + PDF reports (23 Nov 2026, v10–v11)
+- v10: admin × on Avisos page (Mis avisos and Avisos enviados).
+- v11: «📄 Informe» button top-right on Anfitriones, Kidz, Bienvenida, Worship, Este domingo (Anuncios), Formación, Stand and Mi IGHO, for that ministry's leaders + Consejo/admin (IGHO: lider_igho, current IGHO). Pick dates (último mes / 3 meses / año / custom) → downloads a PDF (html2pdf.js 0.10.2 from jsDelivr, loaded on first use; fallback opens a print window). Code: INFORMES, botonInforme (called from show()), dialogoInforme, generarInforme, descargarPdf, INF_CSS. Contents: Anfitriones (attendance per Sunday + averages, manteles, team notes); Kidz (per Sunday × class, servers, each child's visits); Bienvenida (new people, how they came, class, IGHO); Worship (each Sunday: team, songs+key, who served; top songs; times each person served; absences); Anuncios (each Sunday's items + announcer); Formación (classes in range, enrolled/completed/withdrew, lists); Stand (activity, class and IGHO sign-ups); IGHO (meetings with who came, each member's attendance, coverage visits, people wanting to join).
 
 ## Status (23 Nov 2026, end of day)
 - Notifications work on Joel's Android (function `swift-action` deployed with notificar.ts, Verify JWT off).

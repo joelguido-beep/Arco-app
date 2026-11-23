@@ -749,7 +749,7 @@
 
   <!-- ================= AVISOS ================= -->
   <section id="v-avisos" class="hidden"><div class="top"><button class="back" data-go="home" aria-label="Volver"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button></div>
-    <div class="page-title">Avisos</div><div class="hello-sub" id="av-sub">Notificaciones de Arco Ríos · versión 23-nov v10</div><div id="av-body"></div></section>
+    <div class="page-title">Avisos</div><div class="hello-sub" id="av-sub">Notificaciones de Arco Ríos · versión 23-nov v11</div><div id="av-body"></div></section>
 
   <!-- ================= CENSO (enlace público, sin cuenta) ================= -->
   <section id="v-censo" class="hidden"><div class="top"><span class="pill"><span class="dot" id="cz-logo"></span>Arco Ríos</span></div>
@@ -1107,6 +1107,7 @@ document.addEventListener("click", (e) => {
 function show(view) {
   for (const v of ["login", "home", "resumen", "soon", "anfitriones", "kidz", "padres", "domingo", "worship", "bienvenida", "igho", "clave", "admin", "tablero", "formacion", "stand", "difusion", "avisos", "censo", "finanzas"]) $("v-" + v).classList.toggle("hidden", v !== view);
   marcarSoloVer(view);
+  if (typeof INFORMES !== "undefined" && INFORMES && INFORMES[view]) botonInforme(view);
   document.body.classList.toggle("modo-tablero", view === "tablero");
   $("nav").classList.toggle("hidden", view === "login" || view === "clave" || view === "censo");
   document.querySelectorAll(".nav [data-go]").forEach((b) => b.classList.toggle("on", b.dataset.go === view));
@@ -2368,6 +2369,253 @@ function ighoListoHtml(g, nombre, telFinal, r, desde) {
       <div class="det">${esc(g.nombre)} · ${r?.personas ? "el líder recibió un aviso en la app" : "el líder no usa la app todavía"}</div></div>
     ${wp ? `<a class="btn-primary wa-btn" href="${wp}?text=${encodeURIComponent(paraPersona)}" target="_blank" rel="noopener">${g.mapas?.length ? "Enviar la ubicación del IGHO" : "Mensaje"} a ${esc(n1)} por WhatsApp</a>` : `<div class="hint">${esc(n1)} no tiene celular registrado.</div>`}
     ${wl ? `<a class="btn-sec wa-sec" style="display:block;text-align:center;text-decoration:none;margin-top:8px" href="${wl}?text=${encodeURIComponent(paraLider)}" target="_blank" rel="noopener">Avisar al líder (${esc((g.lider || "").split(" ")[0])}) por WhatsApp</a>` : ""}`;
+}
+
+// ===================================================================
+// INFORMES EN PDF por ministerio (líderes del ministerio, Consejo y admin)
+// Botón «Informe» arriba a la derecha de cada página → elegir fechas → descarga un PDF.
+// El PDF se arma con html2pdf (se carga solo la primera vez); si no carga, se abre para imprimir.
+// ===================================================================
+var INFORMES = {
+  anfitriones: { t: "Anfitriones", puede: () => ctx.esAncianoOAdmin || ctx.lideraMinisterios.has("anfitriones") },
+  kidz: { t: "Kidz", puede: () => ctx.esAncianoOAdmin || ctx.lideraMinisterios.has("kidz") },
+  bienvenida: { t: "Bienvenida", puede: () => ctx.esAncianoOAdmin || ctx.lideraMinisterios.has("bienvenida") },
+  worship: { t: "Arco Worship", puede: () => ctx.esAncianoOAdmin || ctx.lideraMinisterios.has("worship") },
+  domingo: { t: "Anuncios", puede: () => ctx.esAncianoOAdmin || ctx.lideraMinisterios.has("anuncios") || ctx.roles.has("secretaria") },
+  formacion: { t: "Formación Cristiana", puede: () => ctx.esAncianoOAdmin || ctx.lideraMinisterios.has("formacion") },
+  stand: { t: "Stand de información", puede: () => ctx.esAncianoOAdmin || ctx.lideraMinisterios.has("stand") || ctx.lideraMinisterios.has("formacion") },
+  igho: { t: "IGHO", puede: () => ctx.esAncianoOAdmin || ctx.roles.has("lider_igho") },
+};
+// Pone (o esconde) el botón en la barra de arriba de la página
+function botonInforme(view) {
+  const top = document.querySelector(`#v-${view} .top`); if (!top) return;
+  let b = top.querySelector(".inf-btn");
+  const ve = !!(ctx && INFORMES[view]?.puede());
+  if (!ve) { b?.remove(); return; }
+  if (!b) {
+    b = document.createElement("button"); b.className = "btn-sec mini inf-btn ok-ver"; b.type = "button";
+    b.innerHTML = "📄 Informe"; b.addEventListener("click", () => dialogoInforme(view));
+    top.appendChild(b);
+  }
+}
+function dialogoInforme(view) {
+  const hoy = new Date(), h = ymd(hoy), menos = (dias) => { const d = new Date(hoy); d.setDate(d.getDate() - dias); return ymd(d); };
+  const pres = [["mes", "Último mes", menos(30), h], ["tres", "Últimos 3 meses", menos(91), h], ["anio", `Año ${hoy.getFullYear()}`, `${hoy.getFullYear()}-01-01`, h], ["otro", "Elegir fechas", menos(30), h]];
+  const dlg = document.createElement("div"); dlg.className = "dlg";
+  dlg.innerHTML = `<div class="dlg-in"><h4>Informe de ${esc(INFORMES[view].t)}${view === "igho" ? " · " + esc(ig.lista.find((g) => g.id === ig.sel)?.nombre || "") : ""}</h4>
+    <div class="hint">Elige las fechas y se descarga un PDF.</div>
+    <div class="pick" id="inf-p">${pres.map(([k, t]) => `<button type="button" data-k="${k}" class="${k === "mes" ? "on" : ""}">${t}</button>`).join("")}</div>
+    <div class="two"><div><label>Desde</label><input type="date" id="inf-d" value="${pres[0][2]}" max="${h}"></div><div><label>Hasta</label><input type="date" id="inf-h" value="${h}"></div></div>
+    <button class="btn-primary" id="inf-ok">Descargar PDF</button><div class="ok err" id="inf-msg"></div>
+    <button class="btn-sec" style="width:100%;margin-top:8px" id="inf-x">Cerrar</button></div>`;
+  document.body.appendChild(dlg);
+  const cerrar = () => dlg.remove();
+  dlg.addEventListener("click", (e) => { if (e.target === dlg) cerrar(); });
+  dlg.querySelector("#inf-x").addEventListener("click", cerrar);
+  dlg.querySelectorAll("#inf-p [data-k]").forEach((b) => b.addEventListener("click", () => {
+    const p = pres.find((x) => x[0] === b.dataset.k);
+    dlg.querySelectorAll("#inf-p [data-k]").forEach((x) => x.classList.toggle("on", x === b));
+    dlg.querySelector("#inf-d").value = p[2]; dlg.querySelector("#inf-h").value = p[3];
+  }));
+  dlg.querySelector("#inf-ok").addEventListener("click", async () => {
+    const d = dlg.querySelector("#inf-d").value, hh = dlg.querySelector("#inf-h").value, msg = dlg.querySelector("#inf-msg");
+    if (!d || !hh || d > hh) return (msg.textContent = "Revisa las fechas: «Desde» debe ser antes de «Hasta».");
+    const btn = dlg.querySelector("#inf-ok"); btn.disabled = true; btn.textContent = "Preparando el informe…"; msg.textContent = "";
+    try { await generarInforme(view, d, hh); cerrar(); }
+    catch (e) { console.error(e); msg.textContent = "No se pudo crear el informe: " + (e.message || e); btn.disabled = false; btn.textContent = "Descargar PDF"; }
+  });
+}
+
+// ---- piezas del informe (HTML blanco para el PDF) ----
+const infF = (f) => f ? new Intl.DateTimeFormat("es-EC", { day: "numeric", month: "short", year: "numeric" }).format(fromYmd(String(f).slice(0, 10))).replace(".", "") : "";
+const infFH = (t) => t ? infF(ymd(new Date(t))) : "";
+const infTabla = (cab, filas, pie) => filas.length
+  ? `<table class="inf-t"><thead><tr>${cab.map((c) => `<th>${c}</th>`).join("")}</tr></thead><tbody>${filas.map((f) => `<tr>${f.map((c) => `<td>${c ?? ""}</td>`).join("")}</tr>`).join("")}</tbody>${pie ? `<tfoot><tr>${pie.map((c) => `<td>${c ?? ""}</td>`).join("")}</tr></tfoot>` : ""}</table>`
+  : '<p class="inf-vacio">Sin datos en estas fechas.</p>';
+const infCifras = (xs) => `<div class="inf-cifras">${xs.map(([n, l]) => `<div><b>${n}</b><span>${l}</span></div>`).join("")}</div>`;
+const infH = (t) => `<h2>${t}</h2>`;
+const infProm = (xs) => xs.length ? Math.round(xs.reduce((a, b) => a + (+b || 0), 0) / xs.length) : 0;
+const infSum = (xs) => xs.reduce((a, b) => a + (+b || 0), 0);
+const infChk = (e, nombre) => { if (e) throw new Error(`${nombre}: ${e.message}`); };
+
+async function generarInforme(view, d, h) {
+  const desdeTs = new Date(fromYmd(d)).toISOString(), hastaTs = (() => { const x = fromYmd(h); x.setDate(x.getDate() + 1); return x.toISOString(); })();
+  let titulo = INFORMES[view].t, cuerpo = "";
+
+  if (view === "anfitriones") {
+    const [a, c, n] = await Promise.all([
+      sb.from("asistencia_domingo").select("*").gte("fecha", d).lte("fecha", h).order("fecha"),
+      sb.from("conteo_anfitriones").select("fecha, manteles, registrado_nombre").gte("fecha", d).lte("fecha", h),
+      sb.from("notas_anfitriones").select("*").gte("fecha", d).lte("fecha", h).order("fecha")]);
+    infChk(a.error, "Asistencia");
+    const rows = a.data || [], man = (f) => (c.data || []).find((x) => x.fecha === f);
+    const tot = rows.map((r) => r.total);
+    cuerpo = infCifras([[rows.length, "domingos contados"], [infProm(tot), "promedio de asistencia"], [tot.length ? Math.max(...tot) : 0, "domingo más alto"], [infSum(rows.map((r) => r.nuevos)), "personas nuevas"]])
+      + infH("Asistencia por domingo")
+      + infTabla(["Domingo", "Adultos", "Nuevos", "Niños auditorio", "Niños Kidz", "Siervos Kidz", "Total", "Manteles"],
+        rows.map((r) => [infF(r.fecha), r.adultos, r.nuevos, r.ninos_auditorio, r.ninos_kidz, r.servidores_kidz, `<b>${r.total}</b>`, man(r.fecha)?.manteles ?? ""]),
+        rows.length ? ["Promedio", infProm(rows.map((r) => r.adultos)), infSum(rows.map((r) => r.nuevos)) + " (total)", infProm(rows.map((r) => r.ninos_auditorio)), infProm(rows.map((r) => r.ninos_kidz)), infProm(rows.map((r) => r.servidores_kidz)), `<b>${infProm(tot)}</b>`, ""] : null)
+      + infH("Notas del equipo")
+      + infTabla(["Fecha", "Nota", "Escribió", "Estado"], (n.data || []).map((x) => [infF(x.fecha), esc(x.texto || ""), esc(x.autor_nombre || ""), x.resuelta ? "Resuelta" + (x.resuelta_por_nombre ? " · " + esc(x.resuelta_por_nombre) : "") : "Pendiente"]));
+  }
+
+  if (view === "kidz") {
+    const [cl, co, ck] = await Promise.all([
+      sb.from("kidz_clases").select("id, nombre").order("orden"),
+      sb.from("conteo_kidz").select("*").gte("fecha", d).lte("fecha", h).order("fecha"),
+      sb.from("kidz_checkins").select("fecha, nino_id, kidz_ninos(nombres, apellidos, clase_id)").gte("fecha", d).lte("fecha", h)]);
+    infChk(co.error, "Conteo de Kidz"); infChk(ck.error, "Check-ins");
+    const clases = cl.data || [], cks = ck.data || [], fechas = [...new Set([...(co.data || []).map((x) => x.fecha), ...cks.map((x) => x.fecha)])].sort();
+    const porNino = {}; cks.forEach((x) => { const k = x.nino_id; porNino[k] ||= { n: x.kidz_ninos, veces: 0 }; porNino[k].veces++; });
+    const ninos = Object.values(porNino).sort((a, b) => b.veces - a.veces);
+    const conteo = (f) => (co.data || []).find((x) => x.fecha === f);
+    cuerpo = infCifras([[fechas.length, "domingos"], [infProm(fechas.map((f) => conteo(f)?.ninos ?? cks.filter((x) => x.fecha === f).length)), "niños por domingo (promedio)"], [ninos.length, "niños distintos"], [infProm((co.data || []).map((x) => x.servidores)), "siervos por domingo"]])
+      + infH("Niños por domingo y clase")
+      + infTabla(["Domingo", ...clases.map((c) => esc(c.nombre)), "Total niños", "Siervos"],
+        fechas.map((f) => [infF(f), ...clases.map((c) => cks.filter((x) => x.fecha === f && x.kidz_ninos?.clase_id === c.id).length), `<b>${conteo(f)?.ninos ?? cks.filter((x) => x.fecha === f).length}</b>`, conteo(f)?.servidores ?? ""]))
+      + infH("Niños que vinieron")
+      + infTabla(["Niño/a", "Clase", "Veces"], ninos.map((x) => [esc(`${x.n?.nombres || ""} ${x.n?.apellidos || ""}`), esc(clases.find((c) => c.id === x.n?.clase_id)?.nombre || ""), x.veces]));
+  }
+
+  if (view === "bienvenida") {
+    const { data, error } = await sb.from("nuevos_seguimiento").select("*").gte("primera_visita", d).lte("primera_visita", h).order("primera_visita");
+    infChk(error, "Bienvenida");
+    const rows = data || [], como = Object.fromEntries(COMO), inter = Object.fromEntries(INTERES);
+    const pct = (n) => rows.length ? Math.round((n / rows.length) * 100) + "%" : "—";
+    cuerpo = infCifras([[rows.length, "personas nuevas"], [pct(rows.filter((x) => x.clase_bienvenida).length), "tomaron la clase de bienvenida"], [pct(rows.filter((x) => x.igho_nombre).length), "ya están en un IGHO"], [pct(rows.filter((x) => x.interes_igho === "si").length), "quieren un IGHO"]])
+      + infH("¿Cómo llegaron?") + infTabla(["Cómo llegó", "Personas"], COMO.map(([k, t]) => [t, rows.filter((x) => x.como_llego === k).length]).filter((x) => x[1]))
+      + infH("Personas nuevas")
+      + infTabla(["Primera visita", "Nombre", "Teléfono", "Cómo llegó", "Interés IGHO", "Clase", "IGHO"],
+        rows.map((x) => [infF(x.primera_visita), esc(`${x.nombres} ${x.apellidos || ""}`), esc(x.telefono || ""), esc((como[x.como_llego] || "") + (x.invitado_por ? ` (${x.invitado_por})` : "")), esc(inter[x.interes_igho] || ""), x.clase_bienvenida ? "✓" : "—", esc(x.igho_nombre || "—")]));
+  }
+
+  if (view === "worship") {
+    const [dom, can, cat, eq, eqs, aus] = await Promise.all([
+      sb.from("worship_domingo").select("*").gte("fecha", d).lte("fecha", h).order("fecha"),
+      sb.from("worship_canciones").select("*").gte("fecha", d).lte("fecha", h).order("orden"),
+      sb.from("canciones").select("*"),
+      sb.from("worship_equipo").select("*").gte("fecha", d).lte("fecha", h),
+      sb.from("worship_equipos").select("id, nombre"),
+      sb.from("worship_ausencias").select("*").gte("fecha", d).lte("fecha", h).order("fecha")]);
+    infChk(can.error, "Canciones");
+    const song = (id) => (cat.data || []).find((x) => x.id === id), cans = can.data || [], gente = eq.data || [];
+    const fechas = [...new Set([...(dom.data || []).map((x) => x.fecha), ...cans.map((x) => x.fecha), ...gente.map((x) => x.fecha)])].sort();
+    const veces = {}; cans.forEach((x) => (veces[x.cancion_id] = (veces[x.cancion_id] || 0) + 1));
+    const top = Object.entries(veces).sort((a, b) => b[1] - a[1]);
+    const servicios = {}; gente.forEach((x) => (servicios[x.nombre] = (servicios[x.nombre] || 0) + 1));
+    cuerpo = infCifras([[fechas.length, "domingos"], [cans.length, "canciones tocadas"], [top.length, "canciones distintas"], [Object.keys(servicios).length, "personas sirvieron"]])
+      + infH("Cada domingo")
+      + infTabla(["Domingo", "Equipo", "Canciones (tono)", "Quién sirvió"], fechas.map((f) => {
+        const dd = (dom.data || []).find((x) => x.fecha === f);
+        return [infF(f), esc((eqs.data || []).find((e) => e.id === dd?.equipo_id)?.nombre || ""),
+          cans.filter((x) => x.fecha === f).map((x) => esc(song(x.cancion_id)?.titulo || "¿?") + (x.tono ? ` (${esc(x.tono)})` : "")).join("<br>"),
+          gente.filter((x) => x.fecha === f).map((x) => `${esc(x.nombre || "")}${x.funcion ? " · " + esc(x.funcion) : ""}`).join("<br>")]; }))
+      + infH("Canciones más tocadas") + infTabla(["Canción", "Artista", "Veces"], top.map(([id, n]) => [esc(song(+id)?.titulo || song(id)?.titulo || "¿?"), esc(song(+id)?.artista || song(id)?.artista || ""), n]))
+      + infH("Veces que sirvió cada persona") + infTabla(["Persona", "Domingos"], Object.entries(servicios).sort((a, b) => b[1] - a[1]).map(([n, v]) => [esc(n), v]))
+      + infH("«No puedo ese domingo»") + infTabla(["Domingo", "Persona", "Motivo"], (aus.data || []).map((x) => [infF(x.fecha), esc(x.nombre || ""), esc(x.motivo || "")]));
+  }
+
+  if (view === "domingo") {
+    const [dom, it] = await Promise.all([
+      sb.from("anuncios_domingo").select("*").gte("fecha", d).lte("fecha", h).order("fecha"),
+      sb.from("anuncios_items").select("*").gte("fecha", d).lte("fecha", h).order("fecha").order("orden")]);
+    infChk(it.error, "Anuncios");
+    const items = it.data || [], fechas = [...new Set([...(dom.data || []).map((x) => x.fecha), ...items.map((x) => x.fecha)])].sort();
+    titulo = "Anuncios";
+    cuerpo = infCifras([[fechas.length, "domingos"], [items.length, "anuncios nuevos"]])
+      + fechas.map((f) => { const dd = (dom.data || []).find((x) => x.fecha === f), its = items.filter((x) => x.fecha === f);
+        return `<h3>${infF(f)}${dd?.anunciantes_nombres ? ` · da los anuncios: ${esc(dd.anunciantes_nombres)}` : ""}</h3>`
+          + infTabla(["#", "Anuncio", "Detalle"], its.map((x, i) => [i + 1, `<b>${esc(x.titulo || "")}</b>`, esc(x.texto || "").replace(/\n/g, "<br>") + (x.nota ? `<br><i>Nota: ${esc(x.nota)}</i>` : "")])); }).join("");
+  }
+
+  if (view === "formacion") {
+    await cargarCursosFc();
+    const [of, ins] = await Promise.all([sb.from("fc_ofertas").select("*").order("fecha_inicio", { nullsFirst: false }), sb.from("fc_inscripciones").select("*")]);
+    infChk(of.error, "Clases"); infChk(ins.error, "Inscripciones");
+    const enRango = (o) => { const a = o.fecha_inicio || (o.creado_en ? ymd(new Date(o.creado_en)) : null); if (!a) return !!o.abierta; const b = o.fecha_fin || (o.sesiones?.length ? o.sesiones[o.sesiones.length - 1] : a); return a <= h && b >= d; };
+    const ofs = (of.data || []).filter(enRango), est = { inscrito: "Inscrito", completo: "Completó", retirado: "Se retiró" };
+    const insDe = (id) => (ins.data || []).filter((x) => x.oferta_id === id);
+    cuerpo = infCifras([[ofs.length, "clases y eventos"], [infSum(ofs.map((o) => insDe(o.id).length)), "inscritos"], [infSum(ofs.map((o) => insDe(o.id).filter((x) => x.estado === "completo").length)), "completaron"]])
+      + infH("Resumen") + infTabla(["Clase / evento", "Fechas", "Inscritos", "Completaron", "Se retiraron"], ofs.map((o) => [`<b>${esc(o.nombre)}</b>`, esc(detalleFc(o) || ""), insDe(o.id).length, insDe(o.id).filter((x) => x.estado === "completo").length, insDe(o.id).filter((x) => x.estado === "retirado").length]))
+      + ofs.map((o) => `<h3>${esc(o.nombre)}</h3>` + infTabla(["Nombre", "Teléfono", "Estado", "Inscrito el", "Inscribió"],
+        insDe(o.id).map((x) => [esc(x.nombre || ""), esc(x.telefono || ""), esc(est[x.estado] || x.estado || ""), infFH(x.creado_en), esc(x.inscrito_por_nombre || "")]))).join("");
+  }
+
+  if (view === "stand") {
+    const [rg, ac, fi, of, it, ighos] = await Promise.all([
+      sb.from("stand_registros").select("*").gte("creado_en", desdeTs).lt("creado_en", hastaTs).order("creado_en"),
+      sb.from("stand_actividades").select("id, titulo"),
+      sb.from("fc_inscripciones").select("*").gte("creado_en", desdeTs).lt("creado_en", hastaTs).order("creado_en"),
+      sb.from("fc_ofertas").select("id, nombre"),
+      sb.from("igho_interesados").select("*").gte("creado_en", desdeTs).lt("creado_en", hastaTs).order("creado_en"),
+      sb.from("igho").select("id, nombre")]);
+    infChk(rg.error, "Registros del Stand");
+    const act = (id) => (ac.data || []).find((x) => x.id === id)?.titulo || "", ofn = (id) => (of.data || []).find((x) => x.id === id)?.nombre || "";
+    const ign = (id) => (ighos.data || []).find((x) => x.id === id)?.nombre || "";
+    cuerpo = infCifras([[(rg.data || []).length, "inscritos a actividades"], [(fi.data || []).length, "inscritos a clases"], [(it.data || []).length, "quieren un IGHO"]])
+      + infH("Actividades de los anuncios") + infTabla(["Fecha", "Actividad", "Nombre", "Teléfono", "Inscribió"], (rg.data || []).map((x) => [infFH(x.creado_en), esc(act(x.actividad_id)), esc(x.nombre) + (x.responsable ? ` <i>(${esc(x.responsable)})</i>` : ""), esc(x.telefono || ""), esc(x.inscrito_por_nombre || "")]))
+      + infH("Clases y eventos de Formación") + infTabla(["Fecha", "Clase / evento", "Nombre", "Teléfono", "Inscribió"], (fi.data || []).map((x) => [infFH(x.creado_en), esc(ofn(x.oferta_id)), esc(x.nombre || ""), esc(x.telefono || ""), esc(x.inscrito_por_nombre || "")]))
+      + infH("Quieren ir a un IGHO") + infTabla(["Fecha", "IGHO", "Nombre", "Teléfono", "Contactado"], (it.data || []).map((x) => [infFH(x.creado_en), esc(ign(x.igho_id)), esc(x.nombre), esc(x.telefono || ""), x.contactado_en ? "✓ " + infFH(x.contactado_en) : "Pendiente"]));
+  }
+
+  if (view === "igho") {
+    const g = ig.lista.find((x) => x.id === ig.sel); titulo = "IGHO " + (g?.nombre || "");
+    const [mi, re, vi, it] = await Promise.all([
+      sb.from("personas").select("id, nombres, apellidos, telefono").eq("igho_id", ig.sel).eq("activo", true).order("nombres"),
+      sb.from("reuniones_igho").select("id, fecha, asistencia_igho(persona_id)").eq("igho_id", ig.sel).gte("fecha", d).lte("fecha", h).order("fecha"),
+      sb.from("visitas_igho").select("*").eq("igho_id", ig.sel).gte("fecha", d).lte("fecha", h).order("fecha"),
+      sb.from("igho_interesados").select("*").eq("igho_id", ig.sel).gte("creado_en", desdeTs).lt("creado_en", hastaTs).order("creado_en")]);
+    infChk(re.error, "Reuniones");
+    const miembros = mi.data || [], reus = re.data || [];
+    const vino = (pid) => reus.filter((r) => (r.asistencia_igho || []).some((a) => a.persona_id === pid)).length;
+    const nombreDe = (pid) => { const p = miembros.find((m) => m.id === pid); return p ? `${p.nombres} ${p.apellidos || ""}` : ""; };
+    cuerpo = infCifras([[miembros.length, "miembros hoy"], [reus.length, "reuniones registradas"], [infProm(reus.map((r) => (r.asistencia_igho || []).length)), "asistentes por reunión"], [(vi.data || []).length, "visitas de cobertura"]])
+      + (g?.horario || g?.direccion ? `<p>${esc(g.horario || "")}${g.direccion ? " · " + esc(g.direccion) : ""}</p>` : "")
+      + infH("Reuniones") + infTabla(["Fecha", "Asistentes", "Quiénes"], reus.map((r) => [infF(r.fecha), (r.asistencia_igho || []).length, (r.asistencia_igho || []).map((a) => esc(nombreDe(a.persona_id) || "Visita")).join(", ")]))
+      + infH("Asistencia de cada miembro") + infTabla(["Miembro", "Teléfono", `Vino (de ${reus.length})`], miembros.map((p) => [esc(`${p.nombres} ${p.apellidos || ""}`), esc(p.telefono || ""), vino(p.id)]))
+      + infH("Visitas de cobertura") + infTabla(["Fecha", "Quién", "Notas"], (vi.data || []).map((v) => [infF(v.fecha), esc(v.nombre || ""), esc(v.notas || "")]))
+      + infH("Personas que quieren unirse") + infTabla(["Fecha", "Nombre", "Teléfono", "Contactado"], (it.data || []).map((x) => [infFH(x.creado_en), esc(x.nombre), esc(x.telefono || ""), x.contactado_en ? "✓" : "Pendiente"]));
+  }
+
+  const html = `<div class="inf">
+    <div class="inf-cab"><div><div class="inf-iglesia">Arco Ríos</div><h1>Informe · ${esc(titulo)}</h1><div class="inf-rango">${infF(d)} – ${infF(h)}</div></div>
+      <div class="inf-gen">Generado por ${esc(ctx.nombreCompleto || "")}<br>${infF(ymd(new Date()))}</div></div>
+    ${cuerpo}</div>`;
+  const archivo = `Informe ${titulo} ${d} a ${h}.pdf`.replace(/[\\/:*?"<>|]/g, "-");
+  await descargarPdf(html, archivo);
+}
+
+const INF_CSS = `.inf{font-family:Outfit,Arial,sans-serif;color:#1b1b1d;background:#fff;padding:6px 4px;width:700px;box-sizing:border-box;font-size:11px;line-height:1.35}
+  .inf-cab{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px solid #F47B20;padding-bottom:8px;margin-bottom:12px}
+  .inf-iglesia{color:#F47B20;font-weight:700;font-size:13px;letter-spacing:.5px;text-transform:uppercase}
+  .inf h1{margin:2px 0;font-size:22px}.inf-rango{color:#555;font-size:13px}.inf-gen{color:#777;font-size:10px;text-align:right}
+  .inf h2{font-size:15px;margin:16px 0 6px;color:#1b1b1d;border-left:4px solid #F47B20;padding-left:7px;page-break-after:avoid}
+  .inf h3{font-size:13px;margin:12px 0 4px;page-break-after:avoid}
+  .inf-cifras{display:flex;gap:8px;margin:6px 0 4px}.inf-cifras div{flex:1;background:#fdf1e7;border-radius:8px;padding:8px 10px}
+  .inf-cifras b{display:block;font-size:20px;color:#F47B20}.inf-cifras span{color:#444;font-size:10.5px}
+  .inf-t{width:100%;border-collapse:collapse;margin:4px 0 6px}.inf-t th{background:#1b1b1d;color:#fff;text-align:left;padding:5px 6px;font-weight:600;font-size:10.5px}
+  .inf-t td{padding:4px 6px;border-bottom:1px solid #e6e6e6;vertical-align:top}.inf-t tr{page-break-inside:avoid}
+  .inf-t tfoot td{font-weight:700;background:#f4f4f2}.inf-vacio{color:#888;font-style:italic;margin:4px 0}`;
+let html2pdfCarga = null;
+async function descargarPdf(html, archivo) {
+  html2pdfCarga ||= new Promise((ok, mal) => { if (window.html2pdf) return ok();
+    const s = document.createElement("script"); s.src = "https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.2/dist/html2pdf.bundle.min.js";
+    s.onload = ok; s.onerror = () => { html2pdfCarga = null; mal(new Error("sin conexión a la librería de PDF")); }; document.head.appendChild(s); });
+  try { await html2pdfCarga; }
+  catch (e) {   // plan B: abrir para imprimir → «Guardar como PDF»
+    const w = window.open("", "_blank"); if (!w) throw e;
+    w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${esc(archivo)}</title><style>${INF_CSS} body{margin:20px}</style></head><body>${html}<script>setTimeout(()=>print(),400)<\/script></body></html>`); w.document.close();
+    return;
+  }
+  const caja = document.createElement("div");
+  caja.style.cssText = "position:fixed;left:-10000px;top:0;background:#fff";
+  caja.innerHTML = `<style>${INF_CSS}</style>${html}`;
+  document.body.appendChild(caja);
+  try {
+    await window.html2pdf().set({ margin: [10, 10, 12, 10], filename: archivo, image: { type: "jpeg", quality: 0.95 },
+      html2canvas: { scale: 2, backgroundColor: "#ffffff", useCORS: true }, jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+      pagebreak: { mode: ["css", "legacy"], avoid: ["tr", "h2", "h3", ".inf-cifras"] } }).from(caja.querySelector(".inf")).save();
+  } finally { caja.remove(); }
 }
 
 // =================== MI IGHO ===================
@@ -5906,7 +6154,7 @@ async function revisarCenso(x) {
 // ===================================================================
 // AVISOS: notificaciones al teléfono + campana dentro de la app
 // ===================================================================
-const VERSION_APP = "23-nov · v10";
+const VERSION_APP = "23-nov · v11";
 const FUNCION_AVISOS = "swift-action"; // Edge Function en Supabase (se muestra como «notificar»)
 const av = { lista: [], noLeidas: 0, timer: null };
 const IR_A = [["", "Avisos"], ["domingo", "Este domingo"], ["igho", "Mi IGHO"], ["kidz", "Kidz"], ["worship", "Arco Worship"], ["formacion", "Formación Cristiana"], ["stand", "Stand de información"]];
