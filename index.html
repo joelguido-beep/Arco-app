@@ -480,6 +480,53 @@
   .tb-panel input, .tb-panel select, .tb-panel textarea { background: var(--bg); }
   @media (max-width: 1100px) { .cs-row, .acta-busca { grid-template-columns: 1fr; } .cs-t { grid-template-columns: 34px 1fr; } .cs-acc { grid-column: 2; } }
   @media print { .cs-tabs, .cs-add, .cs-acc, .chk { display: none !important; } mark { background: none; font-weight: 700; } .acta { break-inside: auto; } }
+
+  /* ----- Formación: los 5 cursos ----- */
+  .c-wa { background: #7fd99a; } .c-wa .desc { color: var(--ink-dark); }
+  .fc-h { font-size: 15px; font-weight: 600; color: var(--ink-2); margin: 22px 4px 0; text-transform: uppercase; letter-spacing: .6px; }
+  .fc-cursos { display: flex; gap: 10px; justify-content: space-between; margin: 18px 2px 4px; }
+  .fc-curso { display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1; min-width: 0; }
+  .fc-curso img { width: 54px; height: 54px; border-radius: 50%; object-fit: cover; }
+  .fc-curso span { font-size: 11px; color: var(--ink-2); text-align: center; line-height: 1.2; }
+  .fc-emb { width: 58px; height: 58px; border-radius: 50%; object-fit: cover; flex: none; box-shadow: 0 0 0 3px rgba(255,255,255,.35); }
+  .fc-emb.big { width: 76px; height: 76px; float: right; margin: -4px -4px 8px 12px; }
+  .fc-card.curso .kcard-s { color: inherit; opacity: .85; }
+  .fc-card.curso .st { background: rgba(0,0,0,.16); color: inherit; } .fc-card.curso .st.yes { background: rgba(0,0,0,.55); color: #fff; }
+  .fc-card.curso.cerrada { opacity: .55; }
+  .hero.curso .chip { background: rgba(0,0,0,.14); }
+  .curso-pick { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 10px; margin: 6px 0 4px; }
+  .curso-pick button { position: relative; display: flex; flex-direction: column; align-items: center; gap: 8px; background: var(--bg); color: var(--ink); border-radius: 20px; padding: 14px 6px 12px; border: 2px solid transparent; font-size: 13px; font-weight: 600; }
+  .curso-pick button img { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; }
+  .curso-pick button i { position: absolute; top: 8px; right: 8px; width: 22px; height: 22px; border-radius: 50%; background: var(--cc); color: #fff; font-style: normal; font-size: 13px; display: none; place-items: center; }
+  .curso-pick button.on { border-color: var(--cc); background: var(--surface-2); } .curso-pick button.on i { display: grid; }
+  .curso-pick.small { grid-template-columns: repeat(5, 1fr); gap: 6px; } .curso-pick.small button { padding: 10px 2px 8px; font-size: 11px; border-radius: 16px; }
+  .curso-pick.small button img { width: 40px; height: 40px; }
+  .curso-panel { padding-top: 0; overflow: hidden; }
+  .curso-head { display: flex; align-items: center; gap: 12px; margin: 0 -18px 16px; padding: 14px 18px; }
+  .curso-head img { width: 46px; height: 46px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 2px rgba(255,255,255,.5); }
+  .curso-head b { display: block; font-size: 19px; } .curso-head span { font-size: 13px; opacity: .8; }
+  .ses-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 10px; margin: 4px 0 6px; }
+  .ses-grid > div { min-width: 0; }
+  .ses-grid span { display: block; font-size: 12px; color: var(--ink-2); margin-bottom: 2px; } .ses-grid input { margin: 0; padding: 10px 10px; font-size: 15px; min-width: 0; width: 100%; box-sizing: border-box; }
+  .hint.err { color: #ff8a8a; }
+  .ses-list { display: grid; gap: 6px; margin-top: 8px; }
+  .ses-list div { display: flex; justify-content: space-between; background: var(--bg); border-radius: 999px; padding: 9px 16px; font-size: 14px; }
+  .ses-list span { color: var(--ink-2); } .ses-list .pasada { opacity: .45; }
+  .st-emb { width: 20px; height: 20px; border-radius: 50%; vertical-align: -5px; margin-right: 6px; }
+  /* ----- Mensajes por WhatsApp ----- */
+  .wa-sec { color: #7fd99a; }
+  a.btn-sec.mini, .wa-mini { display: inline-block; text-decoration: none; white-space: nowrap; }
+  .wa-mini { background: #1f3b2a; color: #7fd99a; }
+  .df-row.hecho .wa-mini { background: var(--surface-2); color: var(--ink-2); }
+  .df-row.hecho b { opacity: .55; }
+  .df-cuenta { margin-top: 14px; font-size: 15px; } .df-cuenta b { font-size: 26px; margin-right: 4px; } .df-cuenta .warn { color: var(--yellow); }
+  .df-prev { margin-top: 14px; background: #1f3b2a; border-radius: 18px 18px 18px 4px; padding: 12px 14px; font-size: 14px; line-height: 1.45; }
+  .df-prev:empty { display: none; } .df-prev span { display: block; font-size: 12px; color: #7fd99a; margin-bottom: 6px; }
+  #df-sig { display: block; text-align: center; text-decoration: none; background: #25d366; color: #08210f; margin-top: 4px; }
+  #df-sig.hecho { background: var(--surface-2); color: var(--ink-2); }
+  .df-pasos { margin: 0 0 12px 18px; font-size: 14px; line-height: 1.5; color: var(--ink-2); } .df-pasos b { color: var(--ink); }
+  .df-sin summary { cursor: pointer; color: var(--yellow); font-size: 14px; margin-top: 12px; }
+  #v-difusion .check { margin: 10px 0 4px; }
 </style>
 </head>
 <body>
@@ -624,6 +671,8 @@
 
   <section id="v-formacion" class="hidden"><div class="top"><button class="back" data-go="home" aria-label="Volver"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button></div>
     <img class="title-logo fc" data-logo="fc" alt=""><div class="page-title">Formación Cristiana</div><div class="hello-sub">Clases, eventos e inscritos</div><div id="fc-body"></div></section>
+  <section id="v-difusion" class="hidden"><div class="top"><button class="back" data-go="home" aria-label="Volver"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button></div>
+    <div class="page-title">Mensajes por WhatsApp</div><div class="hello-sub">Un mismo mensaje para una lista de personas</div><div id="df-body"></div></section>
   <section id="v-stand" class="hidden"><div class="top"><button class="back" data-go="home" aria-label="Volver"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button></div>
     <div class="page-title">Stand de información</div><div class="hello-sub">Inscribe personas a una clase o evento</div><div id="st-body"></div></section>
 
@@ -778,7 +827,7 @@ const nombreCorto = (n, a) => `${(n || "").split(" ")[0]} ${(a || "").split(" ")
 
 // ---------- Datos de cada tarjeta del inicio ----------
 const ETIQUETA_HOME = { worship: "Arco<br>Worship", domingo: "Este<br>domingo", formacion: "Formación<br>Cristiana", stand: "Stand de<br>información",
-  consejo: "Reunión del<br>Consejo", tablero: "Tablero del<br>Consejo" };
+  consejo: "Reunión del<br>Consejo", tablero: "Tablero del<br>Consejo", difusion: "Mensajes por<br>WhatsApp" };
 const DATOS_HOME = {
   async anfitriones() {
     const { data, error } = await sb.from("asistencia_domingo").select("fecha, total, nuevos").order("fecha", { ascending: false }).limit(8);
@@ -883,7 +932,7 @@ const DATOS_HOME = {
       detail: lista(data.slice(0, 3).map((x) => ({ a: corto(x.descripcion), b: x.fecha ? fmtDiaMes(x.fecha) : "", cls: x.fecha && x.fecha < hoy ? "warn" : "" }))) };
   },
 };
-const SIN_NUMERO = { tablero: true, admin: true, finanzas: true };
+const SIN_NUMERO = { tablero: true, admin: true, finanzas: true, difusion: true };
 
 // Cada sección de la app: quién la ve y cómo se ve.
 const SECCIONES = [
@@ -911,6 +960,8 @@ const SECCIONES = [
     ve: (r) => r.esAncianoOAdmin },
   { id: "tablero", titulo: "Tablero del Consejo", desc: "Para la computadora: gráficos, filtros, multiplicar IGHO e imprimir.", color: "c-orange", tag: "Computadora",
     ve: (r) => r.esAncianoOAdmin },
+  { id: "difusion", titulo: "Mensajes por WhatsApp", desc: "Un mismo mensaje por WhatsApp para una lista de personas.", color: "c-wa", tag: "WhatsApp",
+    ve: (r) => puedeAlgunaDifusion(r) },
   { id: "admin", titulo: "Administración", desc: "Dar acceso a la app, asignar roles y armar las familias.", color: "c-white", tag: "Admin",
     ve: (r) => r.roles.has("admin") || r.roles.has("secretaria") },
   { id: "finanzas", titulo: "Finanzas", desc: "Informe mensual de ingresos y gastos.", color: "c-peach", tag: "Consejo",
@@ -921,7 +972,7 @@ let ctx = null; // { user, nombre, roles:Set, ministerios:Set, esAncianoOAdmin }
 
 // ---------------- Navegación ----------------
 function show(view) {
-  for (const v of ["login", "home", "resumen", "soon", "anfitriones", "kidz", "padres", "domingo", "worship", "bienvenida", "igho", "clave", "admin", "tablero", "formacion", "stand"]) $("v-" + v).classList.toggle("hidden", v !== view);
+  for (const v of ["login", "home", "resumen", "soon", "anfitriones", "kidz", "padres", "domingo", "worship", "bienvenida", "igho", "clave", "admin", "tablero", "formacion", "stand", "difusion"]) $("v-" + v).classList.toggle("hidden", v !== view);
   document.body.classList.toggle("modo-tablero", view === "tablero");
   $("nav").classList.toggle("hidden", view === "login" || view === "clave");
   document.querySelectorAll(".nav [data-go]").forEach((b) => b.classList.toggle("on", b.dataset.go === view));
@@ -945,6 +996,7 @@ function abrir(id) {
   if (id === "consejo") { show("tablero"); return abrirTablero("consejo"); }
   if (id === "formacion") { show("formacion"); return abrirFormacion(null); }
   if (id === "stand") { show("stand"); return abrirStand(); }
+  if (id === "difusion") { df.volver = null; return abrirDifusion(null); }
   const s = SECCIONES.find((x) => x.id === id);
   $("soon-title").textContent = s.titulo;
   $("soon-text").textContent = "Esta sección se construirá en las próximas etapas. Ya tienes acceso a ella según tu rol.";
@@ -2891,20 +2943,29 @@ async function kzPlan(fecha) {
 async function kzAnuncios() {
   const { data, error } = await sb.from("kidz_anuncios").select("*").order("creado_en", { ascending: false }).limit(30);
   if (error) throw error;
-  $("kz-body").innerHTML = `<div class="panel"><h4>Nuevo anuncio</h4><div class="hint">Lo verán todos los padres en su app.</div>
+  $("kz-body").innerHTML = `<button class="btn-sec wa-sec" id="an-wa" style="width:100%;margin-top:0">Mensaje por WhatsApp a los padres</button>
+    <div class="panel"><h4>Nuevo anuncio</h4><div class="hint">Lo verán todos los padres en su app.</div>
       <label>Título</label><input id="an-t" placeholder="Ej.: Programa de Navidad">
       <label>Detalle</label><textarea id="an-x" placeholder="Ej.: El domingo 21 de diciembre los niños presentan su obra en el culto."></textarea>
       <label>Mostrar hasta (opcional)</label><input id="an-h" type="date">
       <button class="btn-primary" id="an-add">Publicar</button><div class="ok err" id="an-msg"></div></div>
     <div class="panel"><h4>Publicados</h4>${(data || []).map((a) => `<div class="li"><div><b>${esc(a.titulo)}</b><div class="muted">${esc(a.texto || "")}</div>
       <div class="muted">${fmtCorta.format(new Date(a.creado_en))}${a.hasta ? " · hasta " + fmtCorta.format(fromYmd(a.hasta)) : ""}${a.hasta && a.hasta < hoyKidz() ? " · ya no se muestra" : ""}</div></div>
-      <button class="btn-sec mini danger" data-del="${a.id}">Borrar</button></div>`).join("") || '<div class="muted">Todavía no hay anuncios.</div>'}</div>`;
+      <div class="row-btns"><button class="btn-sec mini wa-mini" data-wa="${a.id}">WhatsApp</button><button class="btn-sec mini danger" data-del="${a.id}">Borrar</button></div></div>`).join("") || '<div class="muted">Todavía no hay anuncios.</div>'}</div>`;
   $("an-add").addEventListener("click", async () => {
-    const t = $("an-t").value.trim(); if (!t) return ($("an-msg").textContent = "Escribe un título.");
-    const { error } = await sb.from("kidz_anuncios").insert({ titulo: t, texto: $("an-x").value.trim() || null, hasta: $("an-h").value || null, autor_nombre: ctx.nombreCompleto });
+    const t = $("an-t").value.trim(), tx = $("an-x").value.trim(); if (!t) return ($("an-msg").textContent = "Escribe un título.");
+    const { error } = await sb.from("kidz_anuncios").insert({ titulo: t, texto: tx || null, hasta: $("an-h").value || null, autor_nombre: ctx.nombreCompleto });
     if (error) return ($("an-msg").textContent = error.message);
-    kzAnuncios();
+    await kzAnuncios();
+    $("an-msg").innerHTML = `✓ Publicado en la app de los padres. <button class="btn-sec mini wa-mini" id="an-wa2">Enviarlo también por WhatsApp</button>`;
+    $("an-msg").classList.remove("err");
+    $("an-wa2").addEventListener("click", () => abrirDifusion({ tipo: "kidz", texto: textoAnuncioKidz({ titulo: t, texto: tx }) }));
   });
+  const textoAnuncioKidz = (a) => `Hola {nombre}, les saludamos de Arco Kidz 👋\n\n*${a.titulo}*${a.texto ? "\n" + a.texto : ""}\n\n¡Gracias, papás!`;
+  $("an-wa").addEventListener("click", () => abrirDifusion({ tipo: "kidz" }));
+  $("kz-body").querySelectorAll("[data-wa]").forEach((b) => b.addEventListener("click", () => {
+    const a = (data || []).find((x) => x.id === +b.dataset.wa); if (a) abrirDifusion({ tipo: "kidz", texto: textoAnuncioKidz(a) });
+  }));
   $("kz-body").querySelectorAll("[data-del]").forEach((b) => b.addEventListener("click", async () => {
     if (!confirm("¿Borrar este anuncio?")) return; await sb.from("kidz_anuncios").delete().eq("id", +b.dataset.del); kzAnuncios();
   }));
@@ -3969,51 +4030,194 @@ async function editarFijos() {
 }
 
 // ===================================================================
-// FORMACIÓN CRISTIANA: clases y eventos
+// FORMACIÓN CRISTIANA: clases (los 5 cursos) y eventos
 // ===================================================================
+const EMBLEMA_CURSO = {
+  alpha_matrimonios: "data:image/jpeg;base64,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",
+  raices: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCACAAIADASIAAhEBAxEB/8QAGwAAAgIDAQAAAAAAAAAAAAAABQYABAECAwf/xABBEAABAwIEAwQIBAQFAwUAAAABAgMEBREABhIhMUFRExRhcQcVIoGRobHRMjNCwRcjVGIWNFLh8CQlRCZDcoLx/8QAGgEAAwEBAQEAAAAAAAAAAAAAAAEDAgUEBv/EADARAAEEAQIDBQcFAQAAAAAAAAEAAgMRIRIxBEFREyJhcYEUkaGxweHxBSNCUtHw/9oADAMBAAIRAxEAPwA7iYmJjyL4dTExMNuW8oOTW0zKq73KDsRqISpflfgPrhgE7KsUL5naWBLEWM/LeDMVlx508EoSScNcHIc1TJfqchmCwkalXOpQHjyGDNRrMWgMSadTIiqa8lOpl91oKQ9bx535E41U1UnqfHr0Ke2gyWkiRGlr/lK5bX2F+mKBgXRj4SJhIPeI3rFLkcv5YgRIsmTJkTGpDoaQ42r2dX/14DF2REyzBnzoTlJCnIsfvBWrcLHQXPHC1CpNRVW49ElIRGYW8JpbSrUlIF76T8sbVuSrM9ZZRCacamrWuM6kG4LQOyifjfBdbBUEjWttsYBugK9/0RplWWJUemL9S6TPdUyhKeKCDY33xs5lzLMubPisqkxXIQBeWFHQn3m4wBcZ/wAJ5hWZYcfbjIU7DB/CtRsOPLnfyGOmYos5dV7OCCE1xDb3ZX3uBcpJw+WQgyDSdbASDt+OpXSRkV1+OJNEnsTmFfhv7JPv4X+GFWfAlU97spsdxhzkFi1/I8D7segUym1J8JVPlsxYVOH+Ugu2NwL2UQfjfFel5mRVIqItWimpvSXCQwy0P5KL8z/zzwi0KcnCwur+JO3RefYmHTMmTQyHZNDdEllB/mMBQUtvy626ccJhBHEEeeJlpbuufNA+A6XrGJiYmEoqYmJhsyJRG5jy6jUNIgxTey7WWsct+Q+2G0WaVYYnSvDGq7lugsUymLr1eaUpttIW1HCbnwJHXhYYIPVGNWqtVWKmoSKO1GRKbCRu3sNxbe+5wHzLX5EmcHm4sxgdkph2O6m7akHmLc/Hwxdyoy9Byq5PpPdX5jrln+3XZKEJ/Ty89+uKg8gutG5od2UY7oyfFU5lPy61T2pjEuZOil1LZSHbFgK5kWv98aZngS6RTn6dHltzKZqS4ASC5HJO1wOvz8MSr5fq1SD00UqLCSlsqUllzZzyAx1otNbzRU5VUlIDMFpKAtBVYOLCRsTyH+2EegUi1xJa1tE7VY636KN+tcyV4y6IVtNstJjiSv2bC258zc7YzSsu01dMnTnKnM/6QrQ8G0hs3HEb7m+OFOnSqbU5D9NjGM80NUqn69SFo5qR5fLjuMbwYTmYahNfiKXAokh1KpHaOJGpQ3sPEk/PBhDQ0nI1ON4+o+qy7RaVJy363TUKg2yglJbeAdKVXta3w54xIi1ahyaVU5SzNgRtPZrHFKFfpIO42O3HHTMdDXS1rXFWqTQe1S69HbcF21DkfvjlXKu9V+7vSWHUUzXoiwkq0l8jmT05fIdcBQ8NZdinY25+PktKUZtSl1FmDKRFgzZRLklz2VKBuQgX4mx4DFpmkZf77UGjJmw2IRDS5PbAJdPMWte+x2GNazRUU+NT63HYQhDbiFSoja9SULBH4T8jirBotTnPeum6YxLjvurdSw45bio722uMHmjSQdLm2fU4/KLJkQKWxR3MuLU2xLl6H33BdSwnayr8t8aV+kRMxRZNXoDag804pDzWm3a2/Unx+vni1Mbk1XLM81luDEZjDXG7usHQtN7g2Nt9hbxwtZbrL8WTCu3LXHiJUEMRk/mKJ31Hgf8AbDOMFUlczEbx3XAen+JcxMN2daW2ttutwWy2xINn2bglpw9bbC/yPnhRxIiiuVPEYn6Su8KM5MlsxmBd11YQkeJx6Lmxlyk0BimRo0RdPbbu6uQ5bUq/IA3JvvgN6MIHb1V+apBUmI37I6rV/sD8cSU5GjVZU7MVClWdc1XckBwJ6DT+2NtFBdDhmdnDq5u59Apl5jMsGhOTYK0JgqSpfZPAqJA5hPLA9VKrC6Y9OCWY0WcLKa1hoOA77JPlwwVrlSgd6dk0zMU9LqrFuO02ShO1tNtumMv1ioVWittVOhd6DXtdu6oso6X5b4ZAWiyPTo1HA62PhspGnU6swIMV6oSKTNitdkk6rNrtYbn3YxQnO6Umr0J+EZ0jtArsWl6e1QbXUD0FgfI4F0WDIrSZDVOpVPQhI9txzUbX4AKJ440coNQpj6HW5sFL7ZunTLSFA+/BZ3pZEkhqTTfj9lbOX5b0lD0SnPUVhG635Eg2A8OBxXfo0mnVWNSpsker5jqF9ojdDljxtyO9veDjia4+3QqnSZQW49Ic1dpr1W3Fxx4bcuuGHOqmHsnUKRGIugoSi3L2N/mMLG4SAic0uZuM167IbmCmvOZrlUelGzclaHVtg2SFWuSfAccZfy1MYkhxbSq5EQOzBjP2KSP08yLdBgl6OJCZVWrFRmrT3goBKieAJN/dsMLzNb7CjTqZFQsGTKLiXAvTpTcbDnc2w+7VlM9kW9q/+RNeQ5I1OkCHlOTS00p2nuynkpZZcc1qXexKt+FrAe/HWG/T8r6HZVTenz0NFAisru23fl0Fv+DAFVLqNUfDsudDLxAT/OloKrDgLDHapUmZRKe2uZTqdJjE27ZGpSgfFQItgs7o7SQ/uBuwwTy9AucSj1ibS1GMltyI24XzGS6Cbnqkf86YKLazLV8th1nsW4SQR3dlHZrITytzHhffEodSk0qC8/TcvJ1Oot3hlwuDqNQ3Puxxp1UTLkJdrOYahGkBYUprsylA34bdfLAmwMoDUbI8vmrmRAuXAep6okQ06QFJeUhz+YlVtlKST9PDCbU4btOqEiI/+YyspJ69D7xvhpqr1Nq1YcXQ6S+6+g6lPMv9jqN+IH74x6RIq1Kp1TcYWwuS3odbUblK09Tz2+mE4WFiePVEazp5+CIZbjqZ9H8xxEWRIXKcIKI50r03Cdj5DA+DRaNWJLUWIZEGchep5mWSVrRzCfHBJ/Sz6PKSkd+7RZ1IMQ2Vq9o7+GFxiDV5sCJVWZEh9/t+xaCQVLR1UVchfrfGjyCq+gGM03gJyk0ua3PfTQZtJhRWABp7NJWg231G23vwvy6vOqylUqZDYrDrSwttyMpQTfhc24j4Y4Vqkwaa48mbUXp1Wd/FHYTa6iP1HjbBrKqk07IE+bDBMtQWSQNwoeyLeQ3wbmlu3PeWbDJOb9K2CWq0qXFeYgzZaUtD2nYsEWQwm+4sNirzw5M0DLCKEuotxO9MBsr1FSlKNuVuuBdJoD8CXQJzMZ2SJCSmWFC9tQ4m/AWPy8cNuVqG5Re/NdulyI67rZaA/LHTDaM5VeFgcXEubg9eWMJEp+S5VXjOTkhqntOXUxHIUo25XvuBhVlx3ochyNJSpDjSrKSTwPh549+kqW3HcUwgOOhJKUE2CjbYY8XzhIlS6mh6fAVClFsJcTe6Vkcx8bYy9gAXn4/g44WAt3QRAUpWlAUVK9myeJ8P9sN68h1BqmplBbS30jWuNY8Ol+ZxQyBFTKzVECxdLYU7byG3z+mPaLDjbAxgIso4DgmTxl8iRKLRMu1SgonOU5MYBKu0upQ0FPHcnhhPjOlFYdjUaetqC6VBoyvy1/2qB2sTtc49TzTS3qvSVwoshMfWoayU3unmMK9RyyajX24aoy2aZDhlDbltlqPAg9b7+7GnNPJejieGdgMG1bYv/EHbqM7LLrrKKVHp8qSQlT5UotEDmBw59fdgyiFVHTFk1Sq0eTCdcSlZW2kggngk248uONYRM70byk1NKi5FC0pU4Dqun8J3+GFeiU6m1JtmNInPU+aSNKXE3bdvwKRyJ+eFkKJJYQBkEWBdenRG65QKJRp77tQW4tp+3dYka/aA8/djWoRy5kSUkQ5sVuJIS62JatSik2BtsLDfFCXR601LqUyTIfEmAgEPlJs4j+1XlbbFyju95ytXA8uoOPrihxS5Bu2bHYoODwpZFFzmaNIIP/e9MVHbnTPR/CZpTqGpK29GpfJOohVvG2D2XaUijUpiG2rXoF1Kt+JR3JwsZHq6IeSZD7iFOiEtepCOJBN/3xB6SIP9BK+KfvjQcBRK90U8LGse92aCbHKbGL70hDLaZTqdPbBAKhtYG+K2V6OKHSkxO07VQWpRXa1yThcPpIg/0Mr4p++J/EiD/QSvin74NTVv2vhQ4O1C0+YmEL+JEH+glfFP3xP4kwTwgyj5FP3w9bVT26D+yfL72x5X6VpKXaxFjpIJZaKlDoVH7DD1RayqqthxUF+I0rZCnyAVnwHHC1VaRQZs+oy3XprzjTiEuqQ57OtRACE+I225Xwn5FBS40GeHSzmlf0fSUx81RdZADqVN38SNvpj2cHHmzlEy9Cclukz2zAkIbcWl2+i4BC/Lf64dZ9TMOnJlxozs5rTqPYKBOm34vH3YGChRWP09pgjLH8kVxMIZ9JEEEgwJYt1KfvifxIgWv3GXbzT98PWF6PboP7JvrMJNSpUqGo6Q82Uaul+eKdOoUdiBCjykNynYoGh5bYuCOBHTC5/EiD/QS/in74n8SIP9DK+KfvhamqZ4vhS7UXC05VCKiZDfjO37N1BQq3QjCe7Am0bJNYiTnkOstIKY608dBtsfeca/xIg2/wAjK+KfvjlmnMLVVyO4+y04yl98MBK7XNjcnbywFwOyxNxEEjXOacgH3IN6NpLaps2lyPyZrJFvEDf5H5Y1ayvTGZy4cusKW+2bOIYZ/LHG6lHYbdcK8CU5CmsSmDZxlYWn3cv2x6Rmc0uoUiPVJT08QX9N24xGnV1UOtxa56Ym2iMrm8Nolhpwst69ClQt5TSpSRJqygOCwlNj48MXW8p0+XAVOh1RxmIn8S5jJQLeB2vi5ltqjuvdvDpLiorXtOzJ6xpQPAcCcBc01t+vVZLcNC1xWlAMMpSTqt+op8fkMM0BZWi2NjNTwDewF/NEoLEBlH/YqLJrLw/8qQizd/7RtgsxVahSIT02vx40cX0RobbSQpautxfYY0hNVaXKievJXq6KtQSzBjnQpzwsNwOv7Yo1TRmPObzbqymm09B7Qg/pT+L4nb3Ye2yuLjaC3BOAKAHn1x4rnGqk00ipZgmqV3hwiLD2slu/EpH7+BxxiEx8tUJkH2ptRDqz1CVAD9sdsz1BVVytSwyyG0vy1pZaQLewm6Ujz3GNs0w/VNNy2gOJdMVwpWpPDXqSoj64RvKmbBJuwAM+ZyuzJ7xmnNUBd9Mhhdh/ckCx+eKGVJ8x6hz4MZ1aJMRPe4qk7kW/Em3MHp44LxGAj0lVNSzpbDCnFKvawKU74F5TiPUfPKoSyCsNuJSeShpuk++2HndPvB7T4uHv2RePXZtepBVSm43rGP8AnxVtBQcT/qTf6YFTewWn/wBRZcdgk/8AlxEkW8xwxJMlEOZTczwUhpp5wtS2k8ErGyh7xc+4YP1pqc3VXHMvVLW+UhxyA+vUlYPNAPI9MG+63mRveNkeWfGvul5nKMFcRycKsp+CngYzOtdvEcj7sUeyymmw7zVlb21BCQPhbHGLVJ1EzEqY7GVGUpd3Y4QUJUk8QB8xhlzAqly0JqLtKMmC6LiXDVpcQeYcT18cKgVANjc06WgEb2ChEnL9EKmRGrLrfbgFlT7N0LJ5BQ532I4jHPOiUU5imUVpYX3RvW6RwK1H7fXBrLfqVDEqbDfqaYcQdo60+UlpSuQtzPDx4YRajMdqE9+W+f5jyys+HQfDCdQGFOfRHH3QAXdOn5VbDhkKttR3FUqpBC4UlV0doAUpX0N+R+uE/ExhporxwTOheHtXomYmRFWBmeoLXF1Hu0GGjQFgHirliUGuCPBnT48GNBpkdBQhITdbrp4DVitl6rQq/Dao+Yt3EEdg+VWKv7dXI228RjtXqRIXJCKqtinZfhmzSWlfjHKw/wBRxa+YXXDi792LI+Pqei5+jyG7MqLlXqLylK3aZW4q5W4b3t5D6npgFAmMw6BXEKeT32S4loJ/UU6iVH64N0SqCfXRJZb7vSaTHWttrhbawJ/uO+FnL9OVWKuhpXss3Lry+SEcTv8ALGOgC8zjTWNjzdi/Pn806swG41Fyo/KUhtqO9rdKzYJCwSCffbAOqPd7yhIfKtZFWWpKh0VfF6XUk1ei5pcT/lUFlLCegBsPja/vwJePZej9hKtlSJ5WB1AFv2xolVlc2tLdq+WPomOsjRIzTJ/V6vZbv/8AIG+JRQ3U82UiUy6hxTFPSp8pN7L3TY+O+M1o63M0Mb6u4sK28Ab4XspuFmgZjfbJS8lhASocRucB3pUe8NlAO2T6gkqPrZi0vMtLlOJQ4iQHWEK/UdW9vdbBbNdPW/lylVCOs98hxmy7oNlBBGyvcR9cBs2NpqMeNXY4/lyEhuQB/wC26BbfzwQmVN+HEoFZihLjRj90fbP4VaeKT572wuoUAR32u2rfwvf0Vv14/LykxJcYYn91PZTWXxc25LB4jzxwoZYlvqOVpblOmKGpyDIGtpY52xKZBcM4VHKSm34zp0SITqrFsHilXh0P1xrmCo06g95hZdQlEt7Z95Krhof6EHl+2H4lV1END5DgfHyVXO9YbXppUANJZaVqkLaSEpdd52A5D6+WFHGcYxJxs2uTNMZnlxUxMTEwlJTDdRM1oMT1dmFnvkFVgFqF1o+/1HjhRxnDDiFWGZ8TrYvRqhREvZbDGUnG34zzvaPkue2vom/QdD0xSWlmiRZdEaRqfXFcdmSbEbhN0pSelyB7/HCdAnSoD/bQpDjLnMoPHzHP34a4uenHY5j1qAxNZWNKikaSR4jgfligcCugziYX5PdO3UKu1Dfj+j9S0pJcnS0AJHEpBsnbxI+eO+boiI9MpMFlwKVCUGX0jk4sBV/kcHYWZctPOsrWXYxaSlLbbiDoRp3FrXHPFHuNAfDp/wARJUt2SiStTlrnTfbl1w6FYKsYmFlMcDit+mfiVcS0H861pDrgQw5GRFN/1KUnYD4HALJcFSm6zBkLDapCDDSk83QFK+Vr+/BuoChOzZck5gbbU++y+OzsSgt8Ldb44za1ldqY5KbXKkvKfTJCWgUpDgTpvvbiOOGQOZW3NYHBziME8+qEZdlphUlEOVFU/GmSnGJTYSStBCU2ItzG5/8AzBiFQfVMWpxK3JY9RunU2tS7LC+Sk9D4dRgZMzy4hT3qaAxD7VWtbihqWo9bcL/HCpOnSp73bTH3HnOqze3kOWMlwC8x4iKMAN7xHoPuj9SzEzFirp+XGlRYp2cfP5rvv5fXywr4zjGJk2ufLM6U25TExMTCUl//2Q==",
+  herencia_1: "data:image/jpeg;base64,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",
+  herencia_2: "data:image/jpeg;base64,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",
+  legado: "data:image/jpeg;base64,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",
+};
+// Estilo de cada curso (colores de la portada de cada libro)
+const ESTILO_CURSO = {
+  alpha_matrimonios: { bg: "#ffffff", ink: "#1b1b1d", acc: "#E32619", sub: "7 semanas · 7 citas" },
+  raices:            { bg: "#52BD86", ink: "#10311f", acc: "#ffffff", sub: "Nivel 1" },
+  herencia_1:        { bg: "#C21D2C", ink: "#ffffff", acc: "#ffffff", sub: "Nivel 2" },
+  herencia_2:        { bg: "#F2833A", ink: "#2b1300", acc: "#ffffff", sub: "Nivel 3" },
+  legado:            { bg: "#1174BD", ink: "#ffffff", acc: "#ffffff", sub: "Nivel 4" },
+};
 const fc = { sel: null, cursos: null };
 const esLiderFormacion = () => ctx.esAncianoOAdmin || ctx.lideraMinisterios.has("formacion");
 const TIPO_FC = [["clase", "Clase"], ["evento", "Evento"]];
-const fechasFc = (o) => [o.fecha_inicio && fmtCorta.format(fromYmd(o.fecha_inicio)), o.fecha_fin && o.fecha_fin !== o.fecha_inicio && fmtCorta.format(fromYmd(o.fecha_fin))].filter(Boolean).join(" – ");
+const fmtSes = new Intl.DateTimeFormat("es-EC", { weekday: "short", day: "numeric", month: "short" });
+const diaSes = (f) => fmtSes.format(fromYmd(f)).replace(/\./g, "").replace(",", "");
+const cursoDe = (id) => (fc.cursos || []).find((c) => c.id === id) || null;
+const estiloDe = (o) => { const c = cursoDe(o?.curso_id); return c && ESTILO_CURSO[c.codigo] ? { ...ESTILO_CURSO[c.codigo], codigo: c.codigo, nombre: c.nombre, img: EMBLEMA_CURSO[c.codigo] } : null; };
+const estiloCss = (e) => e ? `style="background:${e.bg};color:${e.ink};--cc-acc:${e.acc}"` : "";
+const cursosQueSeOfrecen = () => (fc.cursos || []).filter((c) => ESTILO_CURSO[c.codigo]);
+const fechasFc = (o) => {
+  const s = (o.sesiones || []).filter(Boolean);
+  if (o.modalidad === "intensivo" && s.length) return `Intensivo · ${s.map(diaSes).join(" y ")}`;
+  if (o.modalidad === "semanal" && s.length) return `${s.length} clases · desde ${diaSes(s[0])}`;
+  return [o.fecha_inicio && fmtCorta.format(fromYmd(o.fecha_inicio)), o.fecha_fin && o.fecha_fin !== o.fecha_inicio && fmtCorta.format(fromYmd(o.fecha_fin))].filter(Boolean).join(" – ");
+};
 const detalleFc = (o) => [fechasFc(o), o.horario, o.lugar].filter(Boolean).map(esc).join(" · ");
+
+async function cargarCursosFc() {
+  if (fc.cursos) return;
+  let r = await sb.from("cursos").select("id, codigo, nombre, color, se_ofrece").order("orden");
+  if (r.error) r = await sb.from("cursos").select("id, codigo, nombre").order("orden");   // antes de 16_difusion_formacion.sql
+  fc.cursos = r.data || [];
+}
 
 async function abrirFormacion(id) {
   const body = $("fc-body");
   if (id !== undefined) fc.sel = id;
   body.innerHTML = '<div class="loading">Cargando…</div>';
-  if (!fc.cursos) { const { data } = await sb.from("cursos").select("id, nombre").order("orden"); fc.cursos = data || []; }
+  await cargarCursosFc();
   const [o, i] = await Promise.all([
     sb.from("fc_ofertas").select("*").order("abierta", { ascending: false }).order("fecha_inicio", { ascending: true, nullsFirst: false }),
     sb.from("fc_inscripciones").select("oferta_id, estado"),
   ]);
   if (o.error) { body.innerHTML = `<div class="soon">No se pudo cargar. ${esc(o.error.message)}<br><br>¿Ya se ejecutó 12_anuncios_formacion.sql?</div>`; return; }
   const cuenta = (id, est) => (i.data || []).filter((x) => x.oferta_id === id && (est ? x.estado === est : x.estado !== "retirado")).length;
-  if (fc.sel === "nueva") return formOferta(null);
+  if (fc.sel === "nueva") return formApertura(null);
+  if (fc.sel === "evento") return formOferta(null);
   if (fc.sel) { const of = o.data.find((x) => x.id === fc.sel); if (of) return verOferta(of); }
-  const card = (x) => `<button class="kcard fc-card ${x.abierta ? "" : "cerrada"}" data-of="${x.id}"><div>
-      <div class="sts" style="margin:0 0 4px"><span class="st">${x.tipo === "evento" ? "Evento" : "Clase"}</span>${x.abierta ? '<span class="st yes">Inscripciones abiertas</span>' : '<span class="st">Cerrada</span>'}</div>
+  const card = (x) => { const e = estiloDe(x);
+    return `<button class="kcard fc-card ${e ? "curso" : ""} ${x.abierta ? "" : "cerrada"}" data-of="${x.id}" ${estiloCss(e)}>
+      ${e ? `<img class="fc-emb" src="${e.img}" alt="">` : ""}<div>
+      <div class="sts" style="margin:0 0 4px"><span class="st">${x.tipo === "evento" ? "Evento" : x.modalidad === "intensivo" ? "Intensivo" : x.modalidad === "semanal" ? "7 semanas" : "Clase"}</span>${x.abierta ? '<span class="st yes">Inscripciones abiertas</span>' : '<span class="st">Cerrada</span>'}</div>
       <div class="kcard-n">${esc(x.nombre)}</div><div class="kcard-s">${detalleFc(x) || "Sin fecha"}</div>
-      <div class="kcard-s"><b>${cuenta(x.id)}</b> inscritos${x.cupo ? ` de ${x.cupo}` : ""}${cuenta(x.id, "completo") ? ` · ${cuenta(x.id, "completo")} completaron` : ""}</div></div><span class="kcard-qr">›</span></button>`;
+      <div class="kcard-s"><b>${cuenta(x.id)}</b> inscritos${x.cupo ? ` de ${x.cupo}` : ""}${cuenta(x.id, "completo") ? ` · ${cuenta(x.id, "completo")} completaron` : ""}</div></div><span class="kcard-qr">›</span></button>`; };
+  const abiertas = o.data.filter((x) => x.abierta), cerradas = o.data.filter((x) => !x.abierta);
   body.innerHTML = `
-    ${esLiderFormacion() ? `<button class="btn-primary" id="fc-nueva" style="margin-top:0">+ Nueva clase o evento</button>` : ""}
-    <button class="btn-sec" id="fc-stand" style="width:100%">Inscribir a una persona (Stand)</button>
-    ${o.data.map(card).join("") || `<div class="soon">Todavía no hay clases ni eventos.${esLiderFormacion() ? " Crea el primero arriba." : ""}</div>`}`;
+    ${esLiderFormacion() ? `<button class="btn-primary" id="fc-nueva" style="margin-top:0">+ Abrir clases</button>
+      <div class="two"><button class="btn-sec" id="fc-evento">+ Nuevo evento</button><button class="btn-sec" id="fc-stand">Inscribir (Stand)</button></div>`
+      : `<button class="btn-sec" id="fc-stand" style="width:100%">Inscribir a una persona (Stand)</button>`}
+    ${puedeDifusion("sin_curso") ? `<button class="btn-sec wa-sec" id="fc-difu" style="width:100%">Invitar por WhatsApp</button>` : ""}
+    <div class="fc-cursos">${cursosQueSeOfrecen().map((c) => `<div class="fc-curso" title="${esc(c.nombre)}"><img src="${EMBLEMA_CURSO[c.codigo]}" alt=""><span>${esc(c.nombre)}</span></div>`).join("")}</div>
+    ${abiertas.length ? `<h3 class="fc-h">Inscripciones abiertas</h3>${abiertas.map(card).join("")}` : ""}
+    ${cerradas.length ? `<h3 class="fc-h">Anteriores</h3>${cerradas.map(card).join("")}` : ""}
+    ${!o.data.length ? `<div class="soon">Todavía no hay clases ni eventos.${esLiderFormacion() ? " Abre las primeras arriba." : ""}</div>` : ""}`;
   $("fc-nueva")?.addEventListener("click", () => abrirFormacion("nueva"));
+  $("fc-evento")?.addEventListener("click", () => abrirFormacion("evento"));
   $("fc-stand").addEventListener("click", () => abrir("stand"));
+  $("fc-difu")?.addEventListener("click", () => abrirDifusion({ tipo: "sin_curso" }));
   body.querySelectorAll("[data-of]").forEach((b) => b.addEventListener("click", () => abrirFormacion(+b.dataset.of)));
 }
 
+// ---------- Abrir clases: elegir cursos, modalidad y fechas ----------
+// o = null → nueva apertura (varios cursos); o = clase existente → editarla
+function formApertura(o) {
+  const body = $("fc-body"), editando = !!o?.id;
+  const cursos = cursosQueSeOfrecen();
+  const nuevoEstado = (cid) => ({ curso_id: cid, modalidad: "semanal", inicio: "", sesiones: Array(7).fill(""), horario: "", lugar: "", cupo: "" });
+  const est = new Map();   // curso_id → datos
+  if (editando) est.set(o.curso_id, { curso_id: o.curso_id, modalidad: o.modalidad || "semanal", inicio: (o.sesiones || [])[0] || o.fecha_inicio || "",
+    sesiones: o.modalidad === "intensivo" ? [...(o.sesiones || [])] : [...(o.sesiones || []), ...Array(7).fill("")].slice(0, 7),
+    horario: o.horario || "", lugar: o.lugar || "", cupo: o.cupo || "" });
+  body.innerHTML = `
+    <div class="panel"><h4>${editando ? "Editar clase" : "Abrir clases"}</h4>
+      ${editando ? `<label>Nombre</label><input id="ap-nombre" value="${esc(o.nombre)}">`
+        : `<div class="hint">Elige las clases que se abren. Cada una puede ser de 7 semanas o intensivo (viernes y sábado).</div>
+           <div class="curso-pick" id="ap-pick">${cursos.map((c) => `<button type="button" data-c="${c.id}" style="--cc:${ESTILO_CURSO[c.codigo].bg}">
+             <img src="${EMBLEMA_CURSO[c.codigo]}" alt=""><span>${esc(c.nombre)}</span><i>✓</i></button>`).join("")}</div>`}</div>
+    <div id="ap-det"></div>
+    <div class="panel" id="ap-fin">
+      <label>Descripción (opcional)</label><textarea id="ap-desc" placeholder="Lo que el Stand le puede contar a la persona">${esc(o?.descripcion || "")}</textarea>
+      <label class="check" style="margin:6px 0 14px"><input type="checkbox" id="ap-abierta" ${!o || o.abierta ? "checked" : ""}> Inscripciones abiertas en el Stand</label>
+      <button class="btn-primary" id="ap-save">${editando ? "Guardar" : "Abrir clases"}</button>
+      <button class="btn-sec" id="ap-x" style="width:100%">Cancelar</button>
+      ${editando ? `<button class="btn-sec danger" id="ap-del" style="width:100%">Eliminar</button>` : ""}
+      <div class="ok err" id="ap-msg"></div></div>`;
+
+  const pintarDetalles = () => {
+    const sel = cursos.filter((c) => est.has(c.id));
+    $("ap-fin").classList.toggle("hidden", !sel.length);
+    $("ap-det").innerHTML = sel.map((c) => { const d = est.get(c.id), e = ESTILO_CURSO[c.codigo], intensivo = d.modalidad === "intensivo";
+      const viernesMal = intensivo && d.inicio && fromYmd(d.inicio).getDay() !== 5;
+      return `<div class="panel curso-panel" data-cp="${c.id}">
+        <div class="curso-head" style="background:${e.bg};color:${e.ink}"><img src="${EMBLEMA_CURSO[c.codigo]}" alt=""><div><b>${esc(c.nombre)}</b><span>${esc(e.sub)}</span></div></div>
+        <div class="seg"><button type="button" data-mod="semanal" class="${!intensivo ? "on" : ""}">7 semanas</button><button type="button" data-mod="intensivo" class="${intensivo ? "on" : ""}">Intensivo</button></div>
+        ${intensivo ? `
+          <label>Viernes del intensivo</label><input type="date" data-k="inicio" value="${d.inicio}">
+          <div class="hint ${viernesMal ? "err" : ""}">${viernesMal ? "⚠ Esa fecha no es viernes." : d.inicio ? `Las 7 clases el ${diaSes(d.inicio)} y el ${diaSes(sumarDias(d.inicio, 1))}.` : "Las 7 clases se dan el viernes y el sábado de ese fin de semana."}</div>
+          <label>Horario</label><input data-k="horario" value="${esc(d.horario)}" placeholder="Ej.: Viernes 19:00–22:00 · Sábado 08:00–17:00">`
+        : `
+          <label>Primera clase</label><input type="date" data-k="inicio" value="${d.inicio}">
+          <label>Horario</label><input data-k="horario" value="${esc(d.horario)}" placeholder="Ej.: Domingos 11:30">
+          <div class="ses-grid">${d.sesiones.map((s, k) => `<div><span>Clase ${k + 1}</span><input type="date" data-ses="${k}" value="${s || ""}"></div>`).join("")}</div>
+          <div class="hint">Al poner la primera clase, las demás se llenan cada semana. Cambia una fecha si hay feriado.</div>`}
+        <div class="two"><div><label>Lugar</label><input data-k="lugar" value="${esc(d.lugar)}" placeholder="Ej.: Cafetería Arco"></div>
+          <div><label>Cupo (opcional)</label><input data-k="cupo" type="number" inputmode="numeric" min="1" value="${d.cupo}"></div></div></div>`; }).join("");
+    $("ap-det").querySelectorAll("[data-cp]").forEach((p) => {
+      const d = est.get(+p.dataset.cp);
+      p.querySelectorAll("[data-mod]").forEach((b) => b.addEventListener("click", () => {
+        if (d.modalidad === b.dataset.mod) return;
+        d.modalidad = b.dataset.mod;
+        if (d.modalidad === "semanal") d.sesiones = d.inicio ? Array.from({ length: 7 }, (_, k) => sumarDias(d.inicio, 7 * k)) : Array(7).fill("");
+        pintarDetalles();
+      }));
+      p.querySelectorAll("[data-k]").forEach((inp) => inp.addEventListener(inp.type === "date" ? "change" : "input", () => {
+        d[inp.dataset.k] = inp.value;
+        if (inp.dataset.k === "inicio") {
+          if (d.modalidad === "semanal") d.sesiones = inp.value ? Array.from({ length: 7 }, (_, k) => sumarDias(inp.value, 7 * k)) : Array(7).fill("");
+          pintarDetalles();
+        }
+      }));
+      p.querySelectorAll("[data-ses]").forEach((inp) => inp.addEventListener("change", () => { d.sesiones[+inp.dataset.ses] = inp.value; }));
+    });
+  };
+  $("ap-pick")?.querySelectorAll("[data-c]").forEach((b) => b.addEventListener("click", () => {
+    const id = +b.dataset.c;
+    if (est.has(id)) est.delete(id); else est.set(id, nuevoEstado(id));
+    b.classList.toggle("on", est.has(id));
+    pintarDetalles();
+  }));
+  pintarDetalles();
+
+  $("ap-x").addEventListener("click", () => abrirFormacion(o?.id || null));
+  $("ap-del")?.addEventListener("click", async () => {
+    if (!confirm(`¿Eliminar «${o.nombre}» y sus inscripciones?`)) return;
+    const { error } = await sb.from("fc_ofertas").delete().eq("id", o.id); if (error) return alert(error.message); abrirFormacion(null);
+  });
+  $("ap-save").addEventListener("click", async () => {
+    const msg = $("ap-msg"); msg.textContent = "";
+    if (!est.size) return (msg.textContent = "Elige al menos una clase.");
+    const grupo = o?.grupo || (crypto.randomUUID ? crypto.randomUUID() : null);
+    const filas = [];
+    for (const d of est.values()) {
+      const c = cursoDe(d.curso_id);
+      if (!d.inicio) return (msg.textContent = `Pon la fecha de ${c.nombre}.`);
+      const ses = d.modalidad === "intensivo" ? [d.inicio, sumarDias(d.inicio, 1)] : d.sesiones.filter(Boolean).sort();
+      const nombreAuto = `${c.nombre} · ${d.modalidad === "intensivo" ? "Intensivo " + diaSes(ses[0]).replace(/^\S+ /, "") : "desde " + diaSes(ses[0]).replace(/^\S+ /, "")}`;
+      filas.push({ tipo: "clase", curso_id: c.id, modalidad: d.modalidad, sesiones: ses, fecha_inicio: ses[0], fecha_fin: ses[ses.length - 1],
+        nombre: editando ? ($("ap-nombre").value.trim() || nombreAuto) : nombreAuto, horario: d.horario.trim() || null, lugar: d.lugar.trim() || null,
+        cupo: d.cupo ? +d.cupo : null, descripcion: $("ap-desc").value.trim() || null, abierta: $("ap-abierta").checked, grupo });
+    }
+    $("ap-save").disabled = true;
+    const r = editando ? await sb.from("fc_ofertas").update(filas[0]).eq("id", o.id).select()
+                       : await sb.from("fc_ofertas").insert(filas.map((f) => ({ ...f, creado_por_nombre: ctx.nombreCompleto }))).select();
+    $("ap-save").disabled = false;
+    if (r.error) return (msg.textContent = /modalidad|sesiones|grupo/.test(r.error.message) ? "Falta ejecutar 16_difusion_formacion.sql en Supabase." : r.error.message);
+    abrirFormacion(r.data.length === 1 ? r.data[0].id : null);
+  });
+}
+
+// ---------- Eventos (y clases antiguas sin curso) ----------
 function formOferta(o) {
-  o = o || { tipo: "clase", abierta: true };
+  o = o || { tipo: "evento", abierta: true };
   const body = $("fc-body");
-  body.innerHTML = `<div class="panel"><h4>${o.id ? "Editar" : "Nueva clase o evento"}</h4>
-    <div class="seg" id="fo-tipo">${TIPO_FC.map(([v, t]) => `<button type="button" data-v="${v}" class="${o.tipo === v ? "on" : ""}">${t}</button>`).join("")}</div>
-    <label>Nombre</label><input id="fo-n" value="${esc(o.nombre || "")}" placeholder="Ej.: Raíces · enero 2027 / Retiro de matrimonios">
+  body.innerHTML = `<div class="panel"><h4>${o.id ? "Editar" : "Nuevo evento"}</h4>
+    ${o.id ? `<div class="seg" id="fo-tipo">${TIPO_FC.map(([v, t]) => `<button type="button" data-v="${v}" class="${o.tipo === v ? "on" : ""}">${t}</button>`).join("")}</div>` : ""}
+    <label>Nombre</label><input id="fo-n" value="${esc(o.nombre || "")}" placeholder="Ej.: Retiro de matrimonios">
     <div id="fo-curso-w"><label>¿Cuenta como un curso de Formación?</label>
       <select id="fo-curso"><option value="">No</option>${opciones(fc.cursos.map((c) => [String(c.id), c.nombre]), o.curso_id ? String(o.curso_id) : "")}</select>
       <div class="hint">Si eliges un curso, quien la complete lo tendrá en su ficha.</div></div>
     <div class="two"><div><label>Desde</label><input type="date" id="fo-i" value="${o.fecha_inicio || ""}"></div><div><label>Hasta</label><input type="date" id="fo-f" value="${o.fecha_fin || ""}"></div></div>
-    <label>Horario</label><input id="fo-h" value="${esc(o.horario || "")}" placeholder="Ej.: Domingos 11:30">
+    <label>Horario</label><input id="fo-h" value="${esc(o.horario || "")}" placeholder="Ej.: Sábado 09:00">
     <div class="two"><div><label>Lugar</label><input id="fo-l" value="${esc(o.lugar || "")}"></div><div><label>Cupo (opcional)</label><input id="fo-c" type="number" inputmode="numeric" min="1" value="${o.cupo || ""}"></div></div>
     <label>Descripción</label><textarea id="fo-d" placeholder="Lo que el Stand le puede contar a la persona">${esc(o.descripcion || "")}</textarea>
     <label class="check" style="margin:6px 0 14px"><input type="checkbox" id="fo-a" ${o.abierta ? "checked" : ""}> Inscripciones abiertas en el Stand</label>
@@ -4022,7 +4226,7 @@ function formOferta(o) {
   let tipo = o.tipo;
   const verCurso = () => $("fo-curso-w").classList.toggle("hidden", tipo !== "clase");
   verCurso();
-  $("fo-tipo").querySelectorAll("button").forEach((b) => b.addEventListener("click", () => { tipo = b.dataset.v; $("fo-tipo").querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === b)); verCurso(); }));
+  $("fo-tipo")?.querySelectorAll("button").forEach((b) => b.addEventListener("click", () => { tipo = b.dataset.v; $("fo-tipo").querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === b)); verCurso(); }));
   $("fo-x").addEventListener("click", () => abrirFormacion(o.id || null));
   $("fo-del")?.addEventListener("click", async () => {
     if (!confirm(`¿Eliminar «${o.nombre}» y sus inscripciones?`)) return;
@@ -4044,26 +4248,35 @@ async function verOferta(o) {
   const body = $("fc-body");
   const { data, error } = await sb.from("fc_inscripciones").select("*").eq("oferta_id", o.id).order("nombre");
   if (error) { body.innerHTML = `<div class="soon">${esc(error.message)}</div>`; return; }
-  const activos = data.filter((x) => x.estado !== "retirado"), lider = esLiderFormacion();
+  const activos = data.filter((x) => x.estado !== "retirado"), lider = esLiderFormacion(), e = estiloDe(o);
   const ESTADO = { inscrito: ["st", "Inscrito"], completo: ["st yes", "Completó"], retirado: ["st no", "Retirado"] };
   const recordatorio = (x) => `Hola ${x.nombre.split(" ")[0]}, te escribimos de Arco Ríos sobre «${o.nombre}»${detalleFc(o) ? ` (${[fechasFc(o), o.horario, o.lugar].filter(Boolean).join(" · ")})` : ""}. ¡Te esperamos!`;
+  const ses = (o.sesiones || []).filter(Boolean);
   body.innerHTML = `
-    <div class="hero"><div class="muted" style="color:var(--ink-dark-2)">${o.tipo === "evento" ? "Evento" : "Clase"}${o.curso_id ? " · cuenta como " + esc(fc.cursos.find((c) => c.id === o.curso_id)?.nombre || "curso") : ""}</div>
+    <div class="hero ${e ? "curso" : ""}" ${estiloCss(e)}>
+      ${e ? `<img class="fc-emb big" src="${e.img}" alt="">` : ""}
+      <div class="muted" style="color:inherit;opacity:.8">${o.tipo === "evento" ? "Evento" : o.modalidad === "intensivo" ? "Intensivo · viernes y sábado" : o.modalidad === "semanal" ? "Clase · 7 semanas" : "Clase"}${o.curso_id && !e ? " · cuenta como " + esc(cursoDe(o.curso_id)?.nombre || "curso") : ""}</div>
       <div class="hero-date">${esc(o.nombre)}</div>
-      <div class="chips">${fechasFc(o) ? `<div class="chip"><span>Fecha</span><b>${esc(fechasFc(o))}</b></div>` : ""}${o.horario ? `<div class="chip"><span>Horario</span><b>${esc(o.horario)}</b></div>` : ""}
+      <div class="chips">${!ses.length && fechasFc(o) ? `<div class="chip"><span>Fecha</span><b>${esc(fechasFc(o))}</b></div>` : ""}${o.horario ? `<div class="chip"><span>Horario</span><b>${esc(o.horario)}</b></div>` : ""}
         ${o.lugar ? `<div class="chip"><span>Lugar</span><b>${esc(o.lugar)}</b></div>` : ""}<div class="chip"><span>Inscritos</span><b>${activos.length}${o.cupo ? " de " + o.cupo : ""}</b></div></div></div>
+    ${ses.length ? `<div class="panel"><h4>${o.modalidad === "intensivo" ? "Fin de semana del intensivo" : "Las " + ses.length + " clases"}</h4>
+      <div class="ses-list">${ses.map((s, k) => `<div class="${s < ymd(new Date()) ? "pasada" : ""}"><span>${o.modalidad === "intensivo" ? (k ? "Sábado" : "Viernes") : "Clase " + (k + 1)}</span><b>${esc(diaSes(s))}</b></div>`).join("")}</div></div>` : ""}
     ${o.descripcion ? `<div class="obs">${esc(o.descripcion).replace(/\n/g, "<br>")}</div>` : ""}
     ${o.abierta ? `<button class="btn-primary" id="fv-ins">+ Inscribir a una persona</button>` : `<div class="obs">Inscripciones cerradas.</div>`}
+    ${o.curso_id && puedeDifusion("sin_curso") ? `<button class="btn-sec wa-sec" id="fv-invitar" style="width:100%">Invitar por WhatsApp a quienes no han tomado ${esc(cursoDe(o.curso_id)?.nombre || "el curso")}</button>` : ""}
+    ${activos.length && puedeDifusion("inscritos") ? `<button class="btn-sec wa-sec" id="fv-msg" style="width:100%">Mensaje por WhatsApp ${activos.length === 1 ? "al inscrito" : `a los ${activos.length} inscritos`}</button>` : ""}
     <div class="panel"><h4>Inscritos (${activos.length})</h4>${lider && o.curso_id ? `<div class="hint">Marca «Completó» al terminar: queda en la ficha de la persona.</div>` : ""}
       ${data.map((x) => { const w = waLink(x.telefono); return `<div class="nuevo"><div class="kclase-h"><b>${esc(x.nombre)}</b><span class="${ESTADO[x.estado][0]}">${ESTADO[x.estado][1]}</span></div>
         <div class="muted">${x.telefono ? (w ? `<a class="wa" href="${w}?text=${encodeURIComponent(recordatorio(x))}" target="_blank" rel="noopener">${esc(x.telefono)} · recordar por WhatsApp</a>` : esc(x.telefono)) : "Sin teléfono"} · ${fmtCorta.format(new Date(x.creado_en))}${x.inscrito_por_nombre ? " · por " + esc(x.inscrito_por_nombre) : ""}</div>
         ${x.notas ? `<div class="knota">${esc(x.notas)}</div>` : ""}
         ${lider ? `<div class="row-btns" style="margin-top:8px">${["completo", "inscrito", "retirado"].filter((e) => e !== x.estado).map((e) => `<button class="btn-sec mini" data-est="${e}" data-ins="${x.id}">${{ completo: "Completó", inscrito: "Volver a inscrito", retirado: "Se retiró" }[e]}</button>`).join("")}</div>` : ""}</div>`; }).join("") || '<div class="muted">Nadie inscrito todavía.</div>'}</div>
-    ${lider ? `<button class="btn-sec" id="fv-edit" style="width:100%">Editar clase o evento</button>` : ""}
+    ${lider ? `<button class="btn-sec" id="fv-edit" style="width:100%">Editar ${o.tipo === "evento" ? "evento" : "clase"}</button>` : ""}
     <button class="btn-sec" id="fv-back" style="width:100%">← Todas las clases y eventos</button>`;
   $("fv-back").addEventListener("click", () => abrirFormacion(null));
-  $("fv-edit")?.addEventListener("click", () => formOferta(o));
+  $("fv-edit")?.addEventListener("click", () => (e && o.tipo === "clase" ? formApertura(o) : formOferta(o)));
   $("fv-ins")?.addEventListener("click", () => { st_.oferta = o.id; abrir("stand"); });
+  $("fv-invitar")?.addEventListener("click", () => abrirDifusion({ tipo: "sin_curso", curso: o.curso_id, oferta: o }));
+  $("fv-msg")?.addEventListener("click", () => abrirDifusion({ tipo: "inscritos", ofertaId: o.id, oferta: o }));
   body.querySelectorAll("[data-est]").forEach((b) => b.addEventListener("click", async () => {
     const { error } = await sb.rpc("fc_estado", { p_insc: +b.dataset.ins, p_estado: b.dataset.est }); if (error) return alert(error.message); verOferta(o);
   }));
@@ -4076,6 +4289,7 @@ const st_ = { oferta: null, persona: null };
 async function abrirStand() {
   const body = $("st-body");
   body.innerHTML = '<div class="loading">Cargando…</div>';
+  await cargarCursosFc();
   const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
   const [o, ins] = await Promise.all([
     sb.from("fc_ofertas").select("*").eq("abierta", true).order("fecha_inicio", { nullsFirst: false }),
@@ -4089,7 +4303,7 @@ async function abrirStand() {
   if (!ofertas.length) { body.innerHTML = `<div class="soon">No hay clases ni eventos con inscripciones abiertas. Formación Cristiana los abre en su página.</div>`; return; }
   body.innerHTML = `
     <div class="panel"><h4>1. ¿A qué se inscribe?</h4>
-      <div class="pick" id="st-of">${ofertas.map((x) => `<button type="button" data-of="${x.id}" class="${x.id === st_.oferta ? "on" : ""}">${esc(x.nombre)}</button>`).join("")}</div>
+      <div class="pick" id="st-of">${ofertas.map((x) => { const e = estiloDe(x); return `<button type="button" data-of="${x.id}" class="${x.id === st_.oferta ? "on" : ""}">${e ? `<img class="st-emb" src="${e.img}" alt="">` : ""}${esc(x.nombre)}</button>`; }).join("")}</div>
       <div class="hint" id="st-det"></div></div>
     <div class="panel"><h4>2. La persona</h4>
       <input id="st-q" placeholder="Buscar por nombre o celular" autocomplete="off"><div id="st-res"></div>
@@ -4134,6 +4348,220 @@ async function abrirStand() {
       $("st-listo").scrollIntoView({ block: "center" });
     });
   });
+}
+
+
+// ===================================================================
+// MENSAJES POR WHATSAPP (difusión): un mismo mensaje para una lista
+// WhatsApp no deja que una página web envíe mensajes sola. Hay dos caminos:
+//  1) Uno por uno: la app abre WhatsApp con el mensaje ya escrito para cada
+//     persona (con su nombre); solo hay que tocar Enviar.
+//  2) Lista de difusión de WhatsApp: se descargan los contactos (.vcf) y se
+//     copia el mensaje. Solo llega a quien tiene guardado el número del que envía.
+// ===================================================================
+const LISTAS_DIFUSION = [
+  { id: "kidz", t: "Padres de Kidz", d: "Familias registradas en Kidz" },
+  { id: "no_bautizados", t: "No bautizados", d: "Personas que no tenemos registradas como bautizadas" },
+  { id: "sin_curso", t: "No han tomado una clase", d: "Para invitar a una clase que se abre" },
+  { id: "inscritos", t: "Inscritos en una clase", d: "Recordatorios a quienes ya se inscribieron" },
+  { id: "lideres_igho", t: "Líderes de IGHO", d: "Todos los líderes de Iglesias de hogar" },
+];
+function puedeDifusion(tipo) {
+  if (!ctx) return false;
+  const base = ctx.esAncianoOAdmin || ctx.roles.has("secretaria");
+  if (tipo === "kidz") return base || ctx.lideraMinisterios.has("kidz");
+  if (tipo === "sin_curso" || tipo === "inscritos") return base || ctx.lideraMinisterios.has("formacion");
+  return base;
+}
+const puedeAlgunaDifusion = (r) => LISTAS_DIFUSION.some((l) => puedeDifusion(l.id));
+const df = { tipo: null, curso: null, kclase: "", semanas: false, igho: "", prev: false, ofertaId: null, oferta: null, texto: "", lista: [], enviados: new Set(), volver: null };
+
+// Primer nombre (en Kidz: "Juan y María" → "Juan y María"; "Juan Pérez, María López" → "Juan y María")
+const primerNombre = (n, kidz) => {
+  n = String(n || "").trim(); if (!n) return "";
+  if (!kidz) return n.split(/\s+/)[0];
+  const partes = n.split(/\s*(?:,|\/|&| y | e )\s*/i).filter(Boolean).map((p) => p.split(/\s+/)[0]);
+  return partes.length > 1 ? partes.slice(0, -1).join(", ") + " y " + partes[partes.length - 1] : partes[0];
+};
+const telIntl = (t) => { const d = String(t || "").replace(/\D/g, ""); if (d.length < 9) return null; return d.startsWith("0") ? "593" + d.slice(1) : d.length === 9 ? "593" + d : d; };
+
+function mensajeSugerido() {
+  const o = df.oferta, c = df.curso ? cursoDe(df.curso) : o ? cursoDe(o.curso_id) : null;
+  const cuando = o ? [fechasFc(o), o.horario, o.lugar].filter(Boolean).join(" · ") : "";
+  switch (df.tipo) {
+    case "kidz": return "Hola {nombre}, les saludamos de Arco Kidz 👋\n\nEste domingo …\n\n¡Gracias, papás!";
+    case "no_bautizados": return "Hola {nombre}, te saludamos de Arco Ríos 🙌\n\nNo te tenemos registrado/a como bautizado/a. ¿Te gustaría conversar con alguien sobre dar este siguiente paso?\n\nResponde a este mensaje y te contactamos.";
+    case "sin_curso": return `Hola {nombre}, te saludamos de Arco Ríos 👋\n\nAbrimos una nueva clase de ${c ? c.nombre : "Formación Cristiana"}${cuando ? ` (${cuando})` : ""}. ¿Te gustaría ser parte?\n\nResponde a este mensaje y te apartamos un lugar.`;
+    case "inscritos": return `Hola {nombre}, te recordamos que estás inscrito/a en «${o?.nombre || "la clase"}»${cuando ? ` (${cuando})` : ""}. ¡Te esperamos!\n\nArco Ríos`;
+    case "lideres_igho": return "Hola {nombre}, te saludamos del Consejo de Arco Ríos 🙌\n\n…";
+    default: return "";
+  }
+}
+
+// abrirDifusion({ tipo, curso, oferta, ofertaId, texto }) desde otras páginas
+async function abrirDifusion(pre) {
+  df.volver = pre ? vistaActual : null;
+  show("difusion");
+  await cargarCursosFc();
+  if (pre) {
+    Object.assign(df, { tipo: pre.tipo || null, curso: pre.curso || null, oferta: pre.oferta || null, ofertaId: pre.ofertaId || null,
+      kclase: "", semanas: false, igho: "", prev: false, texto: "" });
+    if (pre.tipo === "sin_curso" && !pre.curso) df.curso = null;
+    df.texto = pre.texto || "";
+  }
+  pintarDifusion();
+}
+
+async function pintarDifusion() {
+  const body = $("df-body");
+  const listas = LISTAS_DIFUSION.filter((l) => puedeDifusion(l.id));
+  if (!df.tipo || !puedeDifusion(df.tipo)) df.tipo = listas[0]?.id || null;
+  if (!df.tipo) { body.innerHTML = `<div class="soon">No tienes acceso a ninguna lista.</div>`; return; }
+  body.innerHTML = '<div class="loading">Cargando…</div>';
+
+  // Datos para los filtros
+  let filtros = "";
+  if (df.tipo === "kidz") {
+    await cargarClases();
+    filtros = `<label>Clase</label><select id="df-kclase"><option value="">Todas las clases</option>${opciones(kd.clases.map((c) => [String(c.id), c.nombre]), df.kclase)}</select>
+      <label class="check"><input type="checkbox" id="df-sem" ${df.semanas ? "checked" : ""}> Solo los que vinieron en las últimas 8 semanas</label>`;
+  } else if (df.tipo === "no_bautizados") {
+    const { data } = await sb.from("igho").select("id, nombre").eq("activo", true).order("nombre");
+    filtros = `<label>IGHO</label><select id="df-igho"><option value="">Toda la iglesia</option>${opciones((data || []).map((g) => [g.id, g.nombre]), df.igho)}</select>`;
+  } else if (df.tipo === "sin_curso") {
+    const cs = cursosQueSeOfrecen();
+    if (!df.curso || !cs.some((c) => c.id === df.curso)) {
+      const { data } = await sb.from("fc_ofertas").select("*").eq("abierta", true).not("curso_id", "is", null).order("fecha_inicio", { nullsFirst: false }).limit(1);
+      df.curso = data?.[0]?.curso_id || cs[0]?.id || null; df.oferta = df.oferta || data?.[0] || null;
+    }
+    const c = cursoDe(df.curso), conPrev = c && !["alpha_matrimonios", "raices"].includes(c.codigo);
+    const prevNombre = conPrev ? cs.filter((x) => x.codigo !== "alpha_matrimonios" && x.id !== c.id && cs.indexOf(x) < cs.indexOf(c)).pop()?.nombre : "";
+    filtros = `<label>¿Qué clase?</label>
+      <div class="curso-pick small" id="df-curso">${cs.map((x) => `<button type="button" data-c="${x.id}" class="${x.id === df.curso ? "on" : ""}" style="--cc:${ESTILO_CURSO[x.codigo].bg}"><img src="${EMBLEMA_CURSO[x.codigo]}" alt=""><span>${esc(x.nombre)}</span><i>✓</i></button>`).join("")}</div>
+      ${conPrev ? `<label class="check"><input type="checkbox" id="df-prevc" ${df.prev ? "checked" : ""}> Solo quienes ya hicieron ${esc(prevNombre)}</label>` : ""}
+      <div class="hint">No incluye a quienes ya lo tienen en su ficha ni a quienes ya están inscritos.</div>`;
+  } else if (df.tipo === "inscritos") {
+    const { data } = await sb.from("fc_ofertas").select("*").order("abierta", { ascending: false }).order("fecha_inicio", { ascending: false, nullsFirst: false });
+    const ofs = data || [];
+    if (!ofs.some((x) => x.id === df.ofertaId)) df.ofertaId = ofs[0]?.id || null;
+    df.oferta = ofs.find((x) => x.id === df.ofertaId) || null;
+    filtros = `<label>Clase o evento</label><select id="df-oferta">${opciones(ofs.map((x) => [String(x.id), x.nombre + (x.abierta ? "" : " (cerrada)")]), String(df.ofertaId || ""))}</select>`;
+  }
+
+  // La lista
+  const r = await sb.rpc("difusion_lista", { p_tipo: df.tipo, p_curso: df.tipo === "sin_curso" ? df.curso : null, p_kclase: df.tipo === "kidz" && df.kclase ? +df.kclase : null,
+    p_semanas: df.tipo === "kidz" && df.semanas ? 8 : null, p_igho: df.tipo === "no_bautizados" && df.igho ? df.igho : null, p_prev: df.tipo === "sin_curso" && df.prev,
+    p_oferta: df.tipo === "inscritos" ? df.ofertaId : null });
+  if (r.error) { body.innerHTML = `<div class="soon">No se pudo cargar la lista. ${esc(r.error.message)}${/difusion_lista/.test(r.error.message) ? "<br><br>Falta ejecutar 16_difusion_formacion.sql en Supabase." : ""}</div>`; return; }
+  // Un mensaje por celular (si dos personas comparten celular, va uno solo con los dos nombres)
+  const porTel = new Map(), sinTel = [];
+  for (const x of r.data || []) {
+    const t = telIntl(x.telefono);
+    if (!t) { sinTel.push(x); continue; }
+    const k = porTel.get(t);
+    if (k) { k.nombres.push(x.nombre); k.detalle = [k.detalle, x.detalle].filter(Boolean).join(" · "); }
+    else porTel.set(t, { tel: t, telefono: x.telefono, nombres: [x.nombre], detalle: x.detalle, clave: x.clave });
+  }
+  df.lista = [...porTel.values()].map((x) => ({ ...x, nombre: x.nombres.join(" y "),
+    saludo: df.tipo === "kidz" ? primerNombre(x.nombres[0], true) : x.nombres.map((n) => primerNombre(n)).join(" y ") }));
+  df.sinTel = sinTel;
+  if (!df.texto) df.texto = mensajeSugerido();
+  const tipoInfo = LISTAS_DIFUSION.find((l) => l.id === df.tipo);
+
+  body.innerHTML = `
+    <div class="panel"><h4>1. ¿A quién?</h4>
+      <div class="pick" id="df-tipos">${listas.map((l) => `<button type="button" data-t="${l.id}" class="${l.id === df.tipo ? "on" : ""}">${esc(l.t)}</button>`).join("")}</div>
+      <div class="hint">${esc(tipoInfo.d)}</div>${filtros}
+      <div class="df-cuenta"><b>${df.lista.length}</b> ${df.lista.length === 1 ? "celular" : "celulares"}${df.sinTel.length ? ` · <span class="warn">${df.sinTel.length} sin celular</span>` : ""}</div></div>
+    <div class="panel"><h4>2. El mensaje</h4>
+      <div class="hint">Escribe <b>{nombre}</b> y se cambia por el nombre de cada ${df.tipo === "kidz" ? "papá o mamá" : "persona"}.</div>
+      <textarea id="df-texto" rows="8">${esc(df.texto)}</textarea>
+      <button class="btn-sec mini" id="df-sugerido" type="button">Volver al mensaje sugerido</button>
+      <div class="df-prev" id="df-prev"></div></div>
+    <div class="panel"><h4>3. Enviar uno por uno</h4>
+      <div class="hint">Se abre WhatsApp con el mensaje ya escrito. Toca <b>Enviar</b> allá y vuelve aquí para el siguiente.</div>
+      ${df.lista.length ? `<a class="btn-primary wa-btn" id="df-sig" target="_blank" rel="noopener"></a>` : ""}
+      <div id="df-lista"></div>
+      ${df.sinTel.length ? `<details class="df-sin"><summary>${df.sinTel.length} sin celular registrado</summary>${df.sinTel.map((x) => `<div class="li"><div><b>${esc(x.nombre)}</b><div class="muted">${esc(x.detalle || "")}</div></div></div>`).join("")}</details>` : ""}</div>
+    <div class="panel"><h4>O con una lista de difusión de WhatsApp</h4>
+      <div class="hint">Más rápido para listas grandes, pero el mensaje es igual para todos (sin el nombre) y <b>solo les llega a quienes tienen guardado tu número</b>.</div>
+      <ol class="df-pasos"><li>Descarga los contactos y ábrelos en tu celular para guardarlos.</li>
+        <li>En WhatsApp: <b>⋮ → Nueva difusión</b> (iPhone: <b>Chats → Listas → Nueva lista</b>) y elige los contactos.</li>
+        <li>Pega el mensaje y envía.</li></ol>
+      <div class="two"><button class="btn-sec" id="df-vcf" ${df.lista.length ? "" : "disabled"}>Descargar contactos</button><button class="btn-sec" id="df-copiar">Copiar mensaje</button></div>
+      <button class="btn-sec" id="df-nums" style="width:100%" ${df.lista.length ? "" : "disabled"}>Copiar los números</button>
+      <div class="ok" id="df-ok"></div></div>
+    ${df.volver ? `<button class="btn-sec" id="df-volver" style="width:100%">← Volver</button>` : ""}`;
+
+  const textoPara = (x) => df.texto.replace(/\{nombre\}/gi, x ? x.saludo : "").replace(/ ,/g, ",").replace(/Hola\s*,/g, "Hola,");
+  const pintarLista = () => {
+    $("df-lista").innerHTML = df.lista.map((x, k) => `<div class="li df-row ${df.enviados.has(x.tel) ? "hecho" : ""}">
+      <div><b>${esc(x.nombre)}</b><div class="muted">${esc(x.detalle || "")}</div></div>
+      <a class="btn-sec mini wa-mini" data-k="${k}" href="https://wa.me/${x.tel}?text=${encodeURIComponent(textoPara(x))}" target="_blank" rel="noopener">${df.enviados.has(x.tel) ? "✓ Enviado" : "WhatsApp"}</a></div>`).join("") || '<div class="muted">No hay nadie en esta lista.</div>';
+    $("df-lista").querySelectorAll("[data-k]").forEach((a) => a.addEventListener("click", () => marcar(df.lista[+a.dataset.k])));
+    const sig = df.lista.find((x) => !df.enviados.has(x.tel)), b = $("df-sig");
+    if (b) {
+      const n = df.lista.filter((x) => df.enviados.has(x.tel)).length;
+      if (sig) { b.href = `https://wa.me/${sig.tel}?text=${encodeURIComponent(textoPara(sig))}`; b.textContent = `Enviar a ${sig.saludo || sig.nombre} (${n + 1} de ${df.lista.length})`; b.classList.remove("hecho"); }
+      else { b.removeAttribute("href"); b.textContent = `✓ Listo: ${df.lista.length} enviados`; b.classList.add("hecho"); }
+    }
+    const ej = df.lista[0];
+    $("df-prev").innerHTML = ej ? `<span>Así le llega a ${esc(ej.saludo || ej.nombre)}:</span>${esc(textoPara(ej)).replace(/\n/g, "<br>")}` : "";
+  };
+  let registrado = false;
+  const marcar = (x) => {
+    if (!x) return;
+    df.enviados.add(x.tel);
+    if (!registrado) { registrado = true; registrarEnvio(df.lista.length); }
+    setTimeout(pintarLista, 300);
+  };
+  pintarLista();
+
+  $("df-sig")?.addEventListener("click", () => marcar(df.lista.find((x) => !df.enviados.has(x.tel))));
+  $("df-tipos").querySelectorAll("[data-t]").forEach((b) => b.addEventListener("click", () => {
+    if (b.dataset.t === df.tipo) return;
+    Object.assign(df, { tipo: b.dataset.t, texto: "", enviados: new Set(), oferta: null, ofertaId: null, curso: null, prev: false }); pintarDifusion();
+  }));
+  const recargar = () => { df.enviados = new Set(); pintarDifusion(); };
+  $("df-kclase")?.addEventListener("change", (e) => { df.kclase = e.target.value; recargar(); });
+  $("df-sem")?.addEventListener("change", (e) => { df.semanas = e.target.checked; recargar(); });
+  $("df-igho")?.addEventListener("change", (e) => { df.igho = e.target.value; recargar(); });
+  $("df-prevc")?.addEventListener("change", (e) => { df.prev = e.target.checked; recargar(); });
+  $("df-curso")?.querySelectorAll("[data-c]").forEach((b) => b.addEventListener("click", () => {
+    const nuevo = +b.dataset.c; if (nuevo === df.curso) return;
+    const sugerido = df.texto === mensajeSugerido();
+    df.curso = nuevo; df.oferta = null; df.prev = false; if (sugerido) df.texto = "";
+    recargar();
+  }));
+  $("df-oferta")?.addEventListener("change", (e) => { const sug = df.texto === mensajeSugerido(); df.ofertaId = +e.target.value; if (sug) df.texto = ""; recargar(); });
+  $("df-texto").addEventListener("input", (e) => { df.texto = e.target.value; pintarLista(); });
+  $("df-sugerido").addEventListener("click", () => { df.texto = mensajeSugerido(); $("df-texto").value = df.texto; pintarLista(); });
+  const ok = (t) => { $("df-ok").textContent = t; setTimeout(() => ($("df-ok").textContent = ""), 3000); };
+  $("df-copiar").addEventListener("click", async () => {
+    const t = textoPara(null).replace(/Hola\s+,/g, "Hola,");
+    try { await navigator.clipboard.writeText(t); ok("✓ Mensaje copiado (sin el nombre)."); } catch { prompt("Copia el mensaje:", t); }
+  });
+  $("df-nums").addEventListener("click", async () => {
+    const t = df.lista.map((x) => "+" + x.tel).join("\n");
+    try { await navigator.clipboard.writeText(t); ok(`✓ ${df.lista.length} números copiados.`); } catch { prompt("Copia los números:", t); }
+  });
+  $("df-vcf").addEventListener("click", () => {
+    const etiqueta = { kidz: "Kidz", no_bautizados: "Arco", sin_curso: "Arco", inscritos: "Arco", lideres_igho: "Líder IGHO" }[df.tipo];
+    const lineaVcf = (s) => String(s).replace(/[\\,;]/g, (c) => "\\" + c).replace(/\n/g, " ");
+    const vcf = df.lista.map((x) => ["BEGIN:VCARD", "VERSION:3.0", `FN:${lineaVcf(x.nombre)} (${etiqueta})`, `N:${lineaVcf(x.nombre)};;;;`, `TEL;TYPE=CELL:+${x.tel}`, "END:VCARD"].join("\r\n")).join("\r\n");
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([vcf], { type: "text/vcard" }));
+    a.download = `${(tipoInfo.t).replace(/\s+/g, "_")}.vcf`;
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+    registrarEnvio(df.lista.length);
+  });
+  $("df-volver")?.addEventListener("click", () => { const v = df.volver; df.volver = null; if (v === "formacion") { show("formacion"); abrirFormacion(); } else abrir(v || "home"); });
+}
+
+async function registrarEnvio(n) {
+  const filtro = [df.tipo === "sin_curso" && cursoDe(df.curso)?.nombre, df.tipo === "inscritos" && df.oferta?.nombre,
+    df.kclase && kd.clases.find((c) => String(c.id) === df.kclase)?.nombre, df.semanas && "últimas 8 semanas", df.prev && "con el curso anterior"].filter(Boolean).join(" · ");
+  try { await sb.from("difusion_envios").insert({ tipo: df.tipo, filtro: filtro || null, mensaje: df.texto, personas: n, enviado_por_nombre: ctx.nombreCompleto }); } catch (e) { console.warn(e); }
 }
 
 // Resumen del Consejo: panel de Formación (para quien la cubre)
