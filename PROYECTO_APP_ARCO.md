@@ -1,6 +1,6 @@
 # App Iglesia Arco Ríos: project summary (to start a new chat)
 
-Attach this file when you start a new chat. The code lives in GitHub: **`joelguido-beep/Arco-app`** (branch `main`, served by GitHub Pages at https://joelguido-beep.github.io/Arco-app/). The Claude GitHub App is installed, so Claude can clone the repo and push changes directly (no need to attach `index.html`). **Joel's standing instruction: push every finished update straight to `main` on GitHub automatically, without asking first** (index.html, new SQL files and this summary). Joel still runs the SQL in Supabase himself. Current version: **25-nov v15** (shown under the title of the Avisos page; constant `VERSION_APP` in index.html; update both on each release).
+Attach this file when you start a new chat. The code lives in GitHub: **`joelguido-beep/Arco-app`** (branch `main`, served by GitHub Pages at https://joelguido-beep.github.io/Arco-app/). The Claude GitHub App is installed, so Claude can clone the repo and push changes directly (no need to attach `index.html`). **Joel's standing instruction: push every finished update straight to `main` on GitHub automatically, without asking first** (index.html, new SQL files and this summary). Joel still runs the SQL in Supabase himself. Current version: **25-nov v16** (shown under the title of the Avisos page; constant `VERSION_APP` in index.html; update both on each release).
 
 ## What it is
 A web app in Spanish for Arco Ríos (Cuenca). It's a single `index.html` file hosted on **GitHub Pages**, and the data lives in **Supabase** (project `lmitwnfvelwbbkjkvmtb`).
@@ -170,6 +170,10 @@ Kidz with QR: camera check-in/check-out (photo confirmation, allergies, parent n
 - Mi perfil (tap your initial, top right of home): my data (name, phone, birth date), Claro/Oscuro switch (saved on the device), change password, «Quiero servir en un ministerio» (request + status), Cerrar sesión.
 - Administración → Solicitudes: approve as Siervo/Anunciante or Líder, or «No aprobar»; the person gets a notice.
 - notificar.ts: «enviar_interes» also sends tipo 'solicitud' (redeploy the function so the admin gets the phone push; without it the request still shows in the bell).
+
+## Folder tabs on home (25 Nov 2026, v16)
+- Home and Resumen cards look like file folders: each card's name is on a tab (monospace caps) at a staggered position (PESTANA_POS, alternating left/right). Stacked, only the tabs and a thin edge show (PILA.SLIVER 42; content of thin cards fades with --pleg); scrolling opens them. Card title moved to the tab (.pc-lbl hidden).
+- Fix: Administración card (c-white) was navy text on navy; now a white folder with a thin line.
 
 ## Status (23 Nov 2026, end of day)
 - Notifications work on Joel's Android (function `swift-action` deployed with notificar.ts, Verify JWT off).

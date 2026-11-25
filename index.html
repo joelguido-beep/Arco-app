@@ -80,6 +80,7 @@
   .c-orange, .p-royal { background: var(--royal); } .c-sky { background: var(--royal); } .c-lilac, .p-depths { background: var(--depths); }
   .c-yellow, .p-hab { background: var(--habanero); } .c-green, .c-peach, .p-aster { background: var(--aster); }
   .c-sand, .p-tan { background: var(--tan); } .c-grey, .p-white { background: #fff; box-shadow: inset 0 0 0 1px var(--line); }
+  .c-white { background: #fff; box-shadow: inset 0 0 0 1px var(--line); }
   .c-orange, .c-sky, .c-lilac, .p-royal, .p-depths { --ink-dark: #F4F1EC; --ink-dark-2: rgba(244,241,236,.8); --ink-soft: rgba(244,241,236,.75); --ink-inv: #111144; color: #F4F1EC; }
 
   /* ---------- Tarjetas apiladas (inicio y resumen) ---------- */
@@ -191,7 +192,6 @@
   .ig-foot.warn { color: var(--warn); }
   .cob { border-top: 1px solid var(--surface-2); padding-top: 10px; margin-top: 6px; }
   /* ---------- Admin ---------- */
-  .c-white { background: var(--ink); }
   .rol-row { display: grid; grid-template-columns: 1fr 190px; align-items: center; gap: 8px; }
   .rol-row .seg { margin-bottom: 8px; }
   .btn-sec.danger { color: var(--coral); }
@@ -719,7 +719,7 @@
   html[data-tema="oscuro"] .mini-hdr { background: rgba(17,17,68,.95); } html[data-tema="oscuro"] .scan-res { background: rgba(17,17,68,.98); }
   html[data-tema="oscuro"] .c-orange, html[data-tema="oscuro"] .c-sky, html[data-tema="oscuro"] .p-royal { box-shadow: inset 0 0 0 1px #2E3577; }
   html[data-tema="oscuro"] .card, html[data-tema="oscuro"] .pcard, html[data-tema="oscuro"] .ig-tile { --ink-inv: #F4F1EC; }
-  html[data-tema="oscuro"] .c-yellow, html[data-tema="oscuro"] .c-green, html[data-tema="oscuro"] .c-peach, html[data-tema="oscuro"] .c-sand, html[data-tema="oscuro"] .c-grey, html[data-tema="oscuro"] .c-wa,
+  html[data-tema="oscuro"] .c-yellow, html[data-tema="oscuro"] .c-green, html[data-tema="oscuro"] .c-peach, html[data-tema="oscuro"] .c-sand, html[data-tema="oscuro"] .c-grey, html[data-tema="oscuro"] .c-wa, html[data-tema="oscuro"] .c-white,
   html[data-tema="oscuro"] .p-hab, html[data-tema="oscuro"] .p-aster, html[data-tema="oscuro"] .p-tan, html[data-tema="oscuro"] .p-white { --ink-inv: #F4F1EC; --ink-dark: #111144; --ink-dark-2: #3B3F6B; --ink-soft: rgba(17,17,68,.62); --ink: #111144; --ink-2: #3B3F6B; color: #111144; }
   html[data-tema="oscuro"] .att.ig-amarillo:not(.on), html[data-tema="oscuro"] .att.ig-rojo:not(.on) { color: #111144; }
   html[data-tema="oscuro"] .att.ig-amarillo:not(.on) .muted, html[data-tema="oscuro"] .att.ig-rojo:not(.on) .muted { color: #3B3F6B; }
@@ -728,6 +728,20 @@
   html[data-tema="oscuro"] .brand-mark img { filter: brightness(0) invert(1); }
   html[data-tema="oscuro"] input::placeholder, html[data-tema="oscuro"] textarea::placeholder { color: #7F87B5; }
   html[data-tema="oscuro"] .anun-box, html[data-tema="oscuro"] mark { color: #111144; }
+  /* ---- Inicio: tarjetas como carpetas con pestaña ---- */
+  .pila { margin-top: 34px; }
+  .pcard { padding-bottom: 62px; }
+  .pcard .pc-lbl { display: none; }
+  .pc-head { min-height: 30px; }
+  .pc-tab { position: absolute; top: -32px; height: 33px; max-width: 70%; padding: 9px 16px 0; border-radius: 9px 9px 0 0; background: inherit;
+            font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: inherit; box-shadow: 0 -5px 10px rgba(17,17,68,.08); }
+  .pc-tab::before, .pc-tab::after { content: ""; position: absolute; bottom: 0; width: 10px; height: 10px; background: inherit; }
+  .pc-tab::before { left: -10px; -webkit-mask: radial-gradient(circle at 0 0, transparent 9.5px, #000 10px); mask: radial-gradient(circle at 0 0, transparent 9.5px, #000 10px); }
+  .pc-tab::after { right: -10px; -webkit-mask: radial-gradient(circle at 100% 0, transparent 9.5px, #000 10px); mask: radial-gradient(circle at 100% 0, transparent 9.5px, #000 10px); }
+  .c-grey .pc-tab, .c-white .pc-tab, .p-white .pc-tab { box-shadow: inset 1px 1px 0 var(--line), inset -1px 0 0 var(--line), 0 -5px 10px rgba(17,17,68,.06); }
+  .pc-sub { max-width: 62%; }
+  .pcard.pc-fina > .pc-top, .pcard.pc-fina > .pc-more { opacity: calc(1 - var(--pleg, 0) * 1.6); }
 </style>
 </head>
 <body>
@@ -974,13 +988,17 @@ const ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
 // =================== Tarjetas apiladas ===================
 // Al abrir, las tarjetas están apiladas (se ve el título y el número de cada una);
 // al deslizar se separan hasta quedar abiertas con su detalle.
-const PILA = { PEEK: 84, SLIVER: 14, OVER: 26, NAV: 104 };
+const PILA = { PEEK: 96, SLIVER: 42, OVER: 26, NAV: 104 };
+// Pestañas de carpeta: cada tarjeta muestra su nombre en una pestaña, en una posición distinta
+const PESTANA_POS = ["left:4%", "right:5%", "left:24%", "right:18%", "left:10%", "right:3%", "left:34%", "right:12%"];
 const pilas = new Set();
 let vistaActual = "login";
 function htmlTarjeta(c, i) {
   const tag = c.go ? "button" : "div";
   const num = c.num === null ? `<span class="pc-go">${ARROW}</span>` : `<div class="pc-num">${c.num ?? "·"}${c.unit ? `<small>${c.unit}</small>` : ""}</div>`;
+  const tab = String(c.label || "").replace(/<br\s*\/?>/gi, " ");
   return `<${tag} class="pcard ${c.color}" ${c.go ? `data-go="${c.go}"` : ""} data-pc="${esc(c.key)}" style="z-index:${i + 1}">
+    <span class="pc-tab" style="${PESTANA_POS[i % PESTANA_POS.length]}">${tab}</span>
     <div class="pc-top"><div class="pc-head"><div class="pc-lbl">${c.label}</div>${c.logo ? `<img class="pc-logo lg-${c.logo}" src="${LOGOS[c.logo]}" alt="">` : ""}</div>
       <div class="pc-sub">${c.sub ?? ""}</div>${num}</div>
     <div class="pc-more">${c.detail ?? ""}</div></${tag}>`;
@@ -1011,11 +1029,13 @@ function medirPila(cont) {
   const naturalFin = docTop + y + PILA.OVER;
   const n = cards.length - 1;
   // Si todo cabe en la pantalla, no se apila
-  if (n < 2 || naturalFin <= innerHeight - PILA.NAV + 40) { cont._delta = cards.map(() => 0); return aplicarPilas(); }
+  if (n < 2 || naturalFin <= innerHeight - PILA.NAV + 40) { cont._delta = cards.map(() => 0); cards.forEach((c) => c.classList.remove("pc-fina")); return aplicarPilas(); }
   const libre = innerHeight - docTop - PILA.NAV - PILA.PEEK - 24;
   const grandes = Math.max(0, Math.min(n, Math.floor((libre - n * PILA.SLIVER) / (PILA.PEEK - PILA.SLIVER))));
   let s = 0; cards.forEach((c, i) => { stacked.push(s); s += Math.min(i < grandes ? PILA.PEEK : PILA.SLIVER, h[i] - PILA.OVER); });
   cont._delta = cards.map((c, i) => Math.min(0, stacked[i] - natural[i]));
+  // Las tarjetas que quedan como una franja delgada (solo se ve la pestaña) esconden su contenido mientras están apiladas
+  cards.forEach((c, i) => c.classList.toggle("pc-fina", i >= grandes && i < n));
   cont._top = docTop;
   aplicarPilas();
 }
@@ -1025,7 +1045,7 @@ function aplicarPilas() {
     if (!cont.offsetParent || !cont._delta) continue;
     const R = Math.max(140, Math.min(innerHeight * 0.6, (cont._top || 300) - 110));
     const p = Math.min(1, Math.max(0, window.scrollY / R)), e = 1 - (1 - p) * (1 - p);
-    [...cont.children].forEach((c, i) => { const d = (cont._delta[i] || 0) * (1 - e); c.style.transform = d ? `translateY(${d.toFixed(1)}px)` : ""; });
+    [...cont.children].forEach((c, i) => { const d = (cont._delta[i] || 0) * (1 - e); c.style.transform = d ? `translateY(${d.toFixed(1)}px)` : ""; c.style.setProperty("--pleg", (1 - e).toFixed(3)); });
   }
   const mini = $("mini-hdr");
   if (mini) mini.classList.toggle("on", ["home", "resumen"].includes(vistaActual) && window.scrollY > 170);
@@ -7013,7 +7033,7 @@ async function revisarCenso(x) {
 // ===================================================================
 // AVISOS: notificaciones al teléfono + campana dentro de la app
 // ===================================================================
-const VERSION_APP = "25-nov · v15";
+const VERSION_APP = "25-nov · v16";
 const FUNCION_AVISOS = "swift-action"; // Edge Function en Supabase (se muestra como «notificar»)
 const av = { lista: [], noLeidas: 0, timer: null };
 const IR_A = [["", "Página principal"], ["domingo", "Este domingo"], ["anfitriones", "Anfitriones"], ["bienvenida", "Bienvenida"], ["igho", "Mi IGHO"], ["kidz", "Kidz"], ["worship", "Arco Worship"], ["formacion", "Formación Cristiana"], ["stand", "Stand de información"]];
