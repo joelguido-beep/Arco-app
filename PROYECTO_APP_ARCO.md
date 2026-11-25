@@ -1,6 +1,6 @@
 # App Iglesia Arco Ríos: project summary (to start a new chat)
 
-Attach this file when you start a new chat. The code lives in GitHub: **`joelguido-beep/Arco-app`** (branch `main`, served by GitHub Pages at https://joelguido-beep.github.io/Arco-app/). The Claude GitHub App is installed, so Claude can clone the repo and push changes directly (no need to attach `index.html`). **Joel's standing instruction: push every finished update straight to `main` on GitHub automatically, without asking first** (index.html, new SQL files and this summary). Joel still runs the SQL in Supabase himself. Current version: **25-nov v13** (shown under the title of the Avisos page; constant `VERSION_APP` in index.html; update both on each release).
+Attach this file when you start a new chat. The code lives in GitHub: **`joelguido-beep/Arco-app`** (branch `main`, served by GitHub Pages at https://joelguido-beep.github.io/Arco-app/). The Claude GitHub App is installed, so Claude can clone the repo and push changes directly (no need to attach `index.html`). **Joel's standing instruction: push every finished update straight to `main` on GitHub automatically, without asking first** (index.html, new SQL files and this summary). Joel still runs the SQL in Supabase himself. Current version: **25-nov v14** (shown under the title of the Avisos page; constant `VERSION_APP` in index.html; update both on each release).
 
 ## What it is
 A web app in Spanish for Arco Ríos (Cuenca). It's a single `index.html` file hosted on **GitHub Pages**, and the data lives in **Supabase** (project `lmitwnfvelwbbkjkvmtb`).
@@ -10,10 +10,11 @@ A web app in Spanish for Arco Ríos (Cuenca). It's a single `index.html` file ho
 - Edge Functions: shown as **notificar** but its URL slug is **`swift-action`** (FUNCION_AVISOS in index.html and the cron URL use swift-action) (code: `notificar.ts`, "Verify JWT" off): sends push notifications (Avisos and the Saturday reminder). VAPID keys create themselves the first time and live in `ajustes_privados` with the cron secret.
 - Edge Function: named **`hyper-api`** in Supabase (code: `admin-usuarios.ts`), with "Verify JWT with legacy secret" turned **off**. Admin actions check the admin role in code; `registro_padre` is public (parents create their own account); `crear_lider_igho` is allowed for admin or the Consejo member who covers that IGHO, and only gives the `lider_igho` role to that IGHO's registered leader.
 
-## Design
-- Dark background `#1b1b1d`, main color **orange `#F47B20`**, white Arco logo on orange.
-- Rounded colored cards, pill-shaped buttons, a fixed bottom menu. Font: Outfit.
-- Phone first. A desktop version for reports is still pending.
+## Design (v14: light theme, Arco Ríos palette)
+- Palette only: Luster White #F4F1EC (background), Aster Flower Blue #9BACD8, Habañero #F98513 (accent: things that need attention), Jodhpur Tan #DAD1C8, **Deep Space Royal #223382 (main color: buttons, selections)**, Deadly Depths #111144 (text). CSS variables --luster, --aster, --habanero, --tan, --royal, --depths; --orange now means the main color (royal).
+- White panels with a thin tan line; tiles, cards and panels have square corners; buttons and inputs 4px. Card classes map to the palette (c-orange/c-sky → royal, c-lilac → depths, c-yellow → habañero, c-green/c-peach → aster, c-sand → tan, c-grey → white); royal/depths cards switch their text to light. Mi IGHO tiles use p-royal / p-hab / p-aster / p-tan / p-depths / p-white.
+- Exceptions kept on purpose: the five Formación course colors (book covers), yellow/red attendance warnings, red for errors.
+- IGHO icon is now a vector (Aster circle, Deadly Depths house). App icons recolored to royal. Phone first; Font: Outfit.
 
 ## Database (SQL files run in this order)
 1. `01_esquema.sql`: personas, igho, ministerios, cursos, censos, perfiles, usuarios_roles, reuniones_igho, asistencia_igho, and RLS
@@ -155,6 +156,11 @@ Kidz with QR: camera check-in/check-out (photo confirmation, allergies, parent n
 - Compartir: the IGHO card (name, presentación, day/time, address, map, leader + phone): Enviar por WhatsApp / Copiar. The same card goes in the Stand/Bienvenida WhatsApp to the person and the leader's WhatsApp from «Quieren unirse».
 - Administración → Editar (Consejo/admin): «Visitas a los IGHO»: pick the spouse, «Su esposo/a no aparece en la asistencia», and «Aparece en la asistencia de todos los IGHO».
 - Phone notifications: general aviso → home page (or the page the sender picked; «Al tocarlo abre» default is now «Página principal»); «Mañana sirves» → the ministry page; IGHO interest → Mi IGHO. Opening one marks it read. Home shows a blue «🏠 X quiere unirse a tu IGHO» banner for leaders until they mark «Ya le contacté».
+
+## Palette, IGHO card (25 Nov 2026, v14)
+- Whole app restyled to the light palette above (also the Tablero charts, PDF reports and confetti).
+- Mi IGHO: the round back arrow at the top returns to the tiles when a section is open (and to home from the tiles).
+- Compartir: the IGHO card is drawn as an image in the business-card style (landscape on the left, Deep Space Royal panel on the right, house icon, name, IGLESIA DE HOGAR · ARCO RÍOS, day/time, address, leader + phone). «Enviar la tarjeta (imagen)» shares it on the phone (or downloads it), plus «Enviar como texto por WhatsApp» and «Copiar el texto».
 
 ## Status (23 Nov 2026, end of day)
 - Notifications work on Joel's Android (function `swift-action` deployed with notificar.ts, Verify JWT off).
