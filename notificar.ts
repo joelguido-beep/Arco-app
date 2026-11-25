@@ -183,10 +183,10 @@ Deno.serve(async (req) => {
       return resp(await despachar([n.id]));
     }
 
-    // Aviso al líder de IGHO desde el Stand: solo el aviso que esa misma persona acaba de crear
+    // Aviso al líder de IGHO desde el Stand, o solicitud de ministerio al admin: solo el aviso que esa misma persona acaba de crear
     if (body.accion === "enviar_interes") {
       const { data: n } = await admin.from("notificaciones").select("id, tipo, creado_en, creado_por").eq("id", Number(body.id)).maybeSingle();
-      if (!n || n.tipo !== "igho" || n.creado_por !== u.id || Date.now() - new Date(n.creado_en).getTime() > 10 * 60 * 1000) return resp({ error: "Sin permiso" }, 403);
+      if (!n || !["igho", "solicitud"].includes(n.tipo) || n.creado_por !== u.id || Date.now() - new Date(n.creado_en).getTime() > 10 * 60 * 1000) return resp({ error: "Sin permiso" }, 403);
       return resp(await despachar([n.id]));
     }
 

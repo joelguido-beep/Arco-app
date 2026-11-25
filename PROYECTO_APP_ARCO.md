@@ -1,6 +1,6 @@
 # App Iglesia Arco Ríos: project summary (to start a new chat)
 
-Attach this file when you start a new chat. The code lives in GitHub: **`joelguido-beep/Arco-app`** (branch `main`, served by GitHub Pages at https://joelguido-beep.github.io/Arco-app/). The Claude GitHub App is installed, so Claude can clone the repo and push changes directly (no need to attach `index.html`). **Joel's standing instruction: push every finished update straight to `main` on GitHub automatically, without asking first** (index.html, new SQL files and this summary). Joel still runs the SQL in Supabase himself. Current version: **25-nov v14** (shown under the title of the Avisos page; constant `VERSION_APP` in index.html; update both on each release).
+Attach this file when you start a new chat. The code lives in GitHub: **`joelguido-beep/Arco-app`** (branch `main`, served by GitHub Pages at https://joelguido-beep.github.io/Arco-app/). The Claude GitHub App is installed, so Claude can clone the repo and push changes directly (no need to attach `index.html`). **Joel's standing instruction: push every finished update straight to `main` on GitHub automatically, without asking first** (index.html, new SQL files and this summary). Joel still runs the SQL in Supabase himself. Current version: **25-nov v15** (shown under the title of the Avisos page; constant `VERSION_APP` in index.html; update both on each release).
 
 ## What it is
 A web app in Spanish for Arco Ríos (Cuenca). It's a single `index.html` file hosted on **GitHub Pages**, and the data lives in **Supabase** (project `lmitwnfvelwbbkjkvmtb`).
@@ -48,6 +48,8 @@ A web app in Spanish for Arco Ríos (Cuenca). It's a single `index.html` file ho
 
 29. `27_clase_bienvenida.sql`: bv_clases (fecha1 / fecha2 = the two Sundays, hora, lugar, abierta), bv_inscritos (origen bienvenida / stand / clase), bv_asistencia (sesion 1 | 2); edita_clase_bv() (Bienvenida + Consejo/admin), inscribe_clase_bv() (+ Stand team); bv_guardar_clase, bv_borrar_clase, bv_inscribir (creates the person if new and adds them to nuevos), bv_quitar, bv_marcar, bv_lista, bv_buscar. Attending day 1 and day 2 (even in different classes) sets nuevos.clase_bienvenida = true + fecha_clase
 30. `28_mi_igho_tarjeta_visitas.sql`: personas.igho_rol (lider / apoyo / anfitrion / asistente; IGHO leaders start as lider) + guardar_rol_igho(); igho.presentacion + guardar_tarjeta_igho(); stand_ighos() also returns presentacion; consejo_visitantes (user_id, conyuge_persona_id, todos_los_igho, sin_conyuge) + guardar_visitante_consejo() (admin; also adds the parentescos link) + conyuge_de_usuario(); cobertura_de_igho() rebuilt (adds column tipo: cobertura | presidente; spouse from consejo_visitantes, else family tree) and registrar_visitas_cobertura() no longer requires coverage; seeds Joel Guido as todos_los_igho, sin_conyuge (his wife doesn't attend IGHO for now)
+
+31. `29_perfil_foto_igho.sql`: igho_fotos (one small JPEG data URL per IGHO, cropped to the card's left side) + guardar_foto_igho(); igho.categorias ('ninos' = Espacio para niños, 'menores18' = IGHO -18 años) + guardar_categorias_igho(); stand_ighos() also returns categorias; mis_datos() / guardar_mis_datos() (own persona through perfiles); solicitudes_ministerio + solicitar_ministerio() (notifies admins, tipo 'solicitud') + resolver_solicitud() (admin approves as servidor / lider_ministerio → inserts usuarios_roles, notifies the person)
 
 ## Roles
 - `admin`, `anciano` (shown as **Miembro del Consejo**), `secretaria`, `finanzas`
@@ -161,6 +163,13 @@ Kidz with QR: camera check-in/check-out (photo confirmation, allergies, parent n
 - Whole app restyled to the light palette above (also the Tablero charts, PDF reports and confetti).
 - Mi IGHO: the round back arrow at the top returns to the tiles when a section is open (and to home from the tiles).
 - Compartir: the IGHO card is drawn as an image in the business-card style (landscape on the left, Deep Space Royal panel on the right, house icon, name, IGLESIA DE HOGAR · ARCO RÍOS, day/time, address, leader + phone). «Enviar la tarjeta (imagen)» shares it on the phone (or downloads it), plus «Enviar como texto por WhatsApp» and «Copiar el texto».
+
+## IGHO photo, profile, dark mode (25 Nov 2026, v15)
+- Compartir: the card's left side is the IGHO photo («📷 Subir foto», cropped automatically; landscape when there's none). Leader's name appears once (only «Cel.» when the IGHO name is the leader's name). Every line is measured against the diagonal so text never crosses into the photo. Presentación removed; instead toggle buttons «🧒 Espacio para niños» and «🎒 IGHO -18 años» (on the card, in the WhatsApp text and in the Stand's IGHO list).
+- WhatsApp text always carries the Google Maps link(s). Sharing the image also copies the text (WhatsApp sometimes drops the caption).
+- Mi perfil (tap your initial, top right of home): my data (name, phone, birth date), Claro/Oscuro switch (saved on the device), change password, «Quiero servir en un ministerio» (request + status), Cerrar sesión.
+- Administración → Solicitudes: approve as Siervo/Anunciante or Líder, or «No aprobar»; the person gets a notice.
+- notificar.ts: «enviar_interes» also sends tipo 'solicitud' (redeploy the function so the admin gets the phone push; without it the request still shows in the bell).
 
 ## Status (23 Nov 2026, end of day)
 - Notifications work on Joel's Android (function `swift-action` deployed with notificar.ts, Verify JWT off).

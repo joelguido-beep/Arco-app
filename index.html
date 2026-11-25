@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#F4F1EC">
+<script>try { if (localStorage.getItem("tema") === "oscuro") { document.documentElement.dataset.tema = "oscuro"; document.querySelector('meta[name="theme-color"]').content = "#111144"; } } catch (e) {}</script>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Arco Ríos">
 <link rel="manifest" href="manifest.json">
@@ -699,6 +700,34 @@
   .c-lilac .lg-ws { background: var(--luster); border-radius: 50%; padding: 2px; }
   .ig-tile { border-radius: 0; }
   .ig-n { font-weight: 300; }
+  /* ---- Mi perfil ---- */
+  .pf-head { display: flex; align-items: center; gap: 14px; margin: 8px 0 6px; }
+  .pf-av { width: 58px; height: 58px; border-radius: 50%; background: var(--royal); color: var(--luster); display: grid; place-items: center; font-size: 24px; font-weight: 600; flex: none; }
+  .pf-head b { display: block; font-size: 19px; } .pf-head span { color: var(--ink-2); font-size: 14px; }
+  .tj-acc { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 10px; }
+  .tj-acc label.btn-sec { cursor: pointer; }
+  /* ================= Modo oscuro (Mi perfil → Apariencia) ================= */
+  html[data-tema="oscuro"] {
+    --bg: #111144; --surface: #1A1F57; --surface-2: #252B6B; --line: #2E3577;
+    --ink: #F4F1EC; --ink-2: #AEB5D6; --ink-soft: rgba(244,241,236,.68); --ink-inv: #F4F1EC;
+    --orange: #2F45AC; --green: #9BACD8; --warn: #F9A54D; --coral: #FF8A7A;
+  }
+  html[data-tema="oscuro"] .btn-sec, html[data-tema="oscuro"] .back, html[data-tema="oscuro"] .campana, html[data-tema="oscuro"] .avatar,
+  html[data-tema="oscuro"] .nav, html[data-tema="oscuro"] .seg button, html[data-tema="oscuro"] .tabs button, html[data-tema="oscuro"] .tb-side,
+  html[data-tema="oscuro"] .tb-pill, html[data-tema="oscuro"] .tarjeta-pres { background: var(--surface); color: var(--ink); }
+  html[data-tema="oscuro"] .seg button.on, html[data-tema="oscuro"] .tabs button.on, html[data-tema="oscuro"] .tb-pill.on { background: var(--orange); color: var(--ink-inv); }
+  html[data-tema="oscuro"] .mini-hdr { background: rgba(17,17,68,.95); } html[data-tema="oscuro"] .scan-res { background: rgba(17,17,68,.98); }
+  html[data-tema="oscuro"] .c-orange, html[data-tema="oscuro"] .c-sky, html[data-tema="oscuro"] .p-royal { box-shadow: inset 0 0 0 1px #2E3577; }
+  html[data-tema="oscuro"] .card, html[data-tema="oscuro"] .pcard, html[data-tema="oscuro"] .ig-tile { --ink-inv: #F4F1EC; }
+  html[data-tema="oscuro"] .c-yellow, html[data-tema="oscuro"] .c-green, html[data-tema="oscuro"] .c-peach, html[data-tema="oscuro"] .c-sand, html[data-tema="oscuro"] .c-grey, html[data-tema="oscuro"] .c-wa,
+  html[data-tema="oscuro"] .p-hab, html[data-tema="oscuro"] .p-aster, html[data-tema="oscuro"] .p-tan, html[data-tema="oscuro"] .p-white { --ink-inv: #F4F1EC; --ink-dark: #111144; --ink-dark-2: #3B3F6B; --ink-soft: rgba(17,17,68,.62); --ink: #111144; --ink-2: #3B3F6B; color: #111144; }
+  html[data-tema="oscuro"] .att.ig-amarillo:not(.on), html[data-tema="oscuro"] .att.ig-rojo:not(.on) { color: #111144; }
+  html[data-tema="oscuro"] .att.ig-amarillo:not(.on) .muted, html[data-tema="oscuro"] .att.ig-rojo:not(.on) .muted { color: #3B3F6B; }
+  html[data-tema="oscuro"] .ig-mi .name-btn.ig-amarillo, html[data-tema="oscuro"] .ig-mi .name-btn.ig-rojo { color: #111144; }
+  html[data-tema="oscuro"] .wa-mini { background: #252B6B; color: #C9D3F0; }
+  html[data-tema="oscuro"] .brand-mark img { filter: brightness(0) invert(1); }
+  html[data-tema="oscuro"] input::placeholder, html[data-tema="oscuro"] textarea::placeholder { color: #7F87B5; }
+  html[data-tema="oscuro"] .anun-box, html[data-tema="oscuro"] mark { color: #111144; }
 </style>
 </head>
 <body>
@@ -737,7 +766,7 @@
   <section id="v-home" class="hidden">
     <div class="top">
       <span class="pill"><span class="dot"><img src="data:image/png;base64,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" alt=""></span><span id="role-label">Mi acceso</span></span>
-      <div class="top-der"><button class="campana" id="campana" data-go="avisos" aria-label="Avisos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><b id="campana-n" class="hidden"></b></button><div class="avatar" id="avatar">·</div></div>
+      <div class="top-der"><button class="campana" id="campana" data-go="avisos" aria-label="Avisos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><b id="campana-n" class="hidden"></b></button><button class="avatar" id="avatar" data-go="perfil" aria-label="Mi perfil">·</button></div>
     </div>
     <div class="big-hdr"><div class="big-t" id="hello">Hola</div><div class="big-d" id="hoy-txt"></div></div>
     <div id="cumple-box"></div>
@@ -839,7 +868,7 @@
   </section>
   <section id="v-admin" class="hidden"><div class="top"><button class="back" data-go="home" aria-label="Volver"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button></div>
     <div class="page-title">Administración</div><div class="hello-sub" id="ad-sub">Acceso a la app, roles y familias</div>
-    <div class="tabs scroll" id="ad-tabs"><button data-tab="usuarios" class="on">Con acceso</button><button data-tab="dar">Dar acceso</button><button data-tab="familias">Familias</button><button data-tab="censo">Censo</button><button data-tab="borrar">Borrar datos</button></div>
+    <div class="tabs scroll" id="ad-tabs"><button data-tab="usuarios" class="on">Con acceso</button><button data-tab="dar">Dar acceso</button><button data-tab="familias">Familias</button><button data-tab="censo">Censo</button><button data-tab="solicitudes">Solicitudes</button><button data-tab="borrar">Borrar datos</button></div>
     <div id="ad-body"></div></section>
 
   <section id="v-formacion" class="hidden"><div class="top"><button class="back" data-go="home" aria-label="Volver"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button></div>
@@ -854,6 +883,8 @@
     <div class="page-title">Finanzas</div><div class="hello-sub">Ingresos de Arco Ríos por mes y por semana · solo Consejo</div><div id="fz-body"></div></section>
 
   <!-- ================= AVISOS ================= -->
+  <section id="v-perfil" class="hidden"><div class="top"><button class="back" data-go="home" aria-label="Volver"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button></div>
+    <div class="page-title">Mi perfil</div><div id="pf-body"></div></section>
   <section id="v-avisos" class="hidden"><div class="top"><button class="back" data-go="home" aria-label="Volver"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button></div>
     <div class="page-title">Avisos</div><div class="hello-sub" id="av-sub">Notificaciones de Arco Ríos · versión 23-nov v11</div><div id="av-body"></div></section>
 
@@ -1196,11 +1227,12 @@ function marcarSoloVer(vista, forzar) {
   let chip = sec.querySelector(".sv-chip");
   if (sv && !chip) { chip = document.createElement("div"); chip.className = "sv-chip"; chip.textContent = "👁 Solo lectura"; sec.querySelector(".top")?.appendChild(chip); }
 }
-function avisoSoloVer() {
+function toast(texto, ms = 3200) {
   let t = $("toast"); if (!t) { t = document.createElement("div"); t.id = "toast"; t.className = "toast"; document.body.appendChild(t); }
-  t.textContent = "Solo lectura: esta página la edita su equipo."; t.classList.add("on");
-  clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove("on"), 2200);
+  t.textContent = texto; t.classList.add("on");
+  clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove("on"), ms);
 }
+function avisoSoloVer() { toast("Solo lectura: esta página la edita su equipo.", 2200); }
 // Botones que solo muestran o navegan; todo lo demás se bloquea en «solo-ver»
 const SV_PERMITIDO = ".back, .date, .dates button, .tabs button, [data-go], [data-tab], [data-kt], [data-fecha], [data-pf], [data-pdf], [data-of], [data-ver], .ok-ver, #bv-fil button, a, summary";
 document.addEventListener("click", (e) => {
@@ -1212,7 +1244,7 @@ document.addEventListener("click", (e) => {
 
 // ---------------- Navegación ----------------
 function show(view) {
-  for (const v of ["login", "home", "resumen", "soon", "anfitriones", "kidz", "padres", "domingo", "worship", "bienvenida", "igho", "clave", "admin", "tablero", "formacion", "stand", "difusion", "avisos", "censo", "finanzas"]) $("v-" + v).classList.toggle("hidden", v !== view);
+  for (const v of ["login", "home", "resumen", "soon", "anfitriones", "kidz", "padres", "domingo", "worship", "bienvenida", "igho", "clave", "admin", "tablero", "formacion", "stand", "difusion", "avisos", "censo", "finanzas", "perfil"]) $("v-" + v).classList.toggle("hidden", v !== view);
   marcarSoloVer(view);
   if (typeof INFORMES !== "undefined" && INFORMES && INFORMES[view]) botonInforme(view);
   document.body.classList.toggle("modo-tablero", view === "tablero");
@@ -1232,8 +1264,9 @@ function abrir(id) {
   if (id === "domingo") { show("domingo"); return abrirDomingo(); }
   if (id === "worship") { show("worship"); return abrirWorship("domingo"); }
   if (id === "bienvenida") { show("bienvenida"); return abrirBienvenida(); }
+  if (id === "perfil") { show("perfil"); return abrirPerfil(); }
   if (id === "igho") { show("igho"); return abrirIgho(); }
-  if (id === "admin") { if (!ctx.roles.has("admin")) return show("home"); show("admin"); return abrirAdmin("usuarios"); }
+  if (id === "admin") { if (!ctx.roles.has("admin")) return show("home"); show("admin"); const t = ad.tab === "solicitudes" ? "solicitudes" : "usuarios"; ad.tab = "usuarios"; return abrirAdmin(t); }
   if (id === "tablero") { show("tablero"); return abrirTablero(); }
   if (id === "consejo") { show("tablero"); return abrirTablero("consejo"); }
   if (id === "formacion") { show("formacion"); return abrirFormacion(null); }
@@ -2644,6 +2677,104 @@ async function abrirUnaClaseBv(id) {
   });
 }
 
+// =================== MI PERFIL (toca tu inicial arriba a la derecha) ===================
+// Mis datos, contraseña, tema claro/oscuro y pedir servir en un ministerio
+function temaActual() { return document.documentElement.dataset.tema === "oscuro" ? "oscuro" : "claro"; }
+function ponerTema(t) {
+  document.documentElement.dataset.tema = t === "oscuro" ? "oscuro" : "";
+  try { localStorage.setItem("tema", t); } catch {}
+  document.querySelector('meta[name="theme-color"]')?.setAttribute("content", t === "oscuro" ? "#111144" : "#F4F1EC");
+}
+async function abrirPerfil() {
+  const body = $("pf-body");
+  body.innerHTML = '<div class="loading">Cargando…</div>';
+  const [md, sol] = await Promise.all([sb.rpc("mis_datos"), sb.from("solicitudes_ministerio").select("*").eq("user_id", ctx.user.id).order("creado_en", { ascending: false })]);
+  const yo = md.data?.[0] || null, usuario = (ctx.user.email || "").replace(`@${DOMINIO}`, "");
+  const mins = MIN_ROLES.filter(([c]) => !ctx.ministerios.has(c));
+  const ESTADO = { pendiente: "En revisión", aprobada: "✓ Aprobada", rechazada: "No aprobada" };
+  body.innerHTML = `
+    <div class="pf-head"><div class="pf-av">${esc((ctx.nombre || "·")[0].toUpperCase())}</div><div><b>${esc(ctx.nombreCompleto || ctx.nombre)}</b><span>${esc($("role-label").textContent)} · ${esc(usuario)}</span></div></div>
+    <div class="panel"><h4>Mis datos</h4>
+      ${md.error ? `<div class="muted err">${esc(md.error.message)}${/mis_datos/.test(md.error.message) ? " (falta ejecutar 29_perfil_foto_igho.sql)" : ""}</div>`
+        : !yo ? '<div class="muted">Tu cuenta todavía no está unida a tu ficha. Pide al administrador que la una.</div>'
+        : `<div class="two"><div><label>Nombres</label><input id="pf-n" value="${esc(yo.nombres || "")}"></div><div><label>Apellidos</label><input id="pf-a" value="${esc(yo.apellidos || "")}"></div></div>
+          <label>Celular</label><input id="pf-t" type="tel" inputmode="tel" value="${esc(yo.telefono || "")}" placeholder="09…">
+          <label>Fecha de nacimiento</label><input id="pf-f" type="date" max="${ymd(new Date())}" value="${esc(yo.fecha_nacimiento || "")}">
+          <button class="btn-primary" id="pf-ok">Guardar mis datos</button>`}
+      <div class="ok" id="pf-msg"></div></div>
+    <div class="panel"><h4>Apariencia</h4>
+      <div class="seg" id="pf-tema">${[["claro", "☀️ Claro"], ["oscuro", "🌙 Oscuro"]].map(([v, t]) => `<button type="button" data-t="${v}" class="${temaActual() === v ? "on" : ""}">${t}</button>`).join("")}</div></div>
+    <div class="panel"><h4>Cambiar contraseña</h4>
+      <label>Nueva contraseña</label><input id="pf-c1" type="password" autocomplete="new-password" placeholder="Al menos 8 caracteres">
+      <label>Repítela</label><input id="pf-c2" type="password" autocomplete="new-password">
+      <button class="btn-primary" id="pf-c-ok">Cambiar contraseña</button><div class="ok" id="pf-c-msg"></div></div>
+    <div class="panel"><h4>Quiero servir en un ministerio</h4>
+      <div class="hint">Pide acceso y el administrador lo revisa. Te llega un aviso cuando lo apruebe.</div>
+      ${ctx.ministerios.size ? `<div class="sts">${[...ctx.ministerios].map((c) => `<span class="st yes">✓ ${esc(MIN_NOMBRE[c] || c)}</span>`).join("")}</div>` : ""}
+      ${mins.length ? `<label>Ministerio</label><select id="pf-min">${opciones(mins, mins[0][0])}</select>
+        <label>Mensaje (opcional)</label><textarea id="pf-min-m" placeholder="Ej.: toco guitarra, puedo los domingos de 9:00"></textarea>
+        <button class="btn-primary" id="pf-min-ok">Pedir acceso</button><div class="ok" id="pf-min-msg"></div>` : '<div class="muted">Ya tienes acceso a todos los ministerios.</div>'}
+      ${(sol.data || []).length ? `<div style="margin-top:12px">${sol.data.map((x) => `<div class="li"><span>${esc(MIN_NOMBRE[x.ministerio] || x.ministerio)} <span class="muted">· ${fmtCorta.format(new Date(x.creado_en))}</span></span><span class="st ${x.estado === "aprobada" ? "yes" : ""}">${ESTADO[x.estado]}</span></div>`).join("")}</div>` : ""}</div>
+    <button class="btn-sec" id="pf-salir" style="width:100%;margin-top:14px">Cerrar sesión</button>`;
+  $("pf-ok")?.addEventListener("click", async () => {
+    const msg = $("pf-msg"); msg.classList.remove("err");
+    const telEsc = $("pf-t").value.trim(), tel = normalizarTelefono(telEsc);
+    if (!$("pf-n").value.trim()) { msg.classList.add("err"); return (msg.textContent = "Escribe tu nombre."); }
+    if (telEsc && tel.length !== 10) { msg.classList.add("err"); return (msg.textContent = "El celular debe tener 10 dígitos (09…)."); }
+    $("pf-ok").disabled = true;
+    const { error } = await sb.rpc("guardar_mis_datos", { p_nombres: $("pf-n").value, p_apellidos: $("pf-a").value, p_telefono: tel, p_fecha_nacimiento: $("pf-f").value || null });
+    $("pf-ok").disabled = false;
+    if (error) { msg.classList.add("err"); return (msg.textContent = error.message); }
+    ctx.nombre = $("pf-n").value.trim().split(" ")[0];
+    ctx.nombreCompleto = `${ctx.nombre} ${$("pf-a").value.trim().split(" ")[0]}`.trim();
+    pintarHome(); msg.textContent = "✓ Guardado";
+  });
+  $("pf-tema").querySelectorAll("button").forEach((b) => b.addEventListener("click", () => {
+    ponerTema(b.dataset.t); $("pf-tema").querySelectorAll("button").forEach((y) => y.classList.toggle("on", y === b));
+  }));
+  $("pf-c-ok").addEventListener("click", async () => {
+    const a = $("pf-c1").value, b = $("pf-c2").value, msg = $("pf-c-msg"); msg.classList.add("err");
+    if (a.length < 8) return (msg.textContent = "La contraseña debe tener al menos 8 caracteres.");
+    if (a !== b) return (msg.textContent = "Las dos contraseñas no coinciden.");
+    $("pf-c-ok").disabled = true;
+    const { error } = await sb.auth.updateUser({ password: a, data: { cambiar_clave: false } });
+    $("pf-c-ok").disabled = false;
+    if (error) return (msg.textContent = "No se pudo: " + error.message);
+    $("pf-c1").value = $("pf-c2").value = ""; msg.classList.remove("err"); msg.textContent = "✓ Contraseña cambiada";
+  });
+  $("pf-min-ok")?.addEventListener("click", async () => {
+    const msg = $("pf-min-msg"); msg.classList.remove("err");
+    $("pf-min-ok").disabled = true;
+    const { data: r, error } = await sb.rpc("solicitar_ministerio", { p_ministerio: $("pf-min").value, p_mensaje: $("pf-min-m").value, p_nombre: ctx.nombreCompleto });
+    $("pf-min-ok").disabled = false;
+    if (error) { msg.classList.add("err"); return (msg.textContent = error.message + (/solicitar_ministerio/.test(error.message) ? " (falta ejecutar 29_perfil_foto_igho.sql)" : "")); }
+    if (r?.aviso) sb.functions.invoke(FUNCION_AVISOS, { body: { accion: "enviar_interes", id: r.aviso } }).catch(() => {});
+    abrirPerfil().then(() => ($("pf-min-msg") && ($("pf-min-msg").textContent = "✓ Pedido enviado al administrador")));
+  });
+  $("pf-salir").addEventListener("click", () => $("logout").click());
+}
+
+// ---- Administración → Solicitudes para servir en un ministerio ----
+async function adSolicitudes() {
+  const body = $("ad-body");
+  body.innerHTML = '<div class="loading">Cargando…</div>';
+  const { data, error } = await sb.from("solicitudes_ministerio").select("*").order("creado_en", { ascending: false }).limit(80);
+  if (error) { body.innerHTML = `<div class="soon">${esc(error.message)}${/solicitudes_ministerio/.test(error.message) ? "<br>Falta ejecutar 29_perfil_foto_igho.sql." : ""}</div>`; return; }
+  const pend = data.filter((x) => x.estado === "pendiente"), resto = data.filter((x) => x.estado !== "pendiente");
+  body.innerHTML = `<div class="panel"><h4>Pendientes (${pend.length})</h4>
+      ${pend.map((x) => `<div class="nuevo"><b>${esc(x.nombre || "Alguien")}</b> <span class="muted">quiere servir en</span> <b>${esc(MIN_NOMBRE[x.ministerio] || x.ministerio)}</b>
+        <div class="muted">${fmtCorta.format(new Date(x.creado_en))}</div>${x.mensaje ? `<div class="knota">«${esc(x.mensaje)}»</div>` : ""}
+        <div class="row-btns" style="margin-top:8px;flex-wrap:wrap"><button class="btn-sec mini" data-ap="${x.id}" data-n="servidor">Aprobar como ${esc(NIVEL_SIERVO[x.ministerio] || "Siervo")}</button><button class="btn-sec mini" data-ap="${x.id}" data-n="lider_ministerio">Aprobar como Líder</button><button class="btn-sec mini danger" data-no="${x.id}">No aprobar</button></div></div>`).join("") || '<div class="muted">No hay solicitudes pendientes.</div>'}</div>
+    ${resto.length ? `<div class="panel"><h4>Anteriores</h4>${resto.map((x) => `<div class="li"><span>${esc(x.nombre || "")} · ${esc(MIN_NOMBRE[x.ministerio] || x.ministerio)}<span class="muted"> · ${fmtCorta.format(new Date(x.resuelto_en || x.creado_en))}</span></span><span class="st ${x.estado === "aprobada" ? "yes" : ""}">${x.estado === "aprobada" ? (x.nivel === "lider_ministerio" ? "Líder" : "Aprobada") : "No aprobada"}</span></div>`).join("")}</div>` : ""}`;
+  const resolver = async (id, ok, nivel) => {
+    const { error: e } = await sb.rpc("resolver_solicitud", { p_id: id, p_aprobar: ok, p_nivel: nivel || null, p_quien: ctx.nombreCompleto });
+    if (e) return alert(e.message);
+    adSolicitudes(); cargarMisAvisos();
+  };
+  body.querySelectorAll("[data-ap]").forEach((b) => b.addEventListener("click", () => resolver(+b.dataset.ap, true, b.dataset.n)));
+  body.querySelectorAll("[data-no]").forEach((b) => b.addEventListener("click", () => confirm("¿No aprobar esta solicitud? La persona recibirá un aviso.") && resolver(+b.dataset.no, false)));
+}
+
 // =================== FINANZAS · INGRESOS ===================
 // finanzas_ingresos: tipo 'semana' (1–5), 'ajuste' o 'mes' (solo total del mes). Gastos: cuando llegue el informe.
 const FZ_MESES = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
@@ -3104,8 +3235,8 @@ const igActual = () => ig.lista.find((g) => g.id === ig.sel);
 const rolIgho = (p) => p.igho_rol || (igActual()?.lider_persona_id === p.id ? "lider" : "asistente");
 const ordenRol = (p) => IG_ROLES.findIndex(([v]) => v === rolIgho(p));
 async function abrirIgho() {
-  let { data, error } = await sb.from("igho").select("id, nombre, supervisor_nombre, lider_persona_id, direccion, horario, mapas, presentacion").eq("activo", true).order("nombre");
-  if (error && /presentacion/.test(error.message)) ({ data, error } = await sb.from("igho").select("id, nombre, supervisor_nombre, lider_persona_id, direccion, horario, mapas").eq("activo", true).order("nombre"));
+  let { data, error } = await sb.from("igho").select("id, nombre, supervisor_nombre, lider_persona_id, direccion, horario, mapas, categorias").eq("activo", true).order("nombre");
+  if (error && /categorias/.test(error.message)) ({ data, error } = await sb.from("igho").select("id, nombre, supervisor_nombre, lider_persona_id, direccion, horario, mapas").eq("activo", true).order("nombre"));
   if (error && /direccion|horario|mapas/.test(error.message)) ({ data, error } = await sb.from("igho").select("id, nombre, supervisor_nombre, lider_persona_id").eq("activo", true).order("nombre"));
   if (error) { $("ig-body").innerHTML = `<div class="soon">${esc(error.message)}</div>`; return; }
   ig.lista = data;
@@ -3425,102 +3556,157 @@ async function pintarResumenIgho() {
 }
 
 // ---------- Compartir: tarjeta del IGHO ----------
-// Mismo texto que reciben las personas desde el Stand y Bienvenida
+// Categorías del IGHO (botones en Compartir; salen en la tarjeta y en el WhatsApp)
+const IG_CATS = [["ninos", "Espacio para niños", "🧒"], ["menores18", "IGHO -18 años", "🎒"]];
+const catsIgho = (g) => IG_CATS.filter(([v]) => (g?.categorias || []).includes(v));
+// ¿El nombre del IGHO ya es el nombre del líder? Entonces no se repite en la tarjeta
+const nomNorm = (t) => String(t || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+const liderEnNombre = (g) => !!g?.lider && nomNorm(g.nombre).includes(nomNorm(g.lider.split(" ")[0]));
+// Mismo texto que reciben las personas desde el Stand y Bienvenida (siempre con el enlace de Google Maps)
 function tarjetaIghoTexto(g) {
   if (!g) return "";
   const m = g.mapas || [], nom = /^igho\b/i.test(g.nombre || "") ? g.nombre : `IGHO ${g.nombre}`;
   return `🏠 *${nom}* · Arco Ríos`
-    + (g.presentacion ? `\n${g.presentacion}` : "")
+    + catsIgho(g).map(([, t, e]) => `\n${e} ${t}`).join("")
     + (g.horario ? `\n\n🗓 ${g.horario}` : "") + (g.direccion ? `\n📍 ${g.direccion}` : "")
     + (m.length === 1 ? `\n🗺 Ubicación: ${m[0]}` : m.map((u, i) => `\n🗺 Ubicación ${i + 1}: ${u}`).join(""))
     + (g.lider ? `\n👤 Líder: ${g.lider}${g.lider_tel ? " · " + g.lider_tel : ""}` : "");
 }
-// Tarjeta del IGHO al estilo tarjeta de presentación: paisaje a la izquierda, panel Deep Space Royal a la derecha
-async function dibujarTarjetaIgho(g) {
-  const W = 1050, H = 600, c = document.createElement("canvas"); c.width = W; c.height = H;
+// Tarjeta del IGHO al estilo tarjeta de presentación:
+// a la izquierda la foto que sube el líder (o un paisaje), a la derecha el panel Deep Space Royal
+const TJ = { W: 1050, H: 600, top: 380, bottom: 560, R: 990 };
+const tjBorde = (y) => TJ.top + (TJ.bottom - TJ.top) * (y / TJ.H);      // borde izquierdo del panel a esa altura
+const tjAncho = (yBase, alto) => TJ.R - (tjBorde(Math.min(TJ.H, yBase + 6)) + 30);   // ancho libre para una línea
+async function dibujarTarjetaIgho(g, foto) {
+  const { W, H, R } = TJ, c = document.createElement("canvas"); c.width = W; c.height = H;
   const x = c.getContext("2d");
-  try { await Promise.all(["700 80px Outfit", "500 30px Outfit", "400 26px Outfit"].map((f) => document.fonts.load(f))); } catch {}
-  // Paisaje (cielo, nube, sol y lomas con la paleta)
-  x.save(); x.beginPath(); x.moveTo(0, 0); x.lineTo(380, 0); x.lineTo(560, H); x.lineTo(0, H); x.closePath(); x.clip();
-  const cielo = x.createLinearGradient(0, 0, 0, H); cielo.addColorStop(0, "#C3CDE8"); cielo.addColorStop(.75, "#F4F1EC"); x.fillStyle = cielo; x.fillRect(0, 0, W, H);
-  x.fillStyle = "#F98513"; x.beginPath(); x.arc(330, 430, 58, 0, Math.PI * 2); x.fill();
-  x.fillStyle = "#FFFFFF"; [[115, 118, 52], [168, 92, 64], [228, 122, 44], [140, 140, 40], [200, 142, 36]].forEach(([cx, cy, r]) => { x.beginPath(); x.arc(cx, cy, r, 0, Math.PI * 2); x.fill(); });
-  x.fillStyle = "#9BACD8"; x.beginPath(); x.moveTo(0, 430); x.bezierCurveTo(140, 380, 280, 420, 600, 470); x.lineTo(600, H); x.lineTo(0, H); x.fill();
-  x.fillStyle = "#DAD1C8"; x.beginPath(); x.moveTo(0, 500); x.bezierCurveTo(160, 450, 330, 455, 600, 505); x.lineTo(600, H); x.lineTo(0, H); x.fill();
+  try { await Promise.all(["700 80px Outfit", "600 28px Outfit", "400 30px Outfit"].map((f) => document.fonts.load(f))); } catch {}
+  // Izquierda: foto recortada o paisaje
+  x.save(); x.beginPath(); x.moveTo(0, 0); x.lineTo(TJ.top + 2, 0); x.lineTo(TJ.bottom + 2, H); x.lineTo(0, H); x.closePath(); x.clip();
+  const img = foto ? await new Promise((ok) => { const i = new Image(); i.onload = () => ok(i); i.onerror = () => ok(null); i.src = foto; }) : null;
+  if (img) {
+    const bw = TJ.bottom + 2, s = Math.max(bw / img.width, H / img.height);
+    x.drawImage(img, (bw - img.width * s) / 2, (H - img.height * s) / 2, img.width * s, img.height * s);
+  } else {
+    const cielo = x.createLinearGradient(0, 0, 0, H); cielo.addColorStop(0, "#C3CDE8"); cielo.addColorStop(.75, "#F4F1EC"); x.fillStyle = cielo; x.fillRect(0, 0, W, H);
+    x.fillStyle = "#F98513"; x.beginPath(); x.arc(330, 430, 58, 0, Math.PI * 2); x.fill();
+    x.fillStyle = "#FFFFFF"; [[115, 118, 52], [168, 92, 64], [228, 122, 44], [140, 140, 40], [200, 142, 36]].forEach(([cx, cy, r]) => { x.beginPath(); x.arc(cx, cy, r, 0, Math.PI * 2); x.fill(); });
+    x.fillStyle = "#9BACD8"; x.beginPath(); x.moveTo(0, 430); x.bezierCurveTo(140, 380, 280, 420, 600, 470); x.lineTo(600, H); x.lineTo(0, H); x.fill();
+    x.fillStyle = "#DAD1C8"; x.beginPath(); x.moveTo(0, 500); x.bezierCurveTo(160, 450, 330, 455, 600, 505); x.lineTo(600, H); x.lineTo(0, H); x.fill();
+  }
   x.restore();
   // Panel de color
-  x.fillStyle = "#223382"; x.beginPath(); x.moveTo(380, 0); x.lineTo(W, 0); x.lineTo(W, H); x.lineTo(560, H); x.closePath(); x.fill();
-  // Nombre (hasta 2 líneas, se achica si no cabe)
-  const R = 990, ancho = 480;
-  const partir = (t, max) => { const ps = t.split(/\s+/), ls = []; let l = ""; ps.forEach((w) => { const n = l ? l + " " + w : w; if (x.measureText(n).width > max && l) { ls.push(l); l = w; } else l = n; }); if (l) ls.push(l); return ls; };
-  let fs = 86, lineas;
-  do { x.font = `700 ${fs}px Outfit, Arial, sans-serif`; lineas = partir(g.nombre || "IGHO", ancho); fs -= 4; } while ((lineas.length > 2 || lineas.some((l) => x.measureText(l).width > ancho)) && fs > 40);
-  fs += 4;
-  x.textAlign = "right"; x.textBaseline = "alphabetic"; x.fillStyle = "#F4F1EC";
-  let y = 70 + fs;
-  // Casita en círculo Aster, a la izquierda de la primera línea
-  const w1 = x.measureText(lineas[0]).width, ic = Math.round(fs * .82), icx = R - w1 - 18 - ic / 2, icy = y - fs * .36;
+  x.fillStyle = "#223382"; x.beginPath(); x.moveTo(TJ.top, 0); x.lineTo(W, 0); x.lineTo(W, H); x.lineTo(TJ.bottom, H); x.closePath(); x.fill();
+  x.textAlign = "right"; x.textBaseline = "alphabetic";
+  const partir = (t, maxDe) => { const ps = String(t).split(/\s+/), ls = []; let l = ""; ps.forEach((w) => { const n = l ? l + " " + w : w; if (x.measureText(n).width > maxDe(ls.length) && l) { ls.push(l); l = w; } else l = n; }); if (l) ls.push(l); return ls; };
+  const cortar = (t, max) => { let s = t; while (x.measureText(s).width > max && s.length > 3) s = s.slice(0, -2).trimEnd() + "…"; return s; };
+  // Nombre (hasta 2 líneas, se achica hasta que quepa con la casita, sin pasar al lado de la foto)
+  let fs = 84, lineas, y0, ic;
+  for (;;) {
+    x.font = `700 ${fs}px Outfit, Arial, sans-serif`; ic = Math.round(fs * .8); y0 = 62 + fs;
+    const max = (i) => tjAncho(y0 + i * fs * 1.02) - (i === 0 ? ic + 18 : 0);
+    lineas = partir(g.nombre || "IGHO", max);
+    if ((lineas.length <= 2 && lineas.every((l, i) => x.measureText(l).width <= max(i))) || fs <= 40) break;
+    fs -= 4;
+  }
+  x.fillStyle = "#F4F1EC";
+  lineas.slice(0, 2).forEach((l, i) => x.fillText(l, R, y0 + i * fs * 1.02));
+  // Casita en círculo Aster a la izquierda de la primera línea
+  const w1 = x.measureText(lineas[0]).width, icx = R - w1 - 16 - ic / 2, icy = y0 - fs * .36;
   x.save(); x.fillStyle = "#9BACD8"; x.strokeStyle = "#111144"; x.lineWidth = ic * .05; x.beginPath(); x.arc(icx, icy, ic / 2, 0, Math.PI * 2); x.fill(); x.stroke();
   x.translate(icx - ic / 2, icy - ic / 2); x.scale(ic / 100, ic / 100); x.lineWidth = 6; x.lineJoin = "round"; x.lineCap = "round";
-  x.stroke(new Path2D("M22 51 L50 27 L78 51")); x.stroke(new Path2D("M31 44 V74 H69 V44")); x.stroke(new Path2D("M44 74 V59 H56 V74")); x.stroke(new Path2D("M63 37 V27 H69 V42"));
+  ["M22 51 L50 27 L78 51", "M31 44 V74 H69 V44", "M44 74 V59 H56 V74", "M63 37 V27 H69 V42"].forEach((d) => x.stroke(new Path2D(d)));
   x.restore();
-  x.fillStyle = "#F4F1EC";
-  lineas.forEach((l, i) => x.fillText(l, R, y + i * fs * 1.02));
-  y += (lineas.length - 1) * fs * 1.02 + 46;
-  x.font = "600 28px Outfit, Arial, sans-serif"; x.fillStyle = "#9BACD8";
-  x.fillText("IGLESIA DE HOGAR · ARCO RÍOS", R, y);
-  // Datos abajo a la derecha
-  x.font = "400 31px Outfit, Arial, sans-serif"; x.fillStyle = "#F4F1EC";
-  const datos = [];
+  let y = y0 + (Math.min(lineas.length, 2) - 1) * fs * 1.02 + 46;
+  x.font = "600 27px Outfit, Arial, sans-serif"; x.fillStyle = "#9BACD8";
+  x.fillText(cortar("IGLESIA DE HOGAR · ARCO RÍOS", tjAncho(y)), R, y);
+  // Categorías
+  const cats = catsIgho(g);
+  if (cats.length) {
+    y += 50; x.font = "600 27px Outfit, Arial, sans-serif"; x.fillStyle = "#F98513";
+    x.fillText(cortar(cats.map(([, t]) => t).join("  ·  "), tjAncho(y)), R, y);
+  }
+  // Datos abajo a la derecha (cada línea cabe en el panel a su altura)
+  x.font = "400 30px Outfit, Arial, sans-serif"; x.fillStyle = "#F4F1EC";
+  const lh = 40, datos = [];
   if (g.horario) datos.push(g.horario);
-  if (g.direccion) datos.push(...partir(g.direccion, 470).slice(0, 2));
-  if (g.lider) datos.push(`${g.lider}${g.lider_tel ? " · " + g.lider_tel : ""}`);
-  let yy = H - 46 - (datos.length - 1) * 41;
-  datos.forEach((d) => { let t = d; while (x.measureText(t).width > 470 && t.length > 4) t = t.slice(0, -2) + "…"; x.fillText(t, R, yy); yy += 41; });
+  if (g.direccion) { const ld = partir(g.direccion, () => tjAncho(H - 46 - lh)); if (ld.length > 2) ld[1] += "…"; datos.push(...ld.slice(0, 2)); }
+  if (g.lider || g.lider_tel) datos.push(liderEnNombre(g) ? (g.lider_tel ? `Cel. ${g.lider_tel}` : "") : `${g.lider}${g.lider_tel ? " · " + g.lider_tel : ""}`);
+  const filas = datos.filter(Boolean);
+  let yy = H - 46 - (filas.length - 1) * lh;
+  filas.forEach((d) => { x.fillText(cortar(d, tjAncho(yy)), R, yy); yy += lh; });
   return c;
 }
-function pintarCompartirIgho() {
+// Foto: se recorta del tamaño del lado izquierdo de la tarjeta y se guarda pequeña
+async function prepararFotoIgho(file) {
+  const url = URL.createObjectURL(file);
+  try {
+    const img = await new Promise((ok, mal) => { const i = new Image(); i.onload = () => ok(i); i.onerror = mal; i.src = url; });
+    const w = TJ.bottom + 2, h = TJ.H, c = document.createElement("canvas"); c.width = w; c.height = h;
+    const s = Math.max(w / img.width, h / img.height);
+    c.getContext("2d").drawImage(img, (w - img.width * s) / 2, (h - img.height * s) / 2, img.width * s, img.height * s);
+    return c.toDataURL("image/jpeg", .84);
+  } finally { URL.revokeObjectURL(url); }
+}
+async function pintarCompartirIgho() {
   const g = igActual(), texto = tarjetaIghoTexto(g) + "\n\n¡Te esperamos! 🙌";
-  const falta = [!g.horario && "día y hora", !g.direccion && "dirección", !g.mapas?.length && "mapa", !g.presentacion && "presentación"].filter(Boolean);
+  const falta = [!g.horario && "día y hora", !g.direccion && "dirección", !g.mapas?.length && "enlace de Google Maps"].filter(Boolean);
   $("ig-body").innerHTML = igCab("Compartir") + `
     <img class="tarjeta-ig" id="ig-tarjeta" alt="Tarjeta del IGHO ${esc(g.nombre)}">
-    ${g.presentacion ? `<div class="tarjeta-pres">${esc(g.presentacion).replace(/\n/g, "<br>")}</div>` : ""}
+    <div class="tj-acc solo-edit"><label class="btn-sec mini" style="margin:0">📷 ${"Subir foto"}<input type="file" accept="image/*" id="ig-foto" hidden></label><button class="btn-sec mini hidden" id="ig-foto-x">Quitar foto</button><span class="muted" id="ig-foto-msg"></span></div>
+    <div class="panel solo-edit" style="margin-top:12px"><h4>Este IGHO tiene</h4>
+      <div class="pick" id="ig-cats">${IG_CATS.map(([v, t, e]) => `<button type="button" data-cat="${v}" class="${(g.categorias || []).includes(v) ? "on" : ""}">${e} ${t}</button>`).join("")}</div>
+      <div class="ok" id="ig-cats-msg"></div></div>
     <button class="btn-primary ok-ver" id="ig-img" style="margin-top:12px">Enviar la tarjeta (imagen)</button>
     <a class="btn-sec wa-btn" style="width:100%;display:block;margin-top:8px" href="https://wa.me/?text=${encodeURIComponent(texto)}" target="_blank" rel="noopener">Enviar como texto por WhatsApp</a>
     <button class="btn-sec ok-ver" id="ig-copiar" style="width:100%">Copiar el texto</button>
-    <div class="hint" style="margin:10px 0 18px">Esta tarjeta es la que reciben por WhatsApp las personas que el Stand de información o Bienvenida conectan con tu IGHO.${falta.length ? ` Falta: ${falta.join(", ")}.` : ""}</div>
-    <div class="panel solo-edit"><h4>Presentación</h4>
-      <div class="hint">Unas líneas sobre tu IGHO: quiénes son, qué hacen, si hay niños… Sale en la tarjeta.</div>
-      <textarea id="ig-pres" maxlength="400" placeholder="Ej.: Somos familias jóvenes con niños. Compartimos una cena sencilla, la Palabra y oración.">${esc(g.presentacion || "")}</textarea>
-      <button class="btn-primary" id="ig-pres-ok">Guardar presentación</button><div class="ok" id="ig-pres-msg"></div></div>
+    <div class="hint" style="margin:10px 0 18px">El texto lleva el día, la dirección${g.mapas?.length ? ", el enlace de Google Maps" : ""} y el contacto del líder. Es el mismo que reciben las personas que el Stand o Bienvenida conectan con tu IGHO.${falta.length ? ` <b>Falta: ${falta.join(", ")}</b> (agrégalo abajo).` : ""}</div>
     ${lugarIghoHtml(g)}`;
   igConectarVolver();
   conectarLugarIgho();
-  // Tarjeta como imagen (para mandar por WhatsApp junto con el texto)
-  let lienzo = null;
-  dibujarTarjetaIgho(g).then((c) => { lienzo = c; if ($("ig-tarjeta")) $("ig-tarjeta").src = c.toDataURL("image/png"); });
+  let lienzo = null, foto = null;
+  const redibujar = async () => { lienzo = await dibujarTarjetaIgho(g, foto); if ($("ig-tarjeta")) $("ig-tarjeta").src = lienzo.toDataURL("image/png"); $("ig-foto-x")?.classList.toggle("hidden", !foto); };
+  sb.from("igho_fotos").select("imagen").eq("igho_id", g.id).maybeSingle().then(({ data }) => { foto = data?.imagen || null; redibujar(); });
+  redibujar();
+  $("ig-foto").addEventListener("change", async (e) => {
+    const f = e.target.files?.[0]; if (!f) return;
+    const msg = $("ig-foto-msg"); msg.textContent = "Subiendo…";
+    try {
+      const img = await prepararFotoIgho(f);
+      const { error } = await sb.rpc("guardar_foto_igho", { p_igho: g.id, p_imagen: img, p_quien: ctx.nombreCompleto });
+      if (error) throw new Error(error.message + (/guardar_foto_igho/.test(error.message) ? " (falta ejecutar 29_perfil_foto_igho.sql)" : ""));
+      foto = img; await redibujar(); msg.textContent = "✓ Foto guardada";
+    } catch (err) { msg.textContent = "No se pudo: " + err.message; }
+    e.target.value = "";
+  });
+  $("ig-foto-x").addEventListener("click", async () => {
+    if (!confirm("¿Quitar la foto de la tarjeta?")) return;
+    const { error } = await sb.rpc("guardar_foto_igho", { p_igho: g.id, p_imagen: null, p_quien: ctx.nombreCompleto });
+    if (error) return alert(error.message);
+    foto = null; redibujar(); $("ig-foto-msg").textContent = "";
+  });
+  $("ig-cats").querySelectorAll("[data-cat]").forEach((b) => b.addEventListener("click", async () => {
+    b.classList.toggle("on");
+    const cats = [...$("ig-cats").querySelectorAll("button.on")].map((x) => x.dataset.cat);
+    const { error } = await sb.rpc("guardar_categorias_igho", { p_igho: g.id, p_cats: cats });
+    if (error) { b.classList.toggle("on"); return ($("ig-cats-msg").textContent = error.message + (/guardar_categorias_igho/.test(error.message) ? " (falta ejecutar 29_perfil_foto_igho.sql)" : "")); }
+    g.categorias = cats; $("ig-cats-msg").textContent = "✓ Guardado";
+    pintarCompartirIgho();
+  }));
   $("ig-img").addEventListener("click", async () => {
     if (!lienzo) return;
     const blob = await new Promise((r) => lienzo.toBlob(r, "image/png"));
     const nombre = `Tarjeta IGHO ${g.nombre}.png`, file = new File([blob], nombre, { type: "image/png" });
+    // WhatsApp a veces no pasa el texto junto con la imagen: lo dejamos copiado para pegarlo (lleva el mapa)
+    try { await navigator.clipboard.writeText(texto); } catch {}
     if (navigator.canShare?.({ files: [file] })) {
-      try { await navigator.share({ files: [file], text: texto }); return; } catch (e) { if (e.name === "AbortError") return; }
+      try { await navigator.share({ files: [file], text: texto }); toast("El texto con el mapa quedó copiado: pégalo en el chat si no aparece."); return; } catch (e) { if (e.name === "AbortError") return; }
     }
     const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = nombre; a.click();
     setTimeout(() => URL.revokeObjectURL(a.href), 4000);
-    $("ig-img").textContent = "✓ Imagen descargada: adjúntala en WhatsApp";
+    $("ig-img").textContent = "✓ Imagen descargada · el texto con el mapa está copiado";
   });
   $("ig-copiar").addEventListener("click", async () => { try { await navigator.clipboard.writeText(texto); $("ig-copiar").textContent = "✓ Copiado"; } catch { prompt("Copia la tarjeta:", texto); } });
-  $("ig-pres-ok")?.addEventListener("click", async () => {
-    const msg = $("ig-pres-msg"); msg.classList.remove("err");
-    $("ig-pres-ok").disabled = true;
-    const { error } = await sb.rpc("guardar_tarjeta_igho", { p_igho: g.id, p_presentacion: $("ig-pres").value });
-    $("ig-pres-ok").disabled = false;
-    if (error) { msg.classList.add("err"); msg.textContent = error.message + (/guardar_tarjeta_igho/.test(error.message) ? " (falta ejecutar 28_mi_igho_tarjeta_visitas.sql)" : ""); return; }
-    g.presentacion = $("ig-pres").value.trim() || null;
-    pintarCompartirIgho();
-    $("ig-pres-msg").textContent = "✓ Guardado";
-  });
 }
 
 // ===================================================================
@@ -3647,6 +3833,7 @@ async function abrirAdmin(tab) {
   if (ad.tab === "censo") return adCenso();
   if (!ighosAdmin.length) { const { data } = await sb.from("igho").select("id, nombre").eq("activo", true).order("nombre"); ighosAdmin = data || []; }
   if (ad.tab === "borrar") return adBorrar();
+  if (ad.tab === "solicitudes") return adSolicitudes();
   if (ad.tab === "usuarios") return pintarUsuarios();
   return pintarDarAcceso();
 }
@@ -6011,7 +6198,7 @@ async function abrirStand() {
   if (sel.tipo === "bv") { const { data } = await sb.rpc("bv_lista", { p_clase: sel.clase.id }); bvIns = (data || []).sort((a, b) => (a.creado_en < b.creado_en ? 1 : -1)); }
   const form = sel.tipo === "igho"
     ? `<div class="panel solo-edit"><h4>2. ¿A qué IGHO?</h4>
-        <select id="st-ig"><option value="">Elige el IGHO…</option>${ighosSt.map((g) => `<option value="${g.id}">${esc(g.nombre)}${g.lider ? " · " + esc(g.lider) : ""}${g.ubicacion ? " · " + esc(g.ubicacion) : ""}</option>`).join("")}</select>
+        <select id="st-ig"><option value="">Elige el IGHO…</option>${ighosSt.map((g) => `<option value="${g.id}">${esc(g.nombre)}${(g.categorias || []).includes("ninos") ? " 🧒" : ""}${(g.categorias || []).includes("menores18") ? " 🎒" : ""}${g.lider ? " · " + esc(g.lider) : ""}${g.ubicacion ? " · " + esc(g.ubicacion) : ""}</option>`).join("")}</select>
         <div class="hint" id="st-ig-det"></div></div>
       <div class="panel solo-edit"><h4>3. La persona</h4>
         <input id="st-q" placeholder="Buscar por nombre o celular" autocomplete="off"><div id="st-res"></div>
@@ -6826,7 +7013,7 @@ async function revisarCenso(x) {
 // ===================================================================
 // AVISOS: notificaciones al teléfono + campana dentro de la app
 // ===================================================================
-const VERSION_APP = "25-nov · v14";
+const VERSION_APP = "25-nov · v15";
 const FUNCION_AVISOS = "swift-action"; // Edge Function en Supabase (se muestra como «notificar»)
 const av = { lista: [], noLeidas: 0, timer: null };
 const IR_A = [["", "Página principal"], ["domingo", "Este domingo"], ["anfitriones", "Anfitriones"], ["bienvenida", "Bienvenida"], ["igho", "Mi IGHO"], ["kidz", "Kidz"], ["worship", "Arco Worship"], ["formacion", "Formación Cristiana"], ["stand", "Stand de información"]];
@@ -6846,6 +7033,7 @@ async function irDesdeAviso(ir, id) {
   if (id && !n) { const { data } = await sb.from("notificaciones").select("id, ir_a, tipo, destino").eq("id", id).maybeSingle(); n = data; }
   let dest = n ? n.ir_a : ir === "avisos" ? null : ir;
   if (n?.tipo === "igho") dest = "igho";
+  if (n?.tipo === "solicitud" && dest === "admin") ad.tab = "solicitudes";
   else if (n?.tipo === "servicio" && !ve(dest)) dest = PAGINAS_SERVICIO.find((x) => ctx.ministerios.has(x === "domingo" ? "anuncios" : x) && ve(x)) || null;
   if (id) sb.from("notificaciones_usuarios").update({ leida_en: new Date().toISOString() }).eq("user_id", ctx.user.id).eq("notificacion_id", id).is("leida_en", null).then(() => cargarMisAvisos());
   if (dest === "igho" && n?.destino?.startsWith?.("igho:")) ig.sel = n.destino.slice(5);
