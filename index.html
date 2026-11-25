@@ -755,6 +755,13 @@
   .hm-tile .ig-t { font-size: 16px; } .hm-tile .ig-s { color: var(--ink-soft); max-width: none; }
   .hm-tile:has(.pc-go) .ig-t { margin-top: 56px; }
   .kz-tiles .ig-tile { min-height: 132px; } .kz-tiles .ig-n small { margin-left: 6px; } .ig-tile.ig-wide { grid-column: span 2; min-height: 112px; }
+  /* ---- Botón de sugerencias ---- */
+  .sug-btn { display: inline-flex; align-items: center; gap: 6px; height: 40px; padding: 0 12px; background: var(--habanero); color: var(--depths); border: 0; border-radius: 4px; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .sug-btn svg { width: 18px; height: 18px; }
+  #v-home .sug-btn span { display: none; } #v-home .sug-btn { width: 46px; justify-content: center; padding: 0; border-radius: 50%; height: 46px; }
+  #v-home .pill { white-space: nowrap; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+  .sg-t { font-size: 16px; line-height: 1.45; margin: 8px 0 6px; }
+  .sg-item .kclase-h { gap: 6px; flex-wrap: wrap; }
 </style>
 </head>
 <body>
@@ -895,7 +902,7 @@
   </section>
   <section id="v-admin" class="hidden"><div class="top"><button class="back" data-go="home" aria-label="Volver"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button></div>
     <div class="page-title">Administración</div><div class="hello-sub" id="ad-sub">Acceso a la app, roles y familias</div>
-    <div class="tabs scroll" id="ad-tabs"><button data-tab="usuarios" class="on">Con acceso</button><button data-tab="dar">Dar acceso</button><button data-tab="familias">Familias</button><button data-tab="censo">Censo</button><button data-tab="solicitudes">Solicitudes</button><button data-tab="borrar">Borrar datos</button></div>
+    <div class="tabs scroll" id="ad-tabs"><button data-tab="usuarios" class="on">Con acceso</button><button data-tab="dar">Dar acceso</button><button data-tab="familias">Familias</button><button data-tab="censo">Censo</button><button data-tab="solicitudes">Solicitudes</button><button data-tab="sugerencias">Sugerencias</button><button data-tab="borrar">Borrar datos</button></div>
     <div id="ad-body"></div></section>
 
   <section id="v-formacion" class="hidden"><div class="top"><button class="back" data-go="home" aria-label="Volver"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button></div>
@@ -1293,6 +1300,7 @@ function show(view) {
   for (const v of ["login", "home", "resumen", "soon", "anfitriones", "kidz", "padres", "domingo", "worship", "bienvenida", "igho", "clave", "admin", "tablero", "formacion", "stand", "difusion", "avisos", "censo", "finanzas", "perfil"]) $("v-" + v).classList.toggle("hidden", v !== view);
   marcarSoloVer(view);
   if (typeof INFORMES !== "undefined" && INFORMES && INFORMES[view]) botonInforme(view);
+  if (ctx && !["login", "clave", "censo"].includes(view)) botonSugerencia(view);
   document.body.classList.toggle("modo-tablero", view === "tablero");
   $("nav").classList.toggle("hidden", view === "login" || view === "clave" || view === "censo");
   document.querySelectorAll(".nav [data-go]").forEach((b) => b.classList.toggle("on", b.dataset.go === view));
@@ -1312,7 +1320,7 @@ function abrir(id) {
   if (id === "bienvenida") { show("bienvenida"); return abrirBienvenida(); }
   if (id === "perfil") { show("perfil"); return abrirPerfil(); }
   if (id === "igho") { show("igho"); return abrirIgho(); }
-  if (id === "admin") { if (!ctx.roles.has("admin")) return show("home"); show("admin"); const t = ad.tab === "solicitudes" ? "solicitudes" : "usuarios"; ad.tab = "usuarios"; return abrirAdmin(t); }
+  if (id === "admin") { if (!ctx.roles.has("admin")) return show("home"); show("admin"); const t = ["solicitudes", "sugerencias"].includes(ad.tab) ? ad.tab : "usuarios"; ad.tab = "usuarios"; return abrirAdmin(t); }
   if (id === "tablero") { show("tablero"); return abrirTablero(); }
   if (id === "consejo") { show("tablero"); return abrirTablero("consejo"); }
   if (id === "formacion") { show("formacion"); return abrirFormacion(null); }
@@ -2822,6 +2830,76 @@ async function adSolicitudes() {
   body.querySelectorAll("[data-no]").forEach((b) => b.addEventListener("click", () => confirm("¿No aprobar esta solicitud? La persona recibirá un aviso.") && resolver(+b.dataset.no, false)));
 }
 
+// =================== SUGERENCIAS (botón 💬 arriba a la derecha) ===================
+// Quien prueba la app escribe qué cambiaría; llega a Administración → Sugerencias
+const ICONO_SUG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/><path d="M12 8v4"/><path d="M12 15.5h.01"/></svg>';
+function botonSugerencia(view) {
+  const top = document.querySelector(`#v-${view} .top`); if (!top || top.querySelector(".sug-btn")) return;
+  const b = document.createElement("button");
+  b.type = "button"; b.className = "sug-btn ok-ver"; b.title = "Sugerir un cambio en la app"; b.setAttribute("aria-label", "Sugerir un cambio en la app");
+  b.innerHTML = ICONO_SUG + "<span>Sugerir</span>";
+  b.addEventListener("click", () => dialogoSugerencia(view));
+  const d = topDer(top); d.insertBefore(b, d.firstChild);
+}
+function paginaActual(view) {
+  const nom = { home: "Inicio", resumen: "Resumen", perfil: "Mi perfil", avisos: "Avisos", padres: "Mis niños", tablero: "Tablero del Consejo" }[view]
+    || SECCIONES.find((x) => x.id === view)?.titulo || view;
+  const sub = view === "igho" ? (ig.tab !== "inicio" ? { asistencia: "Asistencia", agregar: "Añadir miembro", cumple: "Cumpleaños", miembros: "Info de miembros", resumen: "Resumen", compartir: "Compartir" }[ig.tab] : "")
+    : view === "kidz" ? (kd.tab !== "inicio" ? (KD_TABS.find(([id]) => id === kd.tab) || [, ""])[1] : "")
+    : view === "admin" ? ($("ad-tabs")?.querySelector("button.on")?.textContent || "")
+    : view === "bienvenida" ? (bvc.tab === "clase" ? "Clase de bienvenida" : "Personas") : "";
+  return sub ? `${nom} › ${sub}` : nom;
+}
+function dialogoSugerencia(view) {
+  const pag = paginaActual(view);
+  const dlg = document.createElement("div"); dlg.className = "dlg";
+  dlg.innerHTML = `<div class="dlg-in"><h4>💬 ¿Qué cambiarías?</h4>
+    <div class="hint">Estás en <b>${esc(pag)}</b>. Cuéntanos qué no funciona, qué falta o cómo lo harías más fácil. Le llega al administrador.</div>
+    <textarea id="sg-t" maxlength="2000" placeholder="Ej.: en la asistencia me gustaría ver primero a los que no vinieron" style="min-height:130px"></textarea>
+    <button class="btn-primary" id="sg-ok">Enviar sugerencia</button><div class="ok" id="sg-msg"></div>
+    <button class="btn-sec" style="width:100%;margin-top:8px" id="sg-x">Cerrar</button></div>`;
+  document.body.appendChild(dlg);
+  const cerrar = () => dlg.remove();
+  dlg.addEventListener("click", (e) => { if (e.target === dlg) cerrar(); });
+  dlg.querySelector("#sg-x").addEventListener("click", cerrar);
+  setTimeout(() => dlg.querySelector("#sg-t").focus(), 50);
+  dlg.querySelector("#sg-ok").addEventListener("click", async () => {
+    const t = dlg.querySelector("#sg-t").value.trim(), msg = dlg.querySelector("#sg-msg"); msg.classList.remove("err");
+    if (!t) { msg.classList.add("err"); return (msg.textContent = "Escribe tu sugerencia."); }
+    dlg.querySelector("#sg-ok").disabled = true;
+    const { data: r, error } = await sb.rpc("enviar_sugerencia", { p_texto: t, p_pagina: pag, p_nombre: ctx.nombreCompleto || ctx.nombre, p_version: VERSION_APP });
+    if (error) { dlg.querySelector("#sg-ok").disabled = false; msg.classList.add("err"); return (msg.textContent = error.message + (/enviar_sugerencia/.test(error.message) ? " (falta ejecutar 30_sugerencias.sql)" : "")); }
+    if (r?.aviso) sb.functions.invoke(FUNCION_AVISOS, { body: { accion: "enviar_interes", id: r.aviso } }).catch(() => {});
+    cerrar(); toast("¡Gracias! Tu sugerencia le llegó al administrador. 🙌");
+  });
+}
+// ---- Administración → Sugerencias ----
+const sg = { filtro: "nueva" };
+async function adSugerencias() {
+  const body = $("ad-body");
+  body.innerHTML = '<div class="loading">Cargando…</div>';
+  const { data, error } = await sb.from("sugerencias_app").select("*").order("creado_en", { ascending: false }).limit(300);
+  if (error) { body.innerHTML = `<div class="soon">${esc(error.message)}${/sugerencias_app/.test(error.message) ? "<br>Falta ejecutar 30_sugerencias.sql." : ""}</div>`; return; }
+  const cuenta = (e) => data.filter((x) => e === "todas" || x.estado === e).length;
+  const lista = data.filter((x) => sg.filtro === "todas" || x.estado === sg.filtro);
+  const EST = { nueva: "Nueva", hecha: "✓ Hecha", descartada: "Descartada" };
+  body.innerHTML = `<div class="panel"><h4>Sugerencias de la app</h4>
+      <div class="hint">Lo que escriben con el botón 💬 Sugerir, arriba a la derecha de cada página.</div>
+      <div class="seg small" id="sg-f">${[["nueva", "Nuevas"], ["hecha", "Hechas"], ["descartada", "Descartadas"], ["todas", "Todas"]].map(([v, t]) => `<button class="${sg.filtro === v ? "on" : ""}" data-f="${v}">${t} (${cuenta(v)})</button>`).join("")}</div>
+      ${lista.map((x) => `<div class="nuevo sg-item"><div class="kclase-h"><span class="st">${esc(x.pagina || "—")}</span><span class="st ${x.estado === "hecha" ? "yes" : ""}">${EST[x.estado]}</span></div>
+        <div class="sg-t">${esc(x.texto).replace(/\n/g, "<br>")}</div>
+        <div class="muted">${esc(x.nombre || "Alguien")} · ${fmtCorta.format(new Date(x.creado_en))} ${new Date(x.creado_en).toLocaleTimeString("es-EC", { hour: "2-digit", minute: "2-digit" })}${x.version ? " · " + esc(x.version) : ""}</div>
+        ${x.nota_admin ? `<div class="knota">${esc(x.nota_admin)}</div>` : ""}
+        <div class="row-btns" style="margin-top:8px;flex-wrap:wrap">${x.estado !== "hecha" ? `<button class="btn-sec mini" data-e="hecha" data-id="${x.id}">✓ Hecha</button>` : ""}${x.estado !== "descartada" ? `<button class="btn-sec mini" data-e="descartada" data-id="${x.id}">Descartar</button>` : ""}${x.estado !== "nueva" ? `<button class="btn-sec mini" data-e="nueva" data-id="${x.id}">↺ Volver a nueva</button>` : ""}<button class="x" data-e="borrar" data-id="${x.id}" aria-label="Borrar">×</button></div></div>`).join("") || '<div class="muted" style="margin-top:10px">Nada aquí.</div>'}</div>`;
+  body.querySelectorAll("#sg-f [data-f]").forEach((b) => b.addEventListener("click", () => { sg.filtro = b.dataset.f; adSugerencias(); }));
+  body.querySelectorAll("[data-e]").forEach((b) => b.addEventListener("click", async () => {
+    if (b.dataset.e === "borrar" && !confirm("¿Borrar esta sugerencia?")) return;
+    const { error: e } = await sb.rpc("estado_sugerencia", { p_id: +b.dataset.id, p_estado: b.dataset.e, p_nota: null });
+    if (e) return alert(e.message);
+    adSugerencias();
+  }));
+}
+
 // =================== FINANZAS · INGRESOS ===================
 // finanzas_ingresos: tipo 'semana' (1–5), 'ajuste' o 'mes' (solo total del mes). Gastos: cuando llegue el informe.
 const FZ_MESES = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
@@ -2916,6 +2994,12 @@ var INFORMES = {
   igho: { t: "IGHO", puede: () => ctx.esAncianoOAdmin || ctx.roles.has("lider_igho") },
 };
 // Pone (o esconde) el botón en la barra de arriba de la página
+// Grupo de botones a la derecha del encabezado de cada página
+function topDer(top) {
+  let d = top.querySelector(".top-der");
+  if (!d) { d = document.createElement("div"); d.className = "top-der"; top.appendChild(d); }
+  return d;
+}
 function botonInforme(view) {
   const top = document.querySelector(`#v-${view} .top`); if (!top) return;
   let b = top.querySelector(".inf-btn");
@@ -2924,7 +3008,7 @@ function botonInforme(view) {
   if (!b) {
     b = document.createElement("button"); b.className = "btn-sec mini inf-btn ok-ver"; b.type = "button";
     b.innerHTML = "📄 Informe"; b.addEventListener("click", () => dialogoInforme(view));
-    top.appendChild(b);
+    topDer(top).appendChild(b);
   }
 }
 function dialogoInforme(view) {
@@ -3887,6 +3971,7 @@ async function abrirAdmin(tab) {
   if (!ighosAdmin.length) { const { data } = await sb.from("igho").select("id, nombre").eq("activo", true).order("nombre"); ighosAdmin = data || []; }
   if (ad.tab === "borrar") return adBorrar();
   if (ad.tab === "solicitudes") return adSolicitudes();
+  if (ad.tab === "sugerencias") return adSugerencias();
   if (ad.tab === "usuarios") return pintarUsuarios();
   return pintarDarAcceso();
 }
@@ -7088,7 +7173,7 @@ async function revisarCenso(x) {
 // ===================================================================
 // AVISOS: notificaciones al teléfono + campana dentro de la app
 // ===================================================================
-const VERSION_APP = "25-nov · v18";
+const VERSION_APP = "25-nov · v19";
 const FUNCION_AVISOS = "swift-action"; // Edge Function en Supabase (se muestra como «notificar»)
 const av = { lista: [], noLeidas: 0, timer: null };
 const IR_A = [["", "Página principal"], ["domingo", "Este domingo"], ["anfitriones", "Anfitriones"], ["bienvenida", "Bienvenida"], ["igho", "Mi IGHO"], ["kidz", "Kidz"], ["worship", "Arco Worship"], ["formacion", "Formación Cristiana"], ["stand", "Stand de información"]];
@@ -7109,6 +7194,7 @@ async function irDesdeAviso(ir, id) {
   let dest = n ? n.ir_a : ir === "avisos" ? null : ir;
   if (n?.tipo === "igho") dest = "igho";
   if (n?.tipo === "solicitud" && dest === "admin") ad.tab = "solicitudes";
+  if (n?.tipo === "sugerencia" && dest === "admin") ad.tab = "sugerencias";
   else if (n?.tipo === "servicio" && !ve(dest)) dest = PAGINAS_SERVICIO.find((x) => ctx.ministerios.has(x === "domingo" ? "anuncios" : x) && ve(x)) || null;
   if (id) sb.from("notificaciones_usuarios").update({ leida_en: new Date().toISOString() }).eq("user_id", ctx.user.id).eq("notificacion_id", id).is("leida_en", null).then(() => cargarMisAvisos());
   if (dest === "igho" && n?.destino?.startsWith?.("igho:")) ig.sel = n.destino.slice(5);

@@ -1,6 +1,6 @@
 # App Iglesia Arco Ríos: project summary (to start a new chat)
 
-Attach this file when you start a new chat. The code lives in GitHub: **`joelguido-beep/Arco-app`** (branch `main`, served by GitHub Pages at https://joelguido-beep.github.io/Arco-app/). The Claude GitHub App is installed, so Claude can clone the repo and push changes directly (no need to attach `index.html`). **Joel's standing instruction: push every finished update straight to `main` on GitHub automatically, without asking first** (index.html, new SQL files and this summary). Joel still runs the SQL in Supabase himself. Current version: **25-nov v18** (shown under the title of the Avisos page; constant `VERSION_APP` in index.html; update both on each release).
+Attach this file when you start a new chat. The code lives in GitHub: **`joelguido-beep/Arco-app`** (branch `main`, served by GitHub Pages at https://joelguido-beep.github.io/Arco-app/). The Claude GitHub App is installed, so Claude can clone the repo and push changes directly (no need to attach `index.html`). **Joel's standing instruction: push every finished update straight to `main` on GitHub automatically, without asking first** (index.html, new SQL files and this summary). Joel still runs the SQL in Supabase himself. Current version: **25-nov v19** (shown under the title of the Avisos page; constant `VERSION_APP` in index.html; update both on each release).
 
 ## What it is
 A web app in Spanish for Arco Ríos (Cuenca). It's a single `index.html` file hosted on **GitHub Pages**, and the data lives in **Supabase** (project `lmitwnfvelwbbkjkvmtb`).
@@ -50,6 +50,8 @@ A web app in Spanish for Arco Ríos (Cuenca). It's a single `index.html` file ho
 30. `28_mi_igho_tarjeta_visitas.sql`: personas.igho_rol (lider / apoyo / anfitrion / asistente; IGHO leaders start as lider) + guardar_rol_igho(); igho.presentacion + guardar_tarjeta_igho(); stand_ighos() also returns presentacion; consejo_visitantes (user_id, conyuge_persona_id, todos_los_igho, sin_conyuge) + guardar_visitante_consejo() (admin; also adds the parentescos link) + conyuge_de_usuario(); cobertura_de_igho() rebuilt (adds column tipo: cobertura | presidente; spouse from consejo_visitantes, else family tree) and registrar_visitas_cobertura() no longer requires coverage; seeds Joel Guido as todos_los_igho, sin_conyuge (his wife doesn't attend IGHO for now)
 
 31. `29_perfil_foto_igho.sql`: igho_fotos (one small JPEG data URL per IGHO, cropped to the card's left side) + guardar_foto_igho(); igho.categorias ('ninos' = Espacio para niños, 'menores18' = IGHO -18 años) + guardar_categorias_igho(); stand_ighos() also returns categorias; mis_datos() / guardar_mis_datos() (own persona through perfiles); solicitudes_ministerio + solicitar_ministerio() (notifies admins, tipo 'solicitud') + resolver_solicitud() (admin approves as servidor / lider_ministerio → inserts usuarios_roles, notifies the person)
+
+32. `30_sugerencias.sql`: sugerencias_app (who, page › section, text, app version, estado nueva/hecha/descartada, nota_admin) + enviar_sugerencia() (any user; notifies admins, notificaciones.tipo 'sugerencia') + estado_sugerencia() (admin: hecha / descartada / nueva / borrar)
 
 ## Roles
 - `admin`, `anciano` (shown as **Miembro del Consejo**), `secretaria`, `finanzas`
@@ -181,6 +183,10 @@ Kidz with QR: camera check-in/check-out (photo confirmation, allergies, parent n
 ## Tiles on home and Kidz (25 Nov 2026, v18)
 - Home is now a 2-column grid of square tiles (pintarMosaico; every 5th tile full width) with icon, live number (or ↗), name and short line; same DATOS_HOME/llenarTarjeta data. Resumen keeps the folder stack.
 - Kidz opens on tiles (kzInicio): Ingreso (niños hoy · siervos), En vivo (en clase ahora), Mi servicio, Registro, Domingo (date), Anuncios, Datos (niños registrados); each opens its section with a title; the top back arrow returns to the Kidz tiles. The tab bar is gone.
+
+## Suggestions button for testers (25 Nov 2026, v19)
+- Every page (except login/census) has an orange «💬 Sugerir» button at the top right (round icon on home). It records the page and section (e.g. «Mi IGHO › Asistencia»), the user and the app version. Admins get a bell notice; Administración → Sugerencias lists them (Nuevas / Hechas / Descartadas / Todas; ✓ Hecha, Descartar, ↺, ×). notificar.ts also pushes tipo 'sugerencia' (after redeploy).
+- topDer(top): right-side group in each page header (Informe and Sugerir live there).
 
 ## Status (23 Nov 2026, end of day)
 - Notifications work on Joel's Android (function `swift-action` deployed with notificar.ts, Verify JWT off).
