@@ -1,6 +1,6 @@
 # App Iglesia Arco Ríos: project summary (to start a new chat)
 
-Attach this file when you start a new chat. The code lives in GitHub: **`joelguido-beep/Arco-app`** (branch `main`, served by GitHub Pages at https://joelguido-beep.github.io/Arco-app/). The Claude GitHub App is installed, so Claude can clone the repo and push changes directly (no need to attach `index.html`). **Joel's standing instruction: push every finished update straight to `main` on GitHub automatically, without asking first** (index.html, new SQL files and this summary). Joel still runs the SQL in Supabase himself. Current version: **25-nov v17** (shown under the title of the Avisos page; constant `VERSION_APP` in index.html; update both on each release).
+Attach this file when you start a new chat. The code lives in GitHub: **`joelguido-beep/Arco-app`** (branch `main`, served by GitHub Pages at https://joelguido-beep.github.io/Arco-app/). The Claude GitHub App is installed, so Claude can clone the repo and push changes directly (no need to attach `index.html`). **Joel's standing instruction: push every finished update straight to `main` on GitHub automatically, without asking first** (index.html, new SQL files and this summary). Joel still runs the SQL in Supabase himself. Current version: **25-nov v18** (shown under the title of the Avisos page; constant `VERSION_APP` in index.html; update both on each release).
 
 ## What it is
 A web app in Spanish for Arco Ríos (Cuenca). It's a single `index.html` file hosted on **GitHub Pages**, and the data lives in **Supabase** (project `lmitwnfvelwbbkjkvmtb`).
@@ -177,6 +177,10 @@ Kidz with QR: camera check-in/check-out (photo confirmation, allergies, parent n
 
 ## Maps link always (25 Nov 2026, v17)
 - mapasIgho(g): the IGHO's saved Google Maps links, or (if none) a Google Maps search link built from the address + «Cuenca, Ecuador». Used in every WhatsApp text (Compartir, Stand, Bienvenida, «Quieren unirse»).
+
+## Tiles on home and Kidz (25 Nov 2026, v18)
+- Home is now a 2-column grid of square tiles (pintarMosaico; every 5th tile full width) with icon, live number (or ↗), name and short line; same DATOS_HOME/llenarTarjeta data. Resumen keeps the folder stack.
+- Kidz opens on tiles (kzInicio): Ingreso (niños hoy · siervos), En vivo (en clase ahora), Mi servicio, Registro, Domingo (date), Anuncios, Datos (niños registrados); each opens its section with a title; the top back arrow returns to the Kidz tiles. The tab bar is gone.
 
 ## Status (23 Nov 2026, end of day)
 - Notifications work on Joel's Android (function `swift-action` deployed with notificar.ts, Verify JWT off).

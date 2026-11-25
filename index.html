@@ -742,6 +742,19 @@
   .c-grey .pc-tab, .c-white .pc-tab, .p-white .pc-tab { box-shadow: inset 1px 1px 0 var(--line), inset -1px 0 0 var(--line), 0 -5px 10px rgba(17,17,68,.06); }
   .pc-sub { max-width: 62%; }
   .pcard.pc-fina > .pc-top, .pcard.pc-fina > .pc-more { opacity: calc(1 - var(--pleg, 0) * 1.6); }
+  /* ---- Inicio y Kidz en mosaicos ---- */
+  .hm-tiles { margin: 0 0 20px; }
+  .hm-tile { min-height: 150px; padding: 16px 16px 18px; }
+  .hm-tile.ig-big { min-height: 178px; }
+  .hm-tile .pc-logo { position: absolute; top: 14px; left: 16px; height: 34px; width: auto; max-width: 70px; object-fit: contain; }
+  .hm-tile .pc-num { position: static; font-size: 46px; line-height: 1; font-weight: 300; letter-spacing: -1px; margin: 44px 0 8px; color: inherit; }
+  .hm-tile.ig-big .pc-num { font-size: 64px; }
+  .hm-tile .pc-num small { font-size: .42em; font-weight: 400; letter-spacing: 0; opacity: .7; margin-left: 3px; }
+  .hm-tile .pc-go { position: absolute; top: 12px; right: 14px; width: 40px; height: 40px; }
+  .hm-tile .pc-go svg { width: 18px; height: 18px; }
+  .hm-tile .ig-t { font-size: 16px; } .hm-tile .ig-s { color: var(--ink-soft); max-width: none; }
+  .hm-tile:has(.pc-go) .ig-t { margin-top: 56px; }
+  .kz-tiles .ig-tile { min-height: 132px; } .kz-tiles .ig-n small { margin-left: 6px; } .ig-tile.ig-wide { grid-column: span 2; min-height: 112px; }
 </style>
 </head>
 <body>
@@ -1003,7 +1016,20 @@ function htmlTarjeta(c, i) {
       <div class="pc-sub">${c.sub ?? ""}</div>${num}</div>
     <div class="pc-more">${c.detail ?? ""}</div></${tag}>`;
 }
+// Inicio en mosaicos: una cuadrícula de 2 columnas; cada 5 mosaicos uno ocupa todo el ancho
+function pintarMosaico(cont, cards) {
+  pilas.delete(cont);
+  cont.classList.add("ig-tiles", "hm-tiles");
+  cont.innerHTML = cards.map((c, i) => {
+    const tag = c.go ? "button" : "div";
+    const num = c.num === null ? `<span class="pc-go">${ARROW}</span>` : `<div class="pc-num">${c.num ?? "·"}${c.unit ? `<small>${c.unit}</small>` : ""}</div>`;
+    return `<${tag} class="ig-tile hm-tile ${c.color} ${i % 5 === 0 ? "ig-big" : ""}" ${c.go ? `data-go="${c.go}"` : ""} data-pc="${esc(c.key)}">
+      ${c.logo ? `<img class="pc-logo lg-${c.logo}" src="${LOGOS[c.logo]}" alt="">` : ""}${num}
+      <div class="ig-t">${c.label}</div><div class="ig-s pc-sub">${c.sub ?? ""}</div><div class="pc-more hidden"></div></${tag}>`;
+  }).join("");
+}
 function pintarPila(cont, cards) {
+  cont.classList.remove("ig-tiles", "hm-tiles");
   cont.innerHTML = cards.map(htmlTarjeta).join("");
   pilas.add(cont); medirPila(cont);
 }
@@ -1016,7 +1042,7 @@ function llenarTarjeta(cont, key, d) {
   }
   if ("sub" in d) el.querySelector(".pc-sub").innerHTML = d.sub ?? "";
   if ("detail" in d) el.querySelector(".pc-more").innerHTML = d.detail ?? "";
-  medirPila(cont);
+  if (pilas.has(cont)) medirPila(cont);
 }
 function medirPila(cont) {
   if (!cont.offsetParent) return;
@@ -1279,7 +1305,7 @@ function abrir(id) {
   if (id === "home") return show("home");
   if (id === "resumen") { show("resumen"); return cargarResumen(); }
   if (id === "anfitriones") { show("anfitriones"); return abrirAnfitriones(); }
-  if (id === "kidz") { show("kidz"); return abrirKidz(); }
+  if (id === "kidz") { show("kidz"); return abrirKidz("inicio"); }
   if (id === "padres") { show("padres"); return abrirPadres(); }
   if (id === "domingo") { show("domingo"); return abrirDomingo(); }
   if (id === "worship") { show("worship"); return abrirWorship("domingo"); }
@@ -1304,6 +1330,7 @@ document.addEventListener("click", (e) => {
   if (!b) return;
   // Mi IGHO: la flecha de arriba vuelve a los mosaicos si hay una sección abierta
   if (b.classList.contains("back") && b.closest("#v-igho") && ig.sel && !$("ig-body").querySelector(".ig-inicio, .loading")) return irIgho("inicio");
+  if (b.classList.contains("back") && b.closest("#v-kidz") && kd.tab && kd.tab !== "inicio") return abrirKidz("inicio");
   abrir(b.dataset.go);
 });
 
@@ -1381,7 +1408,7 @@ function pintarHome() {
   revisarMiCumple().catch((e) => console.warn(e));
   const visibles = SECCIONES.filter((s) => s.ve(ctx));
   if (!visibles.length) { $("cards").innerHTML = `<div class="soon" style="margin:0 13px">Todavía no tienes un rol asignado. Pide a un administrador que te dé acceso.</div>`; return; }
-  pintarPila($("cards"), visibles.map((s) => ({ key: s.id, go: s.id, color: s.color, logo: s.logo, label: ETIQUETA_HOME[s.id] || esc(s.titulo),
+  pintarMosaico($("cards"), visibles.map((s) => ({ key: s.id, go: s.id, color: s.color, logo: s.logo, label: ETIQUETA_HOME[s.id] || esc(s.titulo),
     num: SIN_NUMERO[s.id] ? null : undefined, sub: SIN_NUMERO[s.id] || !DATOS_HOME[s.id] ? esc(s.desc) : "",
     detail: "" })));
   for (const s of visibles) {
@@ -4256,17 +4283,39 @@ const KD_TABS = [
   ["registro", "Registro", () => !soloVer("kidz")], ["plan", "Domingo", () => esLiderKidz() || soloVer("kidz")], ["anuncios", "Anuncios", () => esLiderKidz() || soloVer("kidz")],
   ["datos", "Datos", () => esLiderKidz() || soloVer("kidz")],
 ];
+// Kidz abre en mosaicos; cada mosaico abre su sección y la flecha de arriba vuelve a los mosaicos
+const KD_TILE = { ingreso: ["p-royal ig-big", "Entrada y salida con QR"], vivo: ["p-hab", "niños en clase ahora"], servicio: ["p-aster", "tu código y tu clase"],
+  registro: ["p-tan", "familias y niños nuevos"], plan: ["p-depths", "turnos y actividades"], anuncios: ["p-white", "para los padres"], datos: ["p-aster ig-wide", "asistencia y estadísticas"] };
 async function abrirKidz(tab) {
-  kd.tab = tab || kd.tab;
+  kd.tab = tab || kd.tab || "inicio";
   clearInterval(kd.vivoTimer);
   await cargarClases();
   const tabs = KD_TABS.filter(([, , ve]) => ve());
-  if (!tabs.some(([id]) => id === kd.tab)) kd.tab = tabs[0][0];
-  $("kz-tabs").innerHTML = tabs.map(([id, t]) => `<button data-kt="${id}" class="${id === kd.tab ? "on" : ""}">${t}</button>`).join("");
-  $("kz-tabs").querySelectorAll("[data-kt]").forEach((b) => b.addEventListener("click", () => abrirKidz(b.dataset.kt)));
+  $("kz-tabs").innerHTML = "";
+  if (kd.tab !== "inicio" && !tabs.some(([id]) => id === kd.tab)) kd.tab = "inicio";
+  if (kd.tab === "inicio") return kzInicio(tabs);
   $("kz-body").innerHTML = '<div class="loading">Cargando…</div>';
   const f = { ingreso: kzIngreso, vivo: kzVivo, servicio: kzServicio, registro: kzRegistro, plan: kzPlan, anuncios: kzAnuncios, datos: kzDatos }[kd.tab];
-  try { await f(); } catch (e) { $("kz-body").innerHTML = `<div class="soon">No se pudo cargar. ${esc(e.message)}</div>`; }
+  try { await f(); $("kz-body").insertAdjacentHTML("afterbegin", `<h3 class="ig-sub">${esc((tabs.find(([id]) => id === kd.tab) || [, ""])[1])}</h3>`); window.scrollTo(0, 0); }
+  catch (e) { $("kz-body").innerHTML = `<div class="soon">No se pudo cargar. ${esc(e.message)}</div>`; }
+}
+async function kzInicio(tabs) {
+  const f = hoyKidz();
+  const tile = ([id, t]) => { const [cls, sub] = KD_TILE[id] || ["p-tan", ""]; return `<button class="ig-tile ok-ver ${cls}" data-kt="${id}"><div class="ig-n" data-kn="${id}">${id === "registro" ? "+" : ""}</div><div class="ig-t">${t}</div><div class="ig-s" data-ks="${id}">${sub}</div><span class="ig-arr">↗</span></button>`; };
+  $("kz-body").innerHTML = `<div class="ig-tiles ig-inicio kz-tiles">${tabs.map(tile).join("")}</div>`;
+  $("kz-body").querySelectorAll("[data-kt]").forEach((b) => b.addEventListener("click", () => abrirKidz(b.dataset.kt)));
+  // Números en vivo
+  const pon = (id, n, s) => { const el = $("kz-body").querySelector(`[data-kn="${id}"]`); if (el && n != null) el.innerHTML = n; const es = $("kz-body").querySelector(`[data-ks="${id}"]`); if (es && s) es.textContent = s; };
+  const [c, s, ni] = await Promise.all([
+    sb.from("kidz_checkins").select("id, salida").eq("fecha", f),
+    sb.from("kidz_siervos_dia").select("user_id", { count: "exact", head: true }).eq("fecha", f),
+    sb.from("kidz_ninos").select("id", { count: "exact", head: true }).eq("activo", true),
+  ]);
+  const hoy = c.data?.length || 0, dentro = (c.data || []).filter((x) => !x.salida).length;
+  pon("ingreso", hoy, `niños hoy · ${s.count || 0} siervos`);
+  pon("vivo", dentro);
+  if (ni.count != null) pon("datos", ni.count, "niños registrados · estadísticas");
+  { const d = fromYmd(f); pon("plan", `${d.getDate()}<small>${MESES_BV[d.getMonth()].slice(0, 3)}</small>`); }
 }
 
 // ----- Ingreso -----
@@ -7039,7 +7088,7 @@ async function revisarCenso(x) {
 // ===================================================================
 // AVISOS: notificaciones al teléfono + campana dentro de la app
 // ===================================================================
-const VERSION_APP = "25-nov · v17";
+const VERSION_APP = "25-nov · v18";
 const FUNCION_AVISOS = "swift-action"; // Edge Function en Supabase (se muestra como «notificar»)
 const av = { lista: [], noLeidas: 0, timer: null };
 const IR_A = [["", "Página principal"], ["domingo", "Este domingo"], ["anfitriones", "Anfitriones"], ["bienvenida", "Bienvenida"], ["igho", "Mi IGHO"], ["kidz", "Kidz"], ["worship", "Arco Worship"], ["formacion", "Formación Cristiana"], ["stand", "Stand de información"]];
