@@ -592,6 +592,41 @@
   .cz-fam .kclase-h b { font-size: 16px; }
   .cz-link { background: var(--surface-2); border-radius: 14px; padding: 12px; font-size: 13px; word-break: break-all; margin: 8px 0; }
   .cz-dif { font-size: 13px; color: var(--ink-2); } .cz-dif b { color: var(--yellow); font-weight: 600; }
+  /* ---------- Mi IGHO por mosaicos ---------- */
+  .ig-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
+  .ig-tile { position: relative; display: flex; flex-direction: column; justify-content: flex-end; min-height: 128px; padding: 16px; border-radius: 22px;
+             color: var(--ink-dark); text-align: left; font: inherit; }
+  .ig-tile.ig-big { grid-column: span 2; min-height: 176px; }
+  .ig-tile.ig-tall { grid-row: span 2; }
+  .ig-n { font-size: 46px; line-height: 1; font-weight: 300; letter-spacing: -1px; margin-bottom: 8px; }
+  .ig-big .ig-n { font-size: 68px; }
+  .ig-n small { font-size: .45em; font-weight: 400; letter-spacing: 0; opacity: .7; }
+  .ig-t { font-size: 17px; font-weight: 600; line-height: 1.15; }
+  .ig-s { font-size: 13px; margin-top: 4px; opacity: .75; line-height: 1.25; }
+  .ig-arr { position: absolute; top: 12px; right: 16px; font-size: 20px; opacity: .55; }
+  .ig-res .ig-tile { min-height: 112px; } .ig-res .ig-n { font-size: 38px; }
+  .ig-sub { font-size: 26px; font-weight: 600; margin: 4px 0 14px; }
+  .ig-avisos { border: 2px solid var(--orange); margin-bottom: 12px; }
+  .ig-mi .name-btn:not(.ig-amarillo):not(.ig-rojo) { color: var(--ink); }
+  .ig-avisos.vacio { border: 0; display: flex; flex-direction: column; gap: 4px; padding: 14px 18px; }
+  .ig-avisos.vacio .muted { font-size: 14px; }
+  .ig-leyenda { font-size: 13px; color: var(--ink-2); margin: 0 0 10px; } .ig-leyenda span { margin-left: 6px; }
+  .ig-leyenda .amarillo, .ig-amarillo { color: var(--yellow); } .ig-leyenda .rojo, .ig-rojo { color: var(--coral); }
+  .att.ig-amarillo:not(.on) .ig-nom, .name-btn.ig-amarillo { color: var(--yellow); }
+  .att.ig-rojo:not(.on) .ig-nom, .name-btn.ig-rojo { color: var(--coral); }
+  .att.on .ig-nom small { display: none; }
+  .ig-nom small { display: block; font-size: 12px; font-weight: 400; opacity: .85; }
+  .ig-txt { font-size: 12px; }
+  .ig-mi .row-btns { flex-shrink: 0; }
+  select.ig-rol { width: auto; margin: 0; padding: 8px 10px; font-size: 14px; border-radius: 999px; background: var(--surface-2); }
+  .ig-card { background: var(--sand); color: var(--ink-dark); border-radius: 26px; padding: 22px; margin-bottom: 12px; }
+  .ig-card-top { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; opacity: .7; }
+  .ig-card-top img { width: 26px; height: 26px; border-radius: 50%; background: var(--orange); padding: 4px; }
+  .ig-card-n { font-size: 30px; font-weight: 600; line-height: 1.1; margin: 14px 0 8px; }
+  .ig-card-p { font-size: 15px; line-height: 1.4; margin-bottom: 10px; }
+  .ig-card-l { font-size: 15px; margin-top: 6px; } .ig-card a { color: var(--ink-dark); font-weight: 600; }
+  .home-igho { display: block; width: 100%; text-align: left; background: var(--sky); color: var(--ink-dark); border-radius: 20px; padding: 14px 18px; margin-bottom: 10px; font: inherit; }
+  .home-igho b { display: block; font-size: 16px; } .home-igho span { font-size: 14px; }
 </style>
 </head>
 <body>
@@ -716,7 +751,6 @@
     <div class="page-title"><img class="title-logo ico c-green" data-logo="bien" alt="">Bienvenida</div><div class="hello-sub">Personas nuevas y su seguimiento</div><div id="bv-body"></div></section>
   <section id="v-igho" class="hidden"><div class="top"><button class="back" data-go="home" aria-label="Volver"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button></div>
     <div class="page-title"><img class="title-logo ws" data-logo="igho" alt="">Mi IGHO</div><div id="ig-sel-wrap"></div>
-    <div class="tabs" id="ig-tabs"><button data-tab="miembros" class="on">Miembros</button><button data-tab="asistencia">Asistencia</button><button data-tab="censo">Censo</button></div>
     <div id="ig-body"></div></section>
 
 
@@ -1051,7 +1085,7 @@ const SECCIONES = [
     ve: (r) => r.esAncianoOAdmin || r.conyuge || r.ministerios.has("formacion") },
   { id: "stand", titulo: "Stand de información", logo: "stand", desc: "Anuncios de la semana e inscripciones a clases, eventos y actividades.", color: "c-green", tag: "Domingo",
     ve: (r) => r.esAncianoOAdmin || r.conyuge || r.ministerios.has("stand") || r.lideraMinisterios.has("formacion") },
-  { id: "igho", titulo: "Mi IGHO", logo: "igho", desc: "Miembros, asistencia de cada reunión y censo anual.", color: "c-sky", tag: "Semanal",
+  { id: "igho", titulo: "Mi IGHO", logo: "igho", desc: "Asistencia, miembros, cumpleaños y la tarjeta del IGHO.", color: "c-sky", tag: "Semanal",
     ve: (r) => r.esAncianoOAdmin || r.conyuge || r.roles.has("lider_igho") },
   { id: "resumen", titulo: "Resumen", desc: "Estadísticas de toda la iglesia.", color: "c-sand", tag: "Consejo",
     ve: (r) => r.esAncianoOAdmin || r.conyuge },
@@ -1196,7 +1230,7 @@ async function iniciar() {
   iniciarAvisos();
   // Si llegó tocando una notificación, abre esa página
   const pq = new URLSearchParams(location.search), ir = pq.get("ir");
-  if (ir) { history.replaceState(null, "", location.pathname); if (ir === "avisos" || SECCIONES.some((x) => x.id === ir && x.ve(ctx))) return abrir(ir); }
+  if (ir || pq.get("aviso")) { history.replaceState(null, "", location.pathname); return irDesdeAviso(ir, +pq.get("aviso") || null); }
   // En la computadora, el Consejo entra directo a su tablero
   if (ctx.esAncianoOAdmin && window.matchMedia("(min-width: 1100px)").matches) return abrir("tablero");
   show("home");
@@ -2606,7 +2640,7 @@ async function abrirFinanzas(body) {
 function ighoListoHtml(g, nombre, telFinal, r, desde) {
   const wl = waLink(g.lider_tel), wp = waLink(telFinal), n1 = nombre.split(" ")[0];
   const paraLider = `Hola ${(g.lider || "").split(" ")[0]}, te escribimos de ${desde} de Arco Ríos: ${nombre}${telFinal ? " (" + telFinal + ")" : ""} quiere conocer tu IGHO ${g.nombre}. ¿Puedes contactarle? 🙏`;
-  const paraPersona = `Hola ${n1}, gracias por tu interés en las Iglesias de hogar de Arco Ríos. ${g.lider ? g.lider.split(" ")[0] + ", líder de " + g.nombre + "," : "El líder del IGHO"} te va a contactar pronto.${textoLugarIgho(g)}${g.lider && g.lider_tel ? `\n👤 Líder: ${g.lider} · ${g.lider_tel}` : ""}\n\n¡Te esperamos! 🙌`;
+  const paraPersona = `Hola ${n1}, gracias por tu interés en las Iglesias de hogar de Arco Ríos. ${g.lider ? g.lider.split(" ")[0] + ", líder de " + g.nombre + "," : "El líder del IGHO"} te va a contactar pronto.\n\n${tarjetaIghoTexto(g)}\n\n¡Te esperamos! 🙌`;
   return `<div class="total-card"><div class="l">✓ Listo</div><div class="n" style="font-size:26px">${esc(nombre)}</div>
       <div class="det">${esc(g.nombre)} · ${r?.personas ? "el líder recibió un aviso en la app" : "el líder no usa la app todavía"}</div></div>
     ${wp ? `<a class="btn-primary wa-btn" href="${wp}?text=${encodeURIComponent(paraPersona)}" target="_blank" rel="noopener">${g.mapas?.length ? "Enviar la ubicación del IGHO" : "Mensaje"} a ${esc(n1)} por WhatsApp</a>` : `<div class="hint">${esc(n1)} no tiene celular registrado.</div>`}
@@ -2988,17 +3022,22 @@ async function accesoLiderIgho(ighoId, lider, cont, volver, titulo) {
   });
 }
 
-const ig = { lista: [], sel: null, tab: "miembros", miembros: [], fecha: ymd(new Date()) };
+const ig = { lista: [], sel: null, tab: "inicio", miembros: [], fecha: ymd(new Date()), reuniones: [], interes: [] };
+const IG_ROLES = [["lider", "Líder"], ["apoyo", "Apoyo"], ["anfitrion", "Anfitrión"], ["asistente", "Asistente"]];
+const IG_ROL_N = Object.fromEntries(IG_ROLES);
+const igActual = () => ig.lista.find((g) => g.id === ig.sel);
+const rolIgho = (p) => p.igho_rol || (igActual()?.lider_persona_id === p.id ? "lider" : "asistente");
+const ordenRol = (p) => IG_ROLES.findIndex(([v]) => v === rolIgho(p));
 async function abrirIgho() {
-  let { data, error } = await sb.from("igho").select("id, nombre, supervisor_nombre, lider_persona_id, direccion, horario, mapas").eq("activo", true).order("nombre");
-  if (error && /direccion|horario|mapas/.test(error.message)) ({ data, error } = await sb.from("igho").select("id, nombre, supervisor_nombre").eq("activo", true).order("nombre"));
+  let { data, error } = await sb.from("igho").select("id, nombre, supervisor_nombre, lider_persona_id, direccion, horario, mapas, presentacion").eq("activo", true).order("nombre");
+  if (error && /presentacion/.test(error.message)) ({ data, error } = await sb.from("igho").select("id, nombre, supervisor_nombre, lider_persona_id, direccion, horario, mapas").eq("activo", true).order("nombre"));
+  if (error && /direccion|horario|mapas/.test(error.message)) ({ data, error } = await sb.from("igho").select("id, nombre, supervisor_nombre, lider_persona_id").eq("activo", true).order("nombre"));
   if (error) { $("ig-body").innerHTML = `<div class="soon">${esc(error.message)}</div>`; return; }
   ig.lista = data;
-  if (ctx.esAncianoOAdmin) {   // nombre del líder de cada IGHO (para el editor)
-    const ids = [...new Set(data.map((g) => g.lider_persona_id).filter(Boolean))];
-    const { data: ls } = ids.length ? await sb.from("personas").select("id, nombres, apellidos, telefono").in("id", ids) : { data: [] };
-    data.forEach((g) => { const l = (ls || []).find((x) => x.id === g.lider_persona_id); g.lider = l ? `${l.nombres} ${l.apellidos || ""}`.trim() : ""; g.lider_tel = l?.telefono || ""; });
-  }
+  // nombre y celular del líder de cada IGHO (editor y tarjeta para compartir)
+  const ids = [...new Set(data.map((g) => g.lider_persona_id).filter(Boolean))];
+  const { data: ls } = ids.length ? await sb.from("personas").select("id, nombres, apellidos, telefono").in("id", ids) : { data: [] };
+  data.forEach((g) => { const l = (ls || []).find((x) => x.id === g.lider_persona_id); g.lider = l ? `${l.nombres} ${l.apellidos || ""}`.trim() : ""; g.lider_tel = l?.telefono || ""; });
   if (!data.length) { $("ig-body").innerHTML = `<div class="soon">No tienes un IGHO asignado todavía. Pide a un administrador que te asigne.</div>`; $("ig-sel-wrap").innerHTML = ""; return; }
   if (!ig.sel || !data.find((x) => x.id === ig.sel)) ig.sel = data[0].id;
   $("ig-sel-wrap").innerHTML = data.length > 1
@@ -3009,96 +3048,109 @@ async function abrirIgho() {
   if ($("ig-sel")) $("ig-sel").addEventListener("change", (e) => { ig.sel = e.target.value; cargarIgho(); });
   cargarIgho();
 }
-document.querySelectorAll("#ig-tabs button").forEach((b) => b.addEventListener("click", () => { ig.tab = b.dataset.tab; cargarIgho(); }));
 
 async function cargarIgho() {
-  document.querySelectorAll("#ig-tabs button").forEach((b) => b.classList.toggle("on", b.dataset.tab === ig.tab));
   $("ig-body").innerHTML = '<div class="loading">Cargando…</div>';
-  const { data, error } = await sb.from("personas").select("id, nombres, apellidos, telefono, fecha_nacimiento").eq("igho_id", ig.sel).eq("activo", true).order("nombres");
+  let { data, error } = await sb.from("personas").select("id, nombres, apellidos, telefono, fecha_nacimiento, bautizado, igho_rol").eq("igho_id", ig.sel).eq("activo", true).order("nombres");
+  if (error && /igho_rol/.test(error.message)) ({ data, error } = await sb.from("personas").select("id, nombres, apellidos, telefono, fecha_nacimiento, bautizado").eq("igho_id", ig.sel).eq("activo", true).order("nombres"));
   if (error) { $("ig-body").innerHTML = `<div class="soon">${esc(error.message)}</div>`; return; }
   ig.miembros = data;
-  // Personas que pidieron en el Stand conocer este IGHO
   const hace30 = new Date(); hace30.setDate(hace30.getDate() - 30);
-  const { data: it } = await sb.from("igho_interesados").select("*").eq("igho_id", ig.sel).or(`contactado_en.is.null,contactado_en.gte.${hace30.toISOString()}`).order("creado_en", { ascending: false });
-  ig.interes = it || [];
+  const desde = new Date(); desde.setDate(desde.getDate() - 180);
+  const [it, reus] = await Promise.all([
+    // Personas que pidieron en el Stand o en Bienvenida conocer este IGHO
+    sb.from("igho_interesados").select("*").eq("igho_id", ig.sel).or(`contactado_en.is.null,contactado_en.gte.${hace30.toISOString()}`).order("creado_en", { ascending: false }),
+    // Últimos 6 meses de reuniones (para saber quién no ha venido)
+    sb.from("reuniones_igho").select("fecha, asistencia_igho(persona_id)").eq("igho_id", ig.sel).gte("fecha", ymd(desde)).order("fecha"),
+  ]);
+  ig.interes = it.data || [];
+  ig.reuniones = reus.data || [];
   ig.cubre = ctx.esAncianoOAdmin ? await cubroIgho(ig.sel).catch(() => false) : false;
   if (ctx.conyuge) marcarSoloVer("igho", !ctx.ighoIds.includes(ig.sel));
   ig.marcados = new Set();
-  if (ig.tab === "miembros") pintarMiembros(); else if (ig.tab === "asistencia") pintarAsistencia(); else pintarCensoIgho();
+  pintarIghoVista();
 }
-function pintarMiembros() {
-  const cumpleIds = new Set(cumplesDeLaSemana(ig.miembros).map((p) => p.id));
+function pintarIghoVista() {
+  const f = { inicio: pintarIghoInicio, asistencia: pintarAsistencia, agregar: pintarAgregarIgho, cumple: pintarCumplesIgho,
+    miembros: pintarMiembros, resumen: pintarResumenIgho, compartir: pintarCompartirIgho }[ig.tab] || pintarIghoInicio;
+  f();
+}
+function irIgho(tab) { ig.tab = tab; pintarIghoVista(); window.scrollTo(0, 0); }
+// Encabezado de cada sección: volver a los mosaicos
+const igCab = (t) => `<button class="btn-sec mini ok-ver" id="ig-volver" style="margin-bottom:10px">‹ Mi IGHO</button><h3 class="ig-sub">${t}</h3>`;
+const igConectarVolver = () => $("ig-volver")?.addEventListener("click", () => irIgho("inicio"));
+
+// ¿Cuándo vino por última vez? (antes de la fecha ref). amarillo: más de 2 semanas · rojo: más de un mes
+function estadoAsis(pid, ref) {
+  const antes = ig.reuniones.filter((r) => r.fecha < ref);
+  if (!antes.length) return null;
+  let ult = null;
+  for (const r of antes) if ((r.asistencia_igho || []).some((a) => a.persona_id === pid)) ult = r.fecha;
+  const base = ult || antes[0].fecha, dias = diasEntre(base, ref);
+  const c = dias > 30 ? "rojo" : dias > 14 ? "amarillo" : null;
+  if (!c) return null;
+  const sem = Math.floor(dias / 7);
+  return { c, ult, txt: ult ? `no viene hace ${sem} semanas` : `sin asistencia desde ${fmtCorta.format(fromYmd(base))}` };
+}
+
+// ---------- Avisos del IGHO: personas que quieren unirse ----------
+function interesIghoHtml() {
+  const g = igActual(), pend = ig.interes.filter((x) => !x.contactado_en).length;
   const yaEsta = (x) => ig.miembros.some((m) => m.id === x.persona_id);
-  const interesHtml = ig.interes?.length ? `<div class="panel" style="border:2px solid var(--orange)"><h4>Quieren unirse (${ig.interes.filter((x) => !x.contactado_en).length})</h4>
+  if (!ig.interes.length) return `<div class="panel ig-avisos vacio"><b>🔔 Avisos</b><span class="muted">Nadie nuevo por ahora. Aquí te aparecen las personas que quieren conocer tu IGHO.</span></div>`;
+  return `<div class="panel ig-avisos"><h4>🔔 Quieren unirse${pend ? ` (${pend})` : ""}</h4>
       <div class="hint">Lo pidieron en el Stand de información o en Bienvenida. Contáctales pronto.</div>
       ${ig.interes.map((x) => { const w = waLink(x.telefono); return `<div class="nuevo"><div class="kclase-h"><b>${esc(x.nombre)}</b>${x.contactado_en ? '<span class="st yes">✓ Contactado</span>' : '<span class="st">Pendiente</span>'}</div>
         <div class="muted">${fmtCorta.format(new Date(x.creado_en))}${x.inscrito_por_nombre ? " · Registró: " + esc(x.inscrito_por_nombre) : ""}</div>
         ${x.notas ? `<div class="knota">${esc(x.notas)}</div>` : ""}
-        <div class="row-btns" style="margin-top:8px">${w ? `<a class="btn-sec mini wa-mini" href="${w}?text=${encodeURIComponent(`Hola ${x.nombre.split(" ")[0]}, soy ${ctx.nombre}, líder del IGHO ${ig.lista.find((g) => g.id === ig.sel)?.nombre || ""} de Arco Ríos. ¡Me contaron que quieres conocer nuestra iglesia de hogar! 🏠${textoLugarIgho(ig.lista.find((g) => g.id === ig.sel))}`)}" target="_blank" rel="noopener">WhatsApp</a>` : ""}
+        <div class="row-btns" style="margin-top:8px">${w ? `<a class="btn-sec mini wa-mini" href="${w}?text=${encodeURIComponent(`Hola ${x.nombre.split(" ")[0]}, soy ${ctx.nombre}, de la iglesia de hogar ${g?.nombre || ""} de Arco Ríos. ¡Me contaron que quieres conocer nuestro IGHO! 🙌\n\n${tarjetaIghoTexto(g)}`)}" target="_blank" rel="noopener">WhatsApp</a>` : ""}
           ${x.contactado_en ? "" : `<button class="btn-sec mini" data-contacto="${x.id}">Ya le contacté</button>`}
           ${x.persona_id && !yaEsta(x) ? `<button class="btn-sec mini" data-unir="${x.id}">Agregar al IGHO</button>` : yaEsta(x) ? '<span class="muted">Ya es miembro</span>' : ""}
-          <button class="x solo-edit" data-borra-int="${x.id}" aria-label="Borrar inscripción" title="Borrar (prueba o error)">×</button></div></div>`; }).join("")}</div>` : "";
-  $("ig-body").innerHTML = `${interesHtml}${lugarIghoHtml(ig.lista.find((g) => g.id === ig.sel))}${cumplesIghoHtml(ig.miembros)}
-    <div class="panel">
-      <h4>Miembros (${ig.miembros.length})</h4><div class="hint">Toca un nombre para editar su ficha${ig.cubre ? ". Marca personas para moverlas a otro IGHO." : ""}</div>
-      ${ig.miembros.map((p) => `<div class="li"><div>${ig.cubre ? `<input type="checkbox" class="ig-mk" data-mk="${p.id}" aria-label="Marcar"> ` : ""}<button class="link name-btn" data-editar="${p.id}">${esc(p.nombres)} ${esc(p.apellidos || "")}${cumpleIds.has(p.id) ? " 🎂" : ""}</button><div>${telHtml(p.telefono)}</div></div><div class="row-btns"><button class="btn-sec mini" data-editar="${p.id}">Editar</button><button class="x" data-quitar="${p.id}" aria-label="Quitar del IGHO">×</button></div></div>`).join("") || `<div class="muted">Este IGHO no tiene miembros todavía.</div>`}
-      ${ig.cubre ? `<div class="ig-acc"><button class="btn-sec" id="ig-mover">Mover marcados a otro IGHO</button><button class="btn-primary" id="ig-mult" style="width:auto;margin:0;padding:12px 18px;font-size:15px">Multiplicar este IGHO</button></div>` : ""}
-    </div>
-    <div class="panel solo-edit">
-      <h4>Agregar desde la base de datos</h4>
-      <input id="ig-q" placeholder="Buscar por nombre o apellido" autocomplete="off">
-      <div id="ig-res"></div>
-    </div>
-    <div class="panel solo-edit">
-      <h4>Agregar persona nueva</h4>
-      <div class="hint">Si no aparece en la búsqueda</div>
-      <label>Nombres</label><input id="ig-n"><label>Apellidos</label><input id="ig-a"><label>Teléfono</label><input id="ig-t" type="tel" inputmode="tel">
-      <button class="btn-primary" id="ig-new">Agregar al IGHO</button>
-      <div class="ok" id="ig-msg"></div>
-    </div>`;
-  $("ig-body").querySelectorAll("[data-editar]").forEach((b) => b.addEventListener("click", () => editarMiembro(b.dataset.editar)));
+          <button class="x solo-edit" data-borra-int="${x.id}" aria-label="Borrar inscripción" title="Borrar (prueba o error)">×</button></div></div>`; }).join("")}</div>`;
+}
+function conectarInteresIgho() {
+  const body = $("ig-body");
   const contactado = (id) => sb.from("igho_interesados").update({ contactado_en: new Date().toISOString(), contactado_por: ctx.nombreCompleto }).eq("id", id);
-  $("ig-body").querySelectorAll("[data-borra-int]").forEach((b) => b.addEventListener("click", async () => {
+  body.querySelectorAll("[data-borra-int]").forEach((b) => b.addEventListener("click", async () => {
     const x = ig.interes.find((y) => y.id === +b.dataset.borraInt); if (!x) return;
     if (!confirm(`¿Borrar la inscripción de ${x.nombre}?\n\nÚsalo si fue una prueba o un error. Si esa persona solo existía por esta inscripción, también se borra de la base.`)) return;
     const { error } = await sb.rpc("borrar_interes_igho", { p_id: x.id });
-    if (error) return alert(error.message + (/borrar_interes_igho/.test(error.message) ? " (falta ejecutar 23_igho_lugar_bienvenida_finanzas.sql)" : ""));
-    cargarIgho();
+    if (error) return alert(error.message);
+    cargarIgho(); cargarMisAvisos();
   }));
-  conectarLugarIgho();
-  $("ig-body").querySelectorAll("[data-contacto]").forEach((b) => b.addEventListener("click", async () => { const { error } = await contactado(+b.dataset.contacto); if (error) return alert(error.message); cargarIgho(); }));
-  $("ig-body").querySelectorAll("[data-unir]").forEach((b) => b.addEventListener("click", async () => {
+  body.querySelectorAll("[data-contacto]").forEach((b) => b.addEventListener("click", async () => { const { error } = await contactado(+b.dataset.contacto); if (error) return alert(error.message); cargarIgho(); cargarMisAvisos(); }));
+  body.querySelectorAll("[data-unir]").forEach((b) => b.addEventListener("click", async () => {
     const x = ig.interes.find((y) => y.id === +b.dataset.unir); if (!x || !confirm(`¿Agregar a ${x.nombre} como miembro de este IGHO?`)) return;
     const { error } = await sb.rpc("agregar_a_igho", { p_persona: x.persona_id, p_igho: ig.sel }); if (error) return alert(error.message);
     if (!x.contactado_en) await contactado(x.id);
-    cargarIgho();
+    cargarIgho(); cargarMisAvisos();
   }));
-  $("ig-body").querySelectorAll("[data-mk]").forEach((x) => x.addEventListener("change", () => (x.checked ? ig.marcados.add(x.dataset.mk) : ig.marcados.delete(x.dataset.mk))));
-  $("ig-mover")?.addEventListener("click", () => moverSeleccion([...ig.marcados], () => cargarIgho()));
-  $("ig-mult")?.addEventListener("click", () => { $("ig-tabs").classList.add("hidden"); abrirMultiplicar(ig.sel, "ig-body", () => { $("ig-tabs").classList.remove("hidden"); abrirIgho(); }); });
-  $("ig-body").querySelectorAll("[data-quitar]").forEach((b) => b.addEventListener("click", async () => {
-    const p = ig.miembros.find((x) => x.id === b.dataset.quitar);
-    if (!confirm(`¿Quitar a ${p.nombres} de este IGHO?`)) return;
-    const { error } = await sb.rpc("quitar_de_igho", { p_persona: p.id }); if (error) return alert(error.message); cargarIgho();
-  }));
-  let t;
-  $("ig-q").addEventListener("input", (e) => { clearTimeout(t); t = setTimeout(async () => {
-    const q = e.target.value.trim(); if (q.length < 2) { $("ig-res").innerHTML = ""; return; }
-    const { data } = await sb.rpc("buscar_personas", { q });
-    $("ig-res").innerHTML = (data || []).map((p) => `<div class="li"><div><b>${esc(p.nombre)}</b><div class="muted">${p.tel ? "Tel. " + esc(p.tel) + " · " : ""}${p.igho ? "IGHO " + esc(p.igho) : "Sin IGHO"}</div></div>
-      ${ig.miembros.some((m) => m.id === p.id) ? `<span class="muted">Ya está</span>` : `<button class="btn-sec mini" data-add="${p.id}" data-otro="${esc(p.igho || "")}">Agregar</button>`}</div>`).join("") || `<div class="muted" style="margin-top:8px">Nadie coincide. Agrégalo como persona nueva.</div>`;
-    $("ig-res").querySelectorAll("[data-add]").forEach((b) => b.addEventListener("click", async () => {
-      if (b.dataset.otro && !confirm(`Esta persona está en el IGHO ${b.dataset.otro}. ¿Pasarla a este IGHO?`)) return;
-      const { error } = await sb.rpc("agregar_a_igho", { p_persona: b.dataset.add, p_igho: ig.sel }); if (error) return alert(error.message); cargarIgho();
-    }));
-  }, 300); });
-  $("ig-new").addEventListener("click", async () => {
-    if (!$("ig-n").value.trim()) { $("ig-msg").classList.add("err"); $("ig-msg").textContent = "Escribe al menos el nombre."; return; }
-    const { error } = await sb.rpc("crear_en_igho", { p_nombres: $("ig-n").value, p_apellidos: $("ig-a").value, p_telefono: $("ig-t").value.replace(/[^\d+]/g, ""), p_igho: ig.sel });
-    if (error) { $("ig-msg").classList.add("err"); $("ig-msg").textContent = error.message; return; }
-    cargarIgho();
-  });
 }
+
+// ---------- Inicio: avisos + mosaicos ----------
+function pintarIghoInicio() {
+  const hoy = ymd(new Date()), n = ig.miembros.length;
+  const ult = ig.reuniones[ig.reuniones.length - 1], ultN = ult ? (ult.asistencia_igho || []).length : null;
+  const sem = cumplesDeLaSemana(ig.miembros);
+  const est = ig.miembros.map((p) => estadoAsis(p.id, hoy)).filter(Boolean);
+  const rojos = est.filter((e) => e.c === "rojo").length, amar = est.length - rojos;
+  const ult8 = ig.reuniones.slice(-8), prom = ult8.length && n ? Math.round((ult8.reduce((a, r) => a + (r.asistencia_igho || []).length, 0) / ult8.length / n) * 100) : null;
+  const semana = new Date(); semana.setDate(semana.getDate() - 6);
+  const yaEsta = ult && fromYmd(ult.fecha) >= hoy0() - 6 * 864e5;
+  const tile = (t, cls, num, tit, sub) => `<button class="ig-tile ok-ver ${cls}" data-igt="${t}">${num != null ? `<div class="ig-n">${num}</div>` : ""}<div class="ig-t">${tit}</div>${sub ? `<div class="ig-s">${sub}</div>` : ""}<span class="ig-arr">↗</span></button>`;
+  $("ig-body").innerHTML = interesIghoHtml() + `<div class="ig-tiles">
+      ${tile("asistencia", "c-green ig-big", ultN != null ? `${ultN}<small>/${n}</small>` : "—", "Asistencia", ult ? `Última reunión: ${fmtCorta.format(fromYmd(ult.fecha))}${yaEsta ? "" : " · falta registrar esta semana"}` : "Toca para registrar la primera reunión")}
+      ${tile("agregar", "c-orange", "+", "Añadir miembro", "")}
+      ${tile("miembros", "c-sky ig-tall", n, "Info de miembros", rojos || amar ? `${amar ? `🟡 ${amar} ` : ""}${rojos ? `🔴 ${rojos}` : ""} sin venir` : "Fichas y roles")}
+      ${tile("cumple", "c-lilac", sem.length, "Cumpleaños", sem.length ? "esta semana 🎂" : "esta semana")}
+      ${tile("resumen", "c-yellow", prom != null ? `${prom}<small>%</small>` : "—", "Resumen", "asistencia promedio")}
+      ${tile("compartir", "c-peach", null, "Compartir", "Tarjeta del IGHO para WhatsApp")}
+    </div>`;
+  $("ig-body").querySelectorAll("[data-igt]").forEach((b) => b.addEventListener("click", () => irIgho(b.dataset.igt)));
+  conectarInteresIgho();
+}
+
+// ---------- Asistencia ----------
 async function pintarAsistencia() {
   const [r, cobv, hist] = await Promise.all([
     sb.from("reuniones_igho").select("id, asistencia_igho(persona_id)").eq("igho_id", ig.sel).eq("fecha", ig.fecha).maybeSingle(),
@@ -3107,20 +3159,24 @@ async function pintarAsistencia() {
   ]);
   const presentes = new Set((r.data?.asistencia_igho || []).map((x) => x.persona_id));
   const visitas = cobv.error ? [] : cobv.data || [], vinieron = new Set(visitas.filter((v) => v.vino).map((v) => v.persona_id));
-  $("ig-body").innerHTML = `
+  const lista = [...ig.miembros].sort((a, b) => ordenRol(a) - ordenRol(b) || a.nombres.localeCompare(b.nombres));
+  const est = Object.fromEntries(lista.map((p) => [p.id, estadoAsis(p.id, ig.fecha)]));
+  const etiqueta = (v) => v.es_conyuge ? "Esposa/o" : v.tipo === "presidente" ? "Anciano presidente" : "Cobertura";
+  $("ig-body").innerHTML = igCab("Asistencia") + `
     <div class="panel">
-      <h4>Reunión</h4>
-      <label>Fecha</label><input type="date" id="ig-fecha" value="${ig.fecha}">
+      <label>Fecha de la reunión</label><input type="date" id="ig-fecha" value="${ig.fecha}">
       <div class="hint">${r.data ? "Ya hay asistencia guardada para esta fecha; puedes corregirla." : "Toca a cada persona que vino."}</div>
-      <div id="ig-check">${ig.miembros.map((p) => `<button class="att ${presentes.has(p.id) ? "on" : ""}" data-p="${p.id}"><span class="dot2">${presentes.has(p.id) ? "✓" : ""}</span>${esc(p.nombres)} ${esc((p.apellidos || "").split(" ")[0])}</button>`).join("") || `<div class="muted">Agrega miembros primero.</div>`}</div>
-      ${visitas.length ? `<div class="hint" style="margin:14px 0 8px">Visita de cobertura (no son miembros del IGHO; cuenta como visita del Consejo)</div>
-        <div id="ig-vis">${visitas.map((v) => `<button class="att vis ${vinieron.has(v.persona_id) ? "on" : ""}" data-v="${v.persona_id}"><span class="dot2">${vinieron.has(v.persona_id) ? "✓" : ""}</span>${esc(v.nombre)}<span class="muted" style="margin-left:auto">${v.es_conyuge ? "Esposa/o" : "Cobertura"}</span></button>`).join("")}</div>` : ""}
+      ${Object.values(est).some(Boolean) ? `<div class="ig-leyenda"><span class="amarillo">●</span> más de 2 semanas sin venir <span class="rojo">●</span> más de un mes</div>` : ""}
+      <div id="ig-check">${lista.map((p) => { const e = est[p.id]; return `<button class="att ${presentes.has(p.id) ? "on" : ""} ${e ? "ig-" + e.c : ""}" data-p="${p.id}"><span class="dot2">${presentes.has(p.id) ? "✓" : ""}</span><span class="ig-nom">${esc(p.nombres)} ${esc((p.apellidos || "").split(" ")[0])}${e ? `<small>${esc(e.txt)}</small>` : ""}</span>${rolIgho(p) !== "asistente" ? `<span class="muted" style="margin-left:auto;font-size:13px">${IG_ROL_N[rolIgho(p)]}</span>` : ""}</button>`; }).join("") || `<div class="muted">Agrega miembros primero.</div>`}</div>
+      ${visitas.length ? `<div class="hint" style="margin:14px 0 8px">Visitas del Consejo (no son miembros del IGHO; cuenta como visita en el Tablero)</div>
+        <div id="ig-vis">${visitas.map((v) => `<button class="att vis ${vinieron.has(v.persona_id) ? "on" : ""}" data-v="${v.persona_id}"><span class="dot2">${vinieron.has(v.persona_id) ? "✓" : ""}</span>${esc(v.nombre)}<span class="muted" style="margin-left:auto;font-size:13px">${etiqueta(v)}</span></button>`).join("")}</div>` : ""}
       <div class="muted" id="ig-cuenta" style="margin-top:10px"></div>
       <button class="btn-primary" id="ig-save-att">Guardar asistencia</button>
       <div class="ok" id="ig-att-msg"></div>
     </div>
     <div class="panel"><h4>Últimas reuniones</h4><div class="hint">Personas presentes</div>
       ${hist.data?.length ? barras(hist.data.map((h) => ({ nombre: fmtCorta.format(fromYmd(h.fecha)), n: h.asistencia_igho?.[0]?.count ?? 0 }))) : `<div class="muted">Todavía no hay reuniones registradas.</div>`}</div>`;
+  igConectarVolver();
   const cuenta = () => { $("ig-cuenta").textContent = `${presentes.size} de ${ig.miembros.length} presentes`; };
   cuenta();
   $("ig-fecha").addEventListener("change", (e) => { ig.fecha = e.target.value; pintarAsistencia(); });
@@ -3142,7 +3198,201 @@ async function pintarAsistencia() {
     if (!e2 && visitas.length) e2 = (await sb.rpc("registrar_visitas_cobertura", { p_igho: ig.sel, p_fecha: ig.fecha, p_personas: [...vinieron] })).error;
     $("ig-save-att").disabled = false;
     if (e2) { msg.classList.add("err"); msg.textContent = "No se pudo guardar: " + e2.message; return; }
-    pintarAsistencia();
+    const i = ig.reuniones.findIndex((x) => x.fecha === ig.fecha), fila = { fecha: ig.fecha, asistencia_igho: [...presentes].map((p) => ({ persona_id: p })) };
+    if (i >= 0) ig.reuniones[i] = fila; else { ig.reuniones.push(fila); ig.reuniones.sort((a, b) => (a.fecha < b.fecha ? -1 : 1)); }
+    await pintarAsistencia();
+    $("ig-att-msg").textContent = "✓ Asistencia guardada";
+  });
+}
+
+// ---------- Añadir miembro ----------
+function pintarAgregarIgho() {
+  $("ig-body").innerHTML = igCab("Añadir miembro") + `
+    <div class="panel solo-edit">
+      <h4>Buscar en la base de datos</h4>
+      <input id="ig-q" placeholder="Buscar por nombre o apellido" autocomplete="off">
+      <div id="ig-res"></div>
+    </div>
+    <div class="panel solo-edit">
+      <h4>Persona nueva</h4>
+      <div class="hint">Si no aparece en la búsqueda</div>
+      <label>Nombres</label><input id="ig-n"><label>Apellidos</label><input id="ig-a"><label>Teléfono</label><input id="ig-t" type="tel" inputmode="tel">
+      <label>Rol en el IGHO</label><select id="ig-r">${opciones(IG_ROLES, "asistente")}</select>
+      <button class="btn-primary" id="ig-new">Agregar al IGHO</button>
+      <div class="ok" id="ig-msg"></div>
+    </div>`;
+  igConectarVolver();
+  const ok = (t) => { const m = $("ig-msg"); m.classList.remove("err"); m.textContent = t; };
+  let t;
+  $("ig-q").addEventListener("input", (e) => { clearTimeout(t); t = setTimeout(async () => {
+    const q = e.target.value.trim(); if (q.length < 2) { $("ig-res").innerHTML = ""; return; }
+    const { data } = await sb.rpc("buscar_personas", { q });
+    $("ig-res").innerHTML = (data || []).map((p) => `<div class="li"><div><b>${esc(p.nombre)}</b><div class="muted">${p.tel ? "Tel. " + esc(p.tel) + " · " : ""}${p.igho ? "IGHO " + esc(p.igho) : "Sin IGHO"}</div></div>
+      ${ig.miembros.some((m) => m.id === p.id) ? `<span class="muted">Ya está</span>` : `<button class="btn-sec mini" data-add="${p.id}" data-otro="${esc(p.igho || "")}" data-nom="${esc(p.nombre)}">Agregar</button>`}</div>`).join("") || `<div class="muted" style="margin-top:8px">Nadie coincide. Agrégalo como persona nueva.</div>`;
+    $("ig-res").querySelectorAll("[data-add]").forEach((b) => b.addEventListener("click", async () => {
+      if (b.dataset.otro && !confirm(`Esta persona está en el IGHO ${b.dataset.otro}. ¿Pasarla a este IGHO?`)) return;
+      const { error } = await sb.rpc("agregar_a_igho", { p_persona: b.dataset.add, p_igho: ig.sel }); if (error) return alert(error.message);
+      b.replaceWith(Object.assign(document.createElement("span"), { className: "st yes", textContent: "✓ Agregado" }));
+      await recargarMiembros();
+    }));
+  }, 300); });
+  $("ig-new").addEventListener("click", async () => {
+    const m = $("ig-msg");
+    if (!$("ig-n").value.trim()) { m.classList.add("err"); m.textContent = "Escribe al menos el nombre."; return; }
+    $("ig-new").disabled = true;
+    const nombre = `${$("ig-n").value.trim()} ${$("ig-a").value.trim()}`.trim(), rol = $("ig-r").value;
+    const { error } = await sb.rpc("crear_en_igho", { p_nombres: $("ig-n").value, p_apellidos: $("ig-a").value, p_telefono: $("ig-t").value.replace(/[^\d+]/g, ""), p_igho: ig.sel });
+    $("ig-new").disabled = false;
+    if (error) { m.classList.add("err"); m.textContent = error.message; return; }
+    await recargarMiembros();
+    if (rol !== "asistente") {
+      const p = ig.miembros.find((x) => `${x.nombres} ${x.apellidos || ""}`.trim() === nombre);
+      if (p) await sb.rpc("guardar_rol_igho", { p_persona: p.id, p_rol: rol });
+      await recargarMiembros();
+    }
+    ["ig-n", "ig-a", "ig-t"].forEach((id) => ($(id).value = "")); $("ig-r").value = "asistente";
+    ok(`✓ ${nombre} agregado/a al IGHO`);
+  });
+}
+async function recargarMiembros() {
+  let { data, error } = await sb.from("personas").select("id, nombres, apellidos, telefono, fecha_nacimiento, bautizado, igho_rol").eq("igho_id", ig.sel).eq("activo", true).order("nombres");
+  if (error && /igho_rol/.test(error.message)) ({ data } = await sb.from("personas").select("id, nombres, apellidos, telefono, fecha_nacimiento, bautizado").eq("igho_id", ig.sel).eq("activo", true).order("nombres"));
+  if (data) ig.miembros = data;
+}
+
+// ---------- Cumpleaños ----------
+function pintarCumplesIgho() {
+  const h = hoy0();
+  const prox = ig.miembros.filter((p) => p.fecha_nacimiento).map((p) => {
+    let dia = cumpleEn(p.fecha_nacimiento, h.getFullYear()); if (dia < h) dia = cumpleEn(p.fecha_nacimiento, h.getFullYear() + 1);
+    return { ...p, dia, edad: dia.getFullYear() - +p.fecha_nacimiento.slice(0, 4) };
+  }).sort((a, b) => a.dia - b.dia);
+  const sinFecha = ig.miembros.filter((p) => !p.fecha_nacimiento);
+  $("ig-body").innerHTML = igCab("Cumpleaños") + cumplesIghoHtml(ig.miembros, false) + `
+    <div class="panel"><h4>Próximos cumpleaños</h4>
+      ${prox.map((p) => `<div class="li"><div><b>${esc(p.nombres)} ${esc((p.apellidos || "").split(" ")[0])}</b><div class="muted">cumple ${p.edad} · ${esc(fmtCumpleDia.format(p.dia))}</div></div><span class="st">${diasHasta(h, p.dia) === 0 ? "hoy" : `en ${diasHasta(h, p.dia)} días`}</span></div>`).join("") || '<div class="muted">Nadie tiene fecha todavía.</div>'}</div>
+    ${sinFecha.length ? `<div class="panel"><h4>Sin fecha de cumpleaños (${sinFecha.length})</h4><div class="hint">Toca para agregarla en su ficha.</div>
+      ${sinFecha.map((p) => `<div class="li"><b>${esc(p.nombres)} ${esc(p.apellidos || "")}</b><button class="btn-sec mini solo-edit" data-editar="${p.id}">Agregar fecha</button></div>`).join("")}</div>` : ""}`;
+  igConectarVolver();
+  $("ig-body").querySelectorAll("[data-editar]").forEach((b) => b.addEventListener("click", () => editarMiembro(b.dataset.editar)));
+}
+
+// ---------- Info de miembros ----------
+function pintarMiembros() {
+  const hoy = ymd(new Date()), cumpleIds = new Set(cumplesDeLaSemana(ig.miembros).map((p) => p.id));
+  const lista = [...ig.miembros].sort((a, b) => ordenRol(a) - ordenRol(b) || a.nombres.localeCompare(b.nombres));
+  const conteo = IG_ROLES.map(([v, t]) => [t, ig.miembros.filter((p) => rolIgho(p) === v).length]).filter(([, n]) => n);
+  $("ig-body").innerHTML = igCab("Info de miembros") + `
+    <div class="panel">
+      <h4>Miembros (${ig.miembros.length})</h4>
+      <div class="sts">${conteo.map(([t, n]) => `<span class="st">${t}: ${n}</span>`).join("")}</div>
+      <div class="hint">Toca un nombre para editar su ficha. Cambia el rol con el selector${ig.cubre ? ". Marca personas para moverlas a otro IGHO." : ""}</div>
+      ${lista.map((p) => { const e = estadoAsis(p.id, hoy); return `<div class="li ig-mi"><div style="min-width:0">${ig.cubre ? `<input type="checkbox" class="ig-mk" data-mk="${p.id}" aria-label="Marcar"> ` : ""}<button class="link name-btn ${e ? "ig-" + e.c : ""}" data-editar="${p.id}">${esc(p.nombres)} ${esc(p.apellidos || "")}${cumpleIds.has(p.id) ? " 🎂" : ""}</button>
+          <div>${telHtml(p.telefono)}${e ? ` <span class="ig-txt ig-${e.c}">· ${esc(e.txt)}</span>` : ""}</div></div>
+        <div class="row-btns"><select class="ig-rol solo-edit" data-rol="${p.id}" aria-label="Rol">${opciones(IG_ROLES, rolIgho(p))}</select><button class="x solo-edit" data-quitar="${p.id}" aria-label="Quitar del IGHO">×</button></div></div>`; }).join("") || `<div class="muted">Este IGHO no tiene miembros todavía.</div>`}
+      ${ig.cubre ? `<div class="ig-acc"><button class="btn-sec" id="ig-mover">Mover marcados a otro IGHO</button><button class="btn-primary" id="ig-mult" style="width:auto;margin:0;padding:12px 18px;font-size:15px">Multiplicar este IGHO</button></div>` : ""}
+    </div>`;
+  igConectarVolver();
+  $("ig-body").querySelectorAll("[data-editar]").forEach((b) => b.addEventListener("click", () => editarMiembro(b.dataset.editar)));
+  $("ig-body").querySelectorAll("[data-rol]").forEach((s) => s.addEventListener("change", async () => {
+    const { error } = await sb.rpc("guardar_rol_igho", { p_persona: s.dataset.rol, p_rol: s.value });
+    if (error) { alert(error.message + (/guardar_rol_igho/.test(error.message) ? " (falta ejecutar 28_mi_igho_tarjeta_visitas.sql)" : "")); return pintarMiembros(); }
+    const p = ig.miembros.find((x) => x.id === s.dataset.rol); if (p) p.igho_rol = s.value;
+  }));
+  $("ig-body").querySelectorAll("[data-mk]").forEach((x) => x.addEventListener("change", () => (x.checked ? ig.marcados.add(x.dataset.mk) : ig.marcados.delete(x.dataset.mk))));
+  $("ig-mover")?.addEventListener("click", () => moverSeleccion([...ig.marcados], () => cargarIgho()));
+  $("ig-mult")?.addEventListener("click", () => abrirMultiplicar(ig.sel, "ig-body", () => abrirIgho()));
+  $("ig-body").querySelectorAll("[data-quitar]").forEach((b) => b.addEventListener("click", async () => {
+    const p = ig.miembros.find((x) => x.id === b.dataset.quitar);
+    if (!confirm(`¿Quitar a ${p.nombres} de este IGHO?`)) return;
+    const { error } = await sb.rpc("quitar_de_igho", { p_persona: p.id }); if (error) return alert(error.message); cargarIgho();
+  }));
+}
+
+// ---------- Resumen del IGHO ----------
+async function pintarResumenIgho() {
+  $("ig-body").innerHTML = igCab("Resumen") + '<div class="loading">Cargando…</div>';
+  igConectarVolver();
+  const ids = ig.miembros.map((p) => p.id), inicioAnio = `${new Date().getFullYear()}-01-01`;
+  const [pc, vis] = await Promise.all([
+    ids.length ? sb.from("persona_cursos").select("persona_id").in("persona_id", ids) : { data: [] },
+    sb.from("visitas_igho").select("fecha").eq("igho_id", ig.sel).gte("fecha", inicioAnio),
+  ]);
+  if (ig.tab !== "resumen") return;
+  const n = ig.miembros.length, hoy = ymd(new Date());
+  const ult8 = ig.reuniones.slice(-8), cuenta = (r) => (r.asistencia_igho || []).length;
+  const prom = ult8.length ? ult8.reduce((a, r) => a + cuenta(r), 0) / ult8.length : 0;
+  const hace30 = new Date(); hace30.setDate(hace30.getDate() - 30);
+  const reun30 = ig.reuniones.filter((r) => fromYmd(r.fecha) >= hace30).length;
+  const baut = ig.miembros.filter((p) => p.bautizado).length, conClase = new Set((pc.data || []).map((x) => x.persona_id)).size;
+  const est = ig.miembros.map((p) => ({ p, e: estadoAsis(p.id, hoy) })).filter((x) => x.e);
+  const pct = (a) => (n ? Math.round((a / n) * 100) : 0);
+  const visN = vis.error ? null : (vis.data || []).length;
+  $("ig-body").innerHTML = igCab("Resumen") + `
+    <div class="ig-tiles ig-res">
+      <div class="ig-tile c-green"><div class="ig-n">${n}</div><div class="ig-t">Miembros</div></div>
+      <div class="ig-tile c-yellow"><div class="ig-n">${ult8.length ? Math.round(prom) : "—"}<small>${ult8.length ? ` · ${pct(prom)}%` : ""}</small></div><div class="ig-t">Promedio por reunión</div><div class="ig-s">últimas ${ult8.length || 0} reuniones</div></div>
+      <div class="ig-tile c-sky"><div class="ig-n">${reun30}</div><div class="ig-t">Reuniones</div><div class="ig-s">últimos 30 días</div></div>
+      <div class="ig-tile c-lilac"><div class="ig-n">${visN ?? "—"}</div><div class="ig-t">Visitas del Consejo</div><div class="ig-s">este año</div></div>
+      <div class="ig-tile c-peach"><div class="ig-n">${pct(baut)}<small>%</small></div><div class="ig-t">Bautizados</div><div class="ig-s">${baut} de ${n}</div></div>
+      <div class="ig-tile c-sand"><div class="ig-n">${pct(conClase)}<small>%</small></div><div class="ig-t">Con alguna clase</div><div class="ig-s">Formación Cristiana</div></div>
+    </div>
+    <div class="panel"><h4>Asistencia de las últimas reuniones</h4>
+      ${ult8.length ? barras([...ult8].reverse().map((r) => ({ nombre: fmtCorta.format(fromYmd(r.fecha)), n: cuenta(r) })), n) : '<div class="muted">Todavía no hay reuniones registradas.</div>'}</div>
+    <div class="panel"><h4>Roles</h4>${barras(IG_ROLES.map(([v, t]) => ({ nombre: t, n: ig.miembros.filter((p) => rolIgho(p) === v).length })), n)}</div>
+    <div class="panel"><h4>Necesitan seguimiento (${est.length})</h4>
+      ${est.sort((a, b) => (a.e.c === b.e.c ? 0 : a.e.c === "rojo" ? -1 : 1)).map(({ p, e }) => `<div class="li"><div><b class="ig-${e.c}">${esc(p.nombres)} ${esc((p.apellidos || "").split(" ")[0])}</b><div class="muted">${esc(e.txt)}</div></div>${waLink(p.telefono) ? `<a class="btn-sec mini wa-mini" href="${waLink(p.telefono)}?text=${encodeURIComponent(`Hola ${p.nombres.split(" ")[0]}, te extrañamos en el IGHO 🙌 ¿Cómo estás?`)}" target="_blank" rel="noopener">WhatsApp</a>` : ""}</div>`).join("") || '<div class="muted">Todos han venido en las últimas dos semanas. 🙌</div>'}</div>
+    <div class="panel"><h4>Datos por completar</h4>
+      <div class="li"><span>Sin fecha de cumpleaños</span><b>${ig.miembros.filter((p) => !p.fecha_nacimiento).length}</b></div>
+      <div class="li"><span>Sin celular</span><b>${ig.miembros.filter((p) => !p.telefono).length}</b></div>
+      <div class="li"><span>Bautismo sin registrar</span><b>${ig.miembros.filter((p) => p.bautizado == null).length}</b></div></div>`;
+  igConectarVolver();
+}
+
+// ---------- Compartir: tarjeta del IGHO ----------
+// Mismo texto que reciben las personas desde el Stand y Bienvenida
+function tarjetaIghoTexto(g) {
+  if (!g) return "";
+  const m = g.mapas || [], nom = /^igho\b/i.test(g.nombre || "") ? g.nombre : `IGHO ${g.nombre}`;
+  return `🏠 *${nom}* · Arco Ríos`
+    + (g.presentacion ? `\n${g.presentacion}` : "")
+    + (g.horario ? `\n\n🗓 ${g.horario}` : "") + (g.direccion ? `\n📍 ${g.direccion}` : "")
+    + (m.length === 1 ? `\n🗺 Ubicación: ${m[0]}` : m.map((u, i) => `\n🗺 Ubicación ${i + 1}: ${u}`).join(""))
+    + (g.lider ? `\n👤 Líder: ${g.lider}${g.lider_tel ? " · " + g.lider_tel : ""}` : "");
+}
+function pintarCompartirIgho() {
+  const g = igActual(), texto = tarjetaIghoTexto(g) + "\n\n¡Te esperamos! 🙌";
+  const falta = [!g.horario && "día y hora", !g.direccion && "dirección", !g.mapas?.length && "mapa", !g.presentacion && "presentación"].filter(Boolean);
+  $("ig-body").innerHTML = igCab("Compartir") + `
+    <div class="ig-card">
+      <div class="ig-card-top"><img src="${LOGOS.igho}" alt=""><span>Iglesia de hogar · Arco Ríos</span></div>
+      <div class="ig-card-n">${esc(g.nombre)}</div>
+      ${g.presentacion ? `<div class="ig-card-p">${esc(g.presentacion).replace(/\n/g, "<br>")}</div>` : ""}
+      ${g.horario ? `<div class="ig-card-l">🗓 <b>${esc(g.horario)}</b></div>` : ""}
+      ${g.direccion ? `<div class="ig-card-l">📍 ${esc(g.direccion)}</div>` : ""}
+      ${g.mapas?.length ? `<div class="ig-card-l">${g.mapas.map((u, i) => `<a href="${esc(u)}" target="_blank" rel="noopener">🗺 Ver mapa${g.mapas.length > 1 ? " " + (i + 1) : ""}</a>`).join(" · ")}</div>` : ""}
+      ${g.lider ? `<div class="ig-card-l">👤 ${esc(g.lider)}${g.lider_tel ? ` · ${esc(g.lider_tel)}` : ""}</div>` : ""}
+    </div>
+    <a class="btn-primary wa-btn" href="https://wa.me/?text=${encodeURIComponent(texto)}" target="_blank" rel="noopener">Enviar por WhatsApp</a>
+    <button class="btn-sec ok-ver" id="ig-copiar" style="width:100%">Copiar el texto</button>
+    <div class="hint" style="margin:10px 0 18px">Esta tarjeta es la que reciben por WhatsApp las personas que el Stand de información o Bienvenida conectan con tu IGHO.${falta.length ? ` Falta: ${falta.join(", ")}.` : ""}</div>
+    <div class="panel solo-edit"><h4>Presentación</h4>
+      <div class="hint">Unas líneas sobre tu IGHO: quiénes son, qué hacen, si hay niños… Sale en la tarjeta.</div>
+      <textarea id="ig-pres" maxlength="400" placeholder="Ej.: Somos familias jóvenes con niños. Compartimos una cena sencilla, la Palabra y oración.">${esc(g.presentacion || "")}</textarea>
+      <button class="btn-primary" id="ig-pres-ok">Guardar presentación</button><div class="ok" id="ig-pres-msg"></div></div>
+    ${lugarIghoHtml(g)}`;
+  igConectarVolver();
+  conectarLugarIgho();
+  $("ig-copiar").addEventListener("click", async () => { try { await navigator.clipboard.writeText(texto); $("ig-copiar").textContent = "✓ Copiado"; } catch { prompt("Copia la tarjeta:", texto); } });
+  $("ig-pres-ok")?.addEventListener("click", async () => {
+    const msg = $("ig-pres-msg"); msg.classList.remove("err");
+    $("ig-pres-ok").disabled = true;
+    const { error } = await sb.rpc("guardar_tarjeta_igho", { p_igho: g.id, p_presentacion: $("ig-pres").value });
+    $("ig-pres-ok").disabled = false;
+    if (error) { msg.classList.add("err"); msg.textContent = error.message + (/guardar_tarjeta_igho/.test(error.message) ? " (falta ejecutar 28_mi_igho_tarjeta_visitas.sql)" : ""); return; }
+    g.presentacion = $("ig-pres").value.trim() || null;
+    pintarCompartirIgho();
+    $("ig-pres-msg").textContent = "✓ Guardado";
   });
 }
 
@@ -3386,11 +3636,15 @@ async function editarUsuario(u) {
       <label class="check" style="margin:6px 0 14px"><input type="checkbox" id="ad-cony" ${ad.conyuges?.has(u.user_id) ? "checked" : ""}> <span><b>Cónyuge del Consejo</b><br><span class="muted">Ve todo menos Finanzas y el Tablero/Reunión del Consejo. Solo edita donde tenga un rol abajo.</span></span></label>
       <div id="ad-roles"></div>
       <button class="btn-primary" id="ad-guardar">Guardar roles</button><div class="ok" id="ad-msg"></div></div>
+    ${u.roles.some((r) => r.rol === "anciano" || r.rol === "admin") ? `<div class="panel" id="ad-vis"><h4>Visitas a los IGHO</h4>
+      <div class="hint">Su esposo/a aparece junto a él/ella en la asistencia de los IGHO que cubre, para registrar la visita en el Tablero.</div>
+      <div id="adv-body" class="loading">Cargando…</div></div>` : ""}
     <div class="panel"><h4>Contraseña</h4><div class="hint">Si olvidó su contraseña, genera una temporal nueva.</div>
       <button class="btn-sec" id="ad-reset">Nueva contraseña temporal</button><div id="ad-clave" style="margin-top:12px"></div></div>
     <div class="panel"><h4>Quitar acceso</h4><div class="hint">Borra su cuenta de la app. Sus datos en la base de datos se quedan.</div>
       <button class="btn-sec danger" id="ad-del">Quitar acceso</button></div>
     <button class="btn-sec" style="width:100%" id="ad-back">← Volver a la lista</button>`;
+  if ($("ad-vis")) panelVisitasConsejo(u);
   const { data: cobData } = await sb.from("cobertura_consejo").select("igho_id, ministerios(codigo)").eq("user_id", u.user_id);
   editorRoles("ad-roles", u.roles, { ighos: (cobData || []).map((x) => x.igho_id).filter(Boolean), mins: (cobData || []).map((x) => x.ministerios?.codigo).filter(Boolean) });
   $("ad-back").addEventListener("click", () => abrirAdmin("usuarios"));
@@ -3411,6 +3665,39 @@ async function editarUsuario(u) {
     if (!confirm(`¿Quitar el acceso a la app de ${u.nombre}?`)) return;
     try { await llamarAdmin({ accion: "eliminar", user_id: u.user_id }); abrirAdmin("usuarios"); } catch (e) { alert(e.message); }
   });
+}
+
+// Administración → Editar (Consejo): esposo/a para la asistencia del IGHO y «visita todos los IGHO»
+async function panelVisitasConsejo(u) {
+  const box = $("adv-body");
+  const { data, error } = await sb.rpc("conyuge_de_usuario", { p_user: u.user_id });
+  box.classList.remove("loading");
+  if (error) { box.innerHTML = `<div class="muted err">${esc(error.message)}${/conyuge_de_usuario/.test(error.message) ? " (falta ejecutar 28_mi_igho_tarjeta_visitas.sql)" : ""}</div>`; return; }
+  const cur = data?.[0] || {};
+  const st = { conyuge: cur.persona_id ? { id: cur.persona_id, nombre: cur.nombre } : null };
+  const pinta = () => {
+    box.innerHTML = `<label>Esposo/a</label>
+      <div id="adv-sel">${st.conyuge ? `<div class="li"><b>${esc(st.conyuge.nombre)}</b><button type="button" class="btn-sec mini" id="adv-quitar">Cambiar</button></div>`
+        : `<input id="adv-q" placeholder="Buscar por nombre" autocomplete="off"><div id="adv-res"></div><div class="hint">Déjalo vacío si no es casado/a.</div>`}</div>
+      <label class="check" style="margin:14px 0 0"><input type="checkbox" id="adv-sin" ${cur.sin_conyuge ? "checked" : ""}> <span><b>Su esposo/a no aparece en la asistencia</b><br><span class="muted">Si por ahora no asiste a los IGHO.</span></span></label>
+      <label class="check" style="margin:14px 0"><input type="checkbox" id="adv-todos" ${cur.todos_los_igho ? "checked" : ""}> <span><b>Aparece en la asistencia de todos los IGHO</b><br><span class="muted">Para el anciano presidente (y su esposa), que visita cualquier IGHO.</span></span></label>
+      <button class="btn-primary" id="adv-ok">Guardar visitas</button><div class="ok" id="adv-msg"></div>`;
+    $("adv-quitar")?.addEventListener("click", () => { cur.todos_los_igho = $("adv-todos").checked; cur.sin_conyuge = $("adv-sin").checked; st.conyuge = null; pinta(); $("adv-q").focus(); });
+    let t;
+    $("adv-q")?.addEventListener("input", (e) => { clearTimeout(t); t = setTimeout(async () => {
+      const q = e.target.value.trim(); if (q.length < 2) return ($("adv-res").innerHTML = "");
+      const { data: r } = await sb.rpc("buscar_personas", { q });
+      $("adv-res").innerHTML = (r || []).map((p, i) => `<div class="li"><div><b>${esc(p.nombre)}</b><div class="muted">${p.igho ? "IGHO " + esc(p.igho) : "Sin IGHO"}</div></div><button type="button" class="btn-sec mini" data-p="${i}">Elegir</button></div>`).join("") || '<div class="muted">No se encontró.</div>';
+      $("adv-res").querySelectorAll("[data-p]").forEach((b) => b.addEventListener("click", () => { const p = r[+b.dataset.p]; cur.todos_los_igho = $("adv-todos").checked; cur.sin_conyuge = $("adv-sin").checked; st.conyuge = { id: p.id, nombre: p.nombre.trim() }; pinta(); }));
+    }, 300); });
+    $("adv-ok").addEventListener("click", async () => {
+      const msg = $("adv-msg"); msg.classList.remove("err");
+      const { error } = await sb.rpc("guardar_visitante_consejo", { p_user: u.user_id, p_conyuge: st.conyuge?.id || null, p_todos: $("adv-todos").checked, p_sin_conyuge: $("adv-sin").checked });
+      if (error) { msg.classList.add("err"); msg.textContent = error.message; return; }
+      cur.todos_los_igho = $("adv-todos").checked; cur.sin_conyuge = $("adv-sin").checked; msg.textContent = "✓ Guardado";
+    });
+  };
+  pinta();
 }
 
 function pintarDarAcceso() {
@@ -3491,7 +3778,7 @@ async function editarMiembro(id) {
   body.innerHTML = '<div class="loading">Cargando…</div>';
   if (!cursosCat) { const { data } = await sb.from("cursos").select("id, nombre").order("orden"); cursosCat = data || []; }
   const [p, pc] = await Promise.all([
-    sb.from("personas").select("id, nombres, apellidos, telefono, sexo, estado_civil, bautizado, fecha_nacimiento").eq("id", id).single(),
+    sb.from("personas").select("id, nombres, apellidos, telefono, sexo, estado_civil, bautizado, fecha_nacimiento, igho_id").eq("id", id).single(),
     sb.from("persona_cursos").select("curso_id").eq("persona_id", id),
   ]);
   if (p.error) { body.innerHTML = `<div class="soon">${esc(p.error.message)}</div>`; return; }
@@ -3503,6 +3790,7 @@ async function editarMiembro(id) {
     <div class="two"><div><label>Sexo</label><select id="em-s">${opciones([["", "—"], ["femenino", "Femenino"], ["masculino", "Masculino"]], x.sexo || "")}</select></div>
       <div><label>Estado civil</label><select id="em-c">${opciones(CIVIL, x.estado_civil || "")}</select></div></div>
     <label>Fecha de nacimiento</label><input id="em-fn" type="date" max="${ymd(new Date())}" value="${esc(x.fecha_nacimiento || "")}">
+    ${x.igho_id === ig.sel ? `<label>Rol en el IGHO</label><select id="em-rol">${opciones(IG_ROLES, rolIgho(ig.miembros.find((m) => m.id === id) || x))}</select>` : ""}
     <label>¿Bautizado/a?</label>
     <div class="seg" id="em-b">${[["si", "Sí"], ["no", "No"]].map(([v, l]) => `<button type="button" data-v="${v}" class="${(x.bautizado ? "si" : x.bautizado === false ? "no" : "") === v ? "on" : ""}">${l}</button>`).join("")}</div>
     <label>Clases de Formación Cristiana</label>
@@ -3527,6 +3815,8 @@ async function editarMiembro(id) {
     const quitar = [...tiene].filter((c) => !marcados.has(c)), agregar = [...marcados].filter((c) => !tiene.has(c));
     if (!r.error && quitar.length) r = await sb.from("persona_cursos").delete().eq("persona_id", id).in("curso_id", quitar);
     if (!r.error && agregar.length) r = await sb.from("persona_cursos").insert(agregar.map((c) => ({ persona_id: id, curso_id: c })));
+    const m0 = ig.miembros.find((m) => m.id === id);
+    if (!r.error && $("em-rol") && (!m0 || $("em-rol").value !== rolIgho(m0))) r = await sb.rpc("guardar_rol_igho", { p_persona: id, p_rol: $("em-rol").value });
     $("em-save").disabled = false;
     if (r.error) { msg.classList.add("err"); msg.textContent = "No se pudo guardar: " + r.error.message; return; }
     cargarIgho();
@@ -6409,21 +6699,42 @@ async function revisarCenso(x) {
 // ===================================================================
 // AVISOS: notificaciones al teléfono + campana dentro de la app
 // ===================================================================
-const VERSION_APP = "23-nov · v12";
+const VERSION_APP = "25-nov · v13";
 const FUNCION_AVISOS = "swift-action"; // Edge Function en Supabase (se muestra como «notificar»)
 const av = { lista: [], noLeidas: 0, timer: null };
-const IR_A = [["", "Avisos"], ["domingo", "Este domingo"], ["igho", "Mi IGHO"], ["kidz", "Kidz"], ["worship", "Arco Worship"], ["formacion", "Formación Cristiana"], ["stand", "Stand de información"]];
+const IR_A = [["", "Página principal"], ["domingo", "Este domingo"], ["anfitriones", "Anfitriones"], ["bienvenida", "Bienvenida"], ["igho", "Mi IGHO"], ["kidz", "Kidz"], ["worship", "Arco Worship"], ["formacion", "Formación Cristiana"], ["stand", "Stand de información"]];
 const pushSoportado = () => "serviceWorker" in navigator && "PushManager" in window && "Notification" in window;
 const esIOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
 const instalada = () => matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
 const bytesDeB64u = (s) => { s = s.replace(/-/g, "+").replace(/_/g, "/"); while (s.length % 4) s += "="; return Uint8Array.from(atob(s), (c) => c.charCodeAt(0)); };
 
+// Al tocar una notificación del teléfono:
+//  · aviso general → página principal (ahí sale el aviso arriba), o la página que eligió quien lo envió
+//  · «Mañana sirves» → la página del ministerio donde sirve
+//  · alguien quiere unirse a un IGHO → Mi IGHO
+const PAGINAS_SERVICIO = ["worship", "kidz", "domingo", "anfitriones", "bienvenida", "stand", "formacion"];
+async function irDesdeAviso(ir, id) {
+  const ve = (x) => !!x && SECCIONES.some((y) => y.id === x && y.ve(ctx));
+  let n = id ? av.lista.find((x) => x.id === id) : null;
+  if (id && !n) { const { data } = await sb.from("notificaciones").select("id, ir_a, tipo, destino").eq("id", id).maybeSingle(); n = data; }
+  let dest = n ? n.ir_a : ir === "avisos" ? null : ir;
+  if (n?.tipo === "igho") dest = "igho";
+  else if (n?.tipo === "servicio" && !ve(dest)) dest = PAGINAS_SERVICIO.find((x) => ctx.ministerios.has(x === "domingo" ? "anuncios" : x) && ve(x)) || null;
+  if (id) sb.from("notificaciones_usuarios").update({ leida_en: new Date().toISOString() }).eq("user_id", ctx.user.id).eq("notificacion_id", id).is("leida_en", null).then(() => cargarMisAvisos());
+  if (dest === "igho" && n?.destino?.startsWith?.("igho:")) ig.sel = n.destino.slice(5);
+  if (dest === "igho") ig.tab = "inicio";
+  abrir(ve(dest) ? dest : "home");
+}
 async function cargarMisAvisos() {
   if (!ctx) return;
-  const { data, error } = await sb.from("notificaciones_usuarios").select("leida_en, notificaciones(id, titulo, cuerpo, ir_a, tipo, creado_en, creado_por_nombre)")
+  const { data, error } = await sb.from("notificaciones_usuarios").select("leida_en, notificaciones(id, titulo, cuerpo, ir_a, tipo, destino, creado_en, creado_por_nombre)")
     .eq("user_id", ctx.user.id).order("notificacion_id", { ascending: false }).limit(40);
   if (error) return;   // falta ejecutar 20_avisos.sql
   av.lista = (data || []).filter((x) => x.notificaciones).map((x) => ({ ...x.notificaciones, leida: !!x.leida_en }));
+  if (ctx.roles.has("lider_igho") && ctx.ighoIds.length) {
+    const { data: it } = await sb.from("igho_interesados").select("id, nombre, igho_id").in("igho_id", ctx.ighoIds).is("contactado_en", null).order("creado_en", { ascending: false });
+    av.interes = it || [];
+  } else av.interes = [];
   av.noLeidas = av.lista.filter((x) => !x.leida).length;
   pintarCampana(); pintarBannerAviso();
 }
@@ -6433,10 +6744,12 @@ function pintarCampana() {
 }
 function pintarBannerAviso() {
   const box = $("aviso-box"); if (!box) return;
-  const x = av.lista.find((a) => !a.leida);
-  box.innerHTML = x ? `<button class="aviso-banner" id="aviso-ban"><b>🔔 ${esc(x.titulo)}</b>${x.cuerpo ? `<span>${esc(x.cuerpo)}</span>` : ""}
-    <small>${esc(x.creado_por_nombre || "")} · ${fmtCorta.format(new Date(x.creado_en))}${av.noLeidas > 1 ? ` · ${av.noLeidas} avisos nuevos` : ""} · toca para ver</small></button>` : "";
+  const x = av.lista.find((a) => !a.leida), it = av.interes || [];
+  const ighoHtml = it.length ? `<button class="home-igho" id="home-igho"><b>🏠 ${it.length === 1 ? `${esc(it[0].nombre)} quiere unirse a tu IGHO` : `${it.length} personas quieren unirse a tu IGHO`}</b><span>${it.length > 1 ? esc(it.slice(0, 3).map((y) => y.nombre.split(" ")[0]).join(", ")) + " · " : ""}Contáctales pronto · toca para ver</span></button>` : "";
+  box.innerHTML = ighoHtml + (x && x.tipo !== "igho" ? `<button class="aviso-banner" id="aviso-ban"><b>🔔 ${esc(x.titulo)}</b>${x.cuerpo ? `<span>${esc(x.cuerpo)}</span>` : ""}
+    <small>${esc(x.creado_por_nombre || "")} · ${fmtCorta.format(new Date(x.creado_en))}${av.noLeidas > 1 ? ` · ${av.noLeidas} avisos nuevos` : ""} · toca para ver</small></button>` : "");
   $("aviso-ban")?.addEventListener("click", () => abrir("avisos"));
+  $("home-igho")?.addEventListener("click", () => { ig.tab = "inicio"; if (it[0]) ig.sel = it[0].igho_id; abrir("igho"); });
   requestAnimationFrame(() => pilas.forEach(medirPila));
 }
 async function marcarLeidas() {
@@ -6458,9 +6771,8 @@ async function registrarSW() {
 }
 navigator.serviceWorker?.addEventListener("message", (e) => {
   if (e.data?.tipo !== "abrir" || !ctx) return;
-  const ir = new URL(e.data.url).searchParams.get("ir");
-  abrir(ir && SECCIONES.some((x) => x.id === ir && x.ve(ctx)) ? ir : "avisos");
-  cargarMisAvisos();
+  const u = new URL(e.data.url).searchParams;
+  irDesdeAviso(u.get("ir"), +u.get("aviso") || null);
 });
 async function estadoPush() {
   if (!pushSoportado()) return esIOS() && !instalada() ? "ios" : "no";

@@ -1,6 +1,6 @@
 # App Iglesia Arco Ríos: project summary (to start a new chat)
 
-Attach this file when you start a new chat. The code lives in GitHub: **`joelguido-beep/Arco-app`** (branch `main`, served by GitHub Pages at https://joelguido-beep.github.io/Arco-app/). The Claude GitHub App is installed, so Claude can clone the repo and push changes directly (no need to attach `index.html`). Current version: **23-nov v12** (shown under the title of the Avisos page; constant `VERSION_APP` in index.html; update both on each release).
+Attach this file when you start a new chat. The code lives in GitHub: **`joelguido-beep/Arco-app`** (branch `main`, served by GitHub Pages at https://joelguido-beep.github.io/Arco-app/). The Claude GitHub App is installed, so Claude can clone the repo and push changes directly (no need to attach `index.html`). Current version: **25-nov v13** (shown under the title of the Avisos page; constant `VERSION_APP` in index.html; update both on each release).
 
 ## What it is
 A web app in Spanish for Arco Ríos (Cuenca). It's a single `index.html` file hosted on **GitHub Pages**, and the data lives in **Supabase** (project `lmitwnfvelwbbkjkvmtb`).
@@ -46,6 +46,8 @@ A web app in Spanish for Arco Ríos (Cuenca). It's a single `index.html` file ho
 28. `26_admin_borrar.sql`: policy «admin borra» (delete for admin) on every public RLS table except personas, perfiles, usuarios_roles, ajustes_privados, cobertura_consejo, conyuges_consejo; admin_borrar_persona() (deletes if the person appears nowhere else, otherwise deactivates: activo = false, out of their IGHO; refuses if they have an app account or lead an IGHO)
 
 29. `27_clase_bienvenida.sql`: bv_clases (fecha1 / fecha2 = the two Sundays, hora, lugar, abierta), bv_inscritos (origen bienvenida / stand / clase), bv_asistencia (sesion 1 | 2); edita_clase_bv() (Bienvenida + Consejo/admin), inscribe_clase_bv() (+ Stand team); bv_guardar_clase, bv_borrar_clase, bv_inscribir (creates the person if new and adds them to nuevos), bv_quitar, bv_marcar, bv_lista, bv_buscar. Attending day 1 and day 2 (even in different classes) sets nuevos.clase_bienvenida = true + fecha_clase
+30. `28_mi_igho_tarjeta_visitas.sql`: personas.igho_rol (lider / apoyo / anfitrion / asistente; IGHO leaders start as lider) + guardar_rol_igho(); igho.presentacion + guardar_tarjeta_igho(); stand_ighos() also returns presentacion; consejo_visitantes (user_id, conyuge_persona_id, todos_los_igho, sin_conyuge) + guardar_visitante_consejo() (admin; also adds the parentescos link) + conyuge_de_usuario(); cobertura_de_igho() rebuilt (adds column tipo: cobertura | presidente; spouse from consejo_visitantes, else family tree) and registrar_visitas_cobertura() no longer requires coverage; seeds Joel Guido as todos_los_igho, sin_conyuge (his wife doesn't attend IGHO for now)
+
 ## Roles
 - `admin`, `anciano` (shown as **Miembro del Consejo**), `secretaria`, `finanzas`
 - **Cónyuge del Consejo**: not a rol_t value but a row in `conyuges_consejo` (checkbox in Administración → Editar). Sees every page except Finanzas, Tablero, Reunión del Consejo, Mensajes por WhatsApp and Administración. Pages are read-only («👁 Solo lectura», class `solo-ver`) unless they also have the matching role (e.g. Líder de Kidz edits Kidz). Mi IGHO: all IGHOs readable, editable only their own.
@@ -144,6 +146,15 @@ Kidz with QR: camera check-in/check-out (photo confirmation, allergies, parent n
 - «Bienvenido a la familia» is every other month, two Sundays in a row (morning). «+ Nueva clase» suggests the date two months after the last class (moved to Sunday); the second Sunday fills itself (+7 days, editable); hora (default 09:00), lugar, notas; Editar can close sign-ups.
 - Sign-ups: checkbox when registering a new person («Inscribir en la clase de bienvenida», on by default), «Clase» button in Seguimiento, «Inscribir marcados» from the Bienvenida list inside the class, search / new person, and the Stand (option «Bienvenido a la familia», with WhatsApp confirmation).
 - Pasar lista: Día 1 / Día 2 switch (opens on today's day), tap each person; people who arrive without signing up are added and marked in one step. Each person shows where they signed up, a WhatsApp reminder button and «✓ completó» once they have both days. The Bienvenida home card shows the next class.
+
+## Mi IGHO tiles, notification routing (25 Nov 2026, v13)
+- Mi IGHO: top «🔔 Quieren unirse» box (notification space), then tiles: Asistencia (last meeting x/members), Añadir miembro, Info de miembros, Cumpleaños, Resumen (average attendance), Compartir. Each opens a sub-page with «‹ Mi IGHO». Censo tab removed (census by link only).
+- Asistencia: names yellow when the person hasn't come in more than 2 weeks, red after more than a month (counted from the last meeting they attended before the chosen date). Bottom: Consejo visits = the IGHO's coverage + spouse, and Joel on every IGHO (his wife hidden).
+- Info de miembros: role per member (Líder, Apoyo, Anfitrión, Asistente) with a selector; also in Editar ficha and when adding a new person.
+- Resumen: members, average per meeting, meetings in 30 days, Consejo visits this year, % baptized, % with a class, last meetings, roles, Necesitan seguimiento (with WhatsApp), missing data.
+- Compartir: the IGHO card (name, presentación, day/time, address, map, leader + phone): Enviar por WhatsApp / Copiar. The same card goes in the Stand/Bienvenida WhatsApp to the person and the leader's WhatsApp from «Quieren unirse».
+- Administración → Editar (Consejo/admin): «Visitas a los IGHO»: pick the spouse, «Su esposo/a no aparece en la asistencia», and «Aparece en la asistencia de todos los IGHO».
+- Phone notifications: general aviso → home page (or the page the sender picked; «Al tocarlo abre» default is now «Página principal»); «Mañana sirves» → the ministry page; IGHO interest → Mi IGHO. Opening one marks it read. Home shows a blue «🏠 X quiere unirse a tu IGHO» banner for leaders until they mark «Ya le contacté».
 
 ## Status (23 Nov 2026, end of day)
 - Notifications work on Joel's Android (function `swift-action` deployed with notificar.ts, Verify JWT off).
