@@ -1,6 +1,6 @@
 # App Iglesia Arco Ríos: project summary (to start a new chat)
 
-Attach this file when you start a new chat. The code lives in GitHub: **`joelguido-beep/Arco-app`** (branch `main`, served by GitHub Pages at https://joelguido-beep.github.io/Arco-app/). The Claude GitHub App is installed, so Claude can clone the repo and push changes directly (no need to attach `index.html`). Current version: **25-nov v13** (shown under the title of the Avisos page; constant `VERSION_APP` in index.html; update both on each release).
+Attach this file when you start a new chat. The code lives in GitHub: **`joelguido-beep/Arco-app`** (branch `main`, served by GitHub Pages at https://joelguido-beep.github.io/Arco-app/). The Claude GitHub App is installed, so Claude can clone the repo and push changes directly (no need to attach `index.html`). **Joel's standing instruction: push every finished update straight to `main` on GitHub automatically, without asking first** (index.html, new SQL files and this summary). Joel still runs the SQL in Supabase himself. Current version: **25-nov v13** (shown under the title of the Avisos page; constant `VERSION_APP` in index.html; update both on each release).
 
 ## What it is
 A web app in Spanish for Arco Ríos (Cuenca). It's a single `index.html` file hosted on **GitHub Pages**, and the data lives in **Supabase** (project `lmitwnfvelwbbkjkvmtb`).
