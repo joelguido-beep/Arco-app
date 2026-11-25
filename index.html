@@ -952,7 +952,8 @@ const DATOS_HOME = {
     if (error) throw error;
     const h30 = new Date(); h30.setDate(h30.getDate() - 30);
     const mes = data.filter((x) => fromYmd(x.primera_visita) >= h30);
-    return { num: mes.length, sub: `nuevos en 30 días · ${mes.filter((x) => x.clase_bienvenida).length} con clase`,
+    const { data: pc } = await sb.from("bv_clases").select("fecha1, fecha2").gte("fecha2", ymd(new Date())).order("fecha1").limit(1);
+    return { num: mes.length, sub: `nuevos en 30 días · ${mes.filter((x) => x.clase_bienvenida).length} con clase${pc?.[0] ? ` · próxima clase ${bvFechas(pc[0])}` : ""}`,
       detail: data.length ? lista(data.slice(0, 3).map((x) => ({ a: esc(nombreCorto(x.nombres, x.apellidos)), b: x.igho_nombre ? esc(x.igho_nombre) : `1ª visita ${fmtDiaMes(x.primera_visita)}` }))) : `<div class="pc-note">Todavía no hay personas nuevas registradas.</div>` };
   },
   async worship() {
@@ -2136,9 +2137,18 @@ function editarMiembroWorship(pid) {
 const COMO = [["invitado", "Invitado por alguien"], ["redes", "Redes sociales"], ["pasaba", "Pasaba por aquí"], ["otro", "Otro"]];
 const INTERES = [["si", "Sí"], ["tal_vez", "Tal vez"], ["no", "No"]];
 const bv = { interes: "si", filtro: "todos" };
+const bvc = { tab: "personas", clase: null, dia: 1, clases: [], proxima: null, falta: false };
 
+// Bienvenida tiene dos pestañas: Personas (registro y seguimiento) y la Clase de bienvenida
 async function abrirBienvenida() {
-  $("bv-body").innerHTML = `
+  $("bv-body").innerHTML = `<div class="seg" id="bv-tabs">${[["personas", "Personas"], ["clase", "Clase de bienvenida"]].map(([v, t]) => `<button class="ok-ver ${v === bvc.tab ? "on" : ""}" data-t="${v}">${t}</button>`).join("")}</div><div id="bv-main"></div>`;
+  $("bv-tabs").querySelectorAll("button").forEach((b) => b.addEventListener("click", () => { bvc.tab = b.dataset.t; bvc.clase = null; abrirBienvenida(); }));
+  await cargarClasesBv();
+  return bvc.tab === "clase" ? abrirClaseBv() : abrirBvPersonas();
+}
+async function abrirBvPersonas() {
+  const px = bvc.proxima;
+  $("bv-main").innerHTML = `
     <div class="panel solo-edit">
       <h4>Registrar persona nueva</h4>
       <label>Nombres</label><input id="bv-n" autocomplete="off">
@@ -2152,6 +2162,7 @@ async function abrirBienvenida() {
       <div class="seg" id="bv-int">${INTERES.map(([v, t]) => `<button type="button" data-v="${v}" class="${v === bv.interes ? "on" : ""}">${t}</button>`).join("")}</div>
       <div id="bv-ig-wrap" class="${bv.interes === "no" ? "hidden" : ""}"><label>¿A qué IGHO? (opcional)</label><select id="bv-ig"><option value="">Todavía no sabe / después</option></select><div class="hint" id="bv-ig-det"></div></div>
       <label>Notas</label><textarea id="bv-notas" placeholder="Opcional"></textarea>
+      ${px ? `<label class="check" style="margin-top:12px"><input type="checkbox" id="bv-cl" checked> Inscribir en la clase de bienvenida · ${esc(bvFechas(px))}</label>` : ""}
       <button class="btn-primary" id="bv-save">Registrar</button>
       <div class="ok" id="bv-msg"></div><div id="bv-listo"></div>
     </div>
@@ -2182,6 +2193,10 @@ async function abrirBienvenida() {
     $("bv-save").disabled = false;
     if (error) { msg.classList.add("err"); msg.textContent = "No se pudo registrar: " + error.message; return; }
     msg.textContent = `✓ ${$("bv-n").value.trim()} registrado/a`;
+    if (px && pid && $("bv-cl")?.checked) {
+      const { error: e2 } = await sb.rpc("bv_inscribir", { p_clase: px.id, p_persona: pid, p_nombres: null, p_apellidos: null, p_telefono: null, p_notas: null, p_origen: "bienvenida", p_quien: ctx.nombreCompleto });
+      msg.textContent += e2 ? ` · no se pudo inscribir en la clase: ${e2.message}` : ` · inscrito/a en la clase (${bvFechas(px)})`;
+    }
     const g = bv.interes !== "no" ? bv.ighos.find((x) => x.id === $("bv-ig").value) : null;
     if (g && pid) await conectarIghoBv(g, pid, `${$("bv-n").value.trim()} ${$("bv-a").value.trim()}`.trim(), $("bv-t").value.replace(/\D/g, ""), $("bv-notas").value.trim(), $("bv-listo"));
     ["bv-n", "bv-a", "bv-t", "bv-e", "bv-i", "bv-notas"].forEach((id) => ($(id).value = ""));
@@ -2217,16 +2232,30 @@ async function cargarNuevos() {
   if (!data.length) { cont.innerHTML = `<div class="muted">No hay personas en esta lista.</div>`; return; }
   const como = Object.fromEntries(COMO), interes = Object.fromEntries(INTERES);
   const ok = (b, t) => `<span class="st ${b ? "yes" : ""}">${b ? "✓" : "–"} ${t}</span>`;
+  // Inscripciones en clases de bienvenida que aún no terminan
+  const insc = {};
+  const futuras = bvc.clases.filter((c) => c.fecha2 >= ymd(new Date()));
+  if (futuras.length) {
+    const { data: ii } = await sb.from("bv_inscritos").select("persona_id, clase_id").in("clase_id", futuras.map((c) => c.id)).in("persona_id", data.map((n) => n.persona_id));
+    (ii || []).forEach((x) => (insc[x.persona_id] = futuras.find((c) => c.id === x.clase_id)));
+  }
+  const px = bvc.proxima;
   cont.innerHTML = data.map((n) => `
     <div class="nuevo">
       <div class="nuevo-top"><div><b>${esc(n.nombres)} ${esc(n.apellidos || "")}</b>
         <div class="muted">${fmtCorta.format(fromYmd(n.primera_visita))} · ${esc(como[n.como_llego] || "")}${n.invitado_por ? ` (${esc(n.invitado_por)})` : ""} · IGHO: ${esc(interes[n.interes_igho] || "—")}</div>
         <div>${telHtml(n.telefono)}</div>${n.notas ? `<div class="knota">${esc(n.notas)}</div>` : ""}</div>
-        <div class="row-btns solo-edit">${!n.igho_nombre && n.interes_igho !== "no" ? `<button class="btn-sec mini" data-bv-ig="${n.persona_id}">IGHO</button>` : ""}<button class="btn-sec mini" data-bv-ed="${n.persona_id}">Editar</button><button class="x" data-bv-del="${n.persona_id}" aria-label="Borrar" title="Borrar">×</button></div></div>
+        <div class="row-btns solo-edit">${!n.clase_bienvenida && !insc[n.persona_id] && px ? `<button class="btn-sec mini" data-bv-cl="${n.persona_id}">Clase</button>` : ""}${!n.igho_nombre && n.interes_igho !== "no" ? `<button class="btn-sec mini" data-bv-ig="${n.persona_id}">IGHO</button>` : ""}<button class="btn-sec mini" data-bv-ed="${n.persona_id}">Editar</button><button class="x" data-bv-del="${n.persona_id}" aria-label="Borrar" title="Borrar">×</button></div></div>
       <div id="bv-ed-${n.persona_id}"></div>
-      <div class="sts">${ok(true, "En la base")}${ok(!!n.igho_nombre, n.igho_nombre ? "IGHO " + esc(n.igho_nombre) : "Sin IGHO")}${ok(n.asistio_igho, "Asistió a IGHO")}</div>
+      <div class="sts">${ok(true, "En la base")}${ok(!!n.igho_nombre, n.igho_nombre ? "IGHO " + esc(n.igho_nombre) : "Sin IGHO")}${ok(n.asistio_igho, "Asistió a IGHO")}${!n.clase_bienvenida && insc[n.persona_id] ? `<span class="st">📅 Inscrito/a a la clase · ${esc(bvFechas(insc[n.persona_id]))}</span>` : ""}</div>
       <label class="check"><input type="checkbox" data-clase="${n.persona_id}" ${n.clase_bienvenida ? "checked" : ""}> Asistió a "Bienvenido a la familia"${n.fecha_clase ? ` · ${fmtCorta.format(fromYmd(n.fecha_clase))}` : ""}</label>
     </div>`).join("");
+  cont.querySelectorAll("[data-bv-cl]").forEach((b) => b.addEventListener("click", async () => {
+    b.disabled = true;
+    const { error } = await sb.rpc("bv_inscribir", { p_clase: px.id, p_persona: b.dataset.bvCl, p_nombres: null, p_apellidos: null, p_telefono: null, p_notas: null, p_origen: "bienvenida", p_quien: ctx.nombreCompleto });
+    if (error) { b.disabled = false; return alert(error.message); }
+    cargarNuevos();
+  }));
   cont.querySelectorAll("[data-bv-ig]").forEach((b) => b.addEventListener("click", async () => {
     const n = data.find((x) => x.persona_id === b.dataset.bvIg), box = $("bv-ed-" + n.persona_id);
     if (box.innerHTML) return (box.innerHTML = "");
@@ -2291,6 +2320,219 @@ async function cargarNuevos() {
     const { error } = await sb.from("nuevos").update({ clase_bienvenida: c.checked, fecha_clase: c.checked ? ymd(new Date()) : null }).eq("persona_id", c.dataset.clase);
     if (error) { alert(error.message); c.checked = !c.checked; } else cargarNuevos();
   }));
+}
+
+// =================== CLASE «BIENVENIDO A LA FAMILIA» ===================
+// Cada dos meses, dos domingos seguidos por la mañana (27_clase_bienvenida.sql).
+// Bienvenida pone las fechas, inscribe (o el Stand) y pasa lista cada domingo.
+// Quien viene los dos días queda con la clase hecha en Seguimiento.
+const MESES_BV = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+const puedeClaseBv = () => ctx.esAncianoOAdmin || ctx.ministerios.has("bienvenida");
+const bvFechas = (c) => `${fmtCorta.format(fromYmd(c.fecha1))} y ${fmtCorta.format(fromYmd(c.fecha2))}`;
+const bvNombre = (c) => { const d = fromYmd(c.fecha1); return `Clase de ${MESES_BV[d.getMonth()]}${d.getFullYear() !== new Date().getFullYear() ? " " + d.getFullYear() : ""}`; };
+const bvCuando = (c) => [`Domingos ${bvFechas(c)}`, c.hora, c.lugar].filter(Boolean).join(" · ");
+const bvMasDias = (f, n) => { const d = fromYmd(f); d.setDate(d.getDate() + n); return ymd(d); };
+const bvTexto = (c, nombre) => `Hola ${String(nombre || "").split(" ")[0]}, te esperamos en la clase «Bienvenido a la familia» de Arco Ríos 🙌\n\nSon dos domingos: ${bvFechas(c)}${c.hora ? `, a las ${c.hora}` : ""}${c.lugar ? ` (${c.lugar})` : ""}. ¡No faltes a ninguno de los dos!\n\nArco Ríos`;
+
+async function cargarClasesBv() {
+  const { data, error } = await sb.from("bv_clases").select("*").order("fecha1", { ascending: false });
+  bvc.falta = !!error; bvc.clases = error ? [] : data || [];
+  const hoy = ymd(new Date());
+  bvc.proxima = [...bvc.clases].reverse().find((c) => c.abierta && c.fecha2 >= hoy) || null;
+}
+// Siguiente clase sugerida: dos meses después de la última, en domingo
+function bvSugerida() {
+  const ult = bvc.clases[0];
+  let d;
+  if (ult) { d = fromYmd(ult.fecha1); d.setMonth(d.getMonth() + 2); } else d = proximoDomingo();
+  d.setDate(d.getDate() + ((7 - d.getDay()) % 7));
+  if (d < proximoDomingo()) d = proximoDomingo();
+  return ymd(d);
+}
+function bvFormHtml(c) {
+  const f1 = c?.fecha1 || bvSugerida();
+  return `<label>Primer domingo</label><input id="bc-f1" type="date" value="${f1}">
+    <label>Segundo domingo</label><input id="bc-f2" type="date" value="${c?.fecha2 || bvMasDias(f1, 7)}">
+    <div class="hint" id="bc-dia"></div>
+    <div class="two"><div><label>Hora</label><input id="bc-h" value="${esc(c?.hora ?? "09:00")}" placeholder="09:00"></div>
+      <div><label>Lugar</label><input id="bc-l" value="${esc(c?.lugar || "")}" placeholder="Ej.: aula 2"></div></div>
+    <label>Notas (opcional)</label><textarea id="bc-n" placeholder="Ej.: quién la da, qué traer">${esc(c?.notas || "")}</textarea>
+    ${c ? `<label class="check" style="margin-top:12px"><input type="checkbox" id="bc-ab" ${c.abierta ? "checked" : ""}> Inscripciones abiertas (se ve en el Stand y al registrar personas nuevas)</label>` : ""}
+    <button class="btn-primary" id="bc-ok">${c ? "Guardar cambios" : "Crear clase"}</button><div class="ok err" id="bc-msg"></div>`;
+}
+function bvFormEventos(c, alGuardar) {
+  const revisa = () => {
+    const a = $("bc-f1").value, b = $("bc-f2").value, avisos = [];
+    if (a && fromYmd(a).getDay() !== 0) avisos.push("El primer día no es domingo.");
+    if (b && fromYmd(b).getDay() !== 0) avisos.push("El segundo día no es domingo.");
+    $("bc-dia").textContent = avisos.join(" ");
+  };
+  $("bc-f1").addEventListener("change", () => { if ($("bc-f1").value) $("bc-f2").value = bvMasDias($("bc-f1").value, 7); revisa(); });
+  $("bc-f2").addEventListener("change", revisa); revisa();
+  $("bc-ok").addEventListener("click", async () => {
+    const msg = $("bc-msg"); msg.textContent = "";
+    if (!$("bc-f1").value || !$("bc-f2").value) return (msg.textContent = "Elige los dos domingos.");
+    $("bc-ok").disabled = true;
+    const { data: id, error } = await sb.rpc("bv_guardar_clase", { p_id: c?.id || null, p_fecha1: $("bc-f1").value, p_fecha2: $("bc-f2").value,
+      p_hora: $("bc-h").value, p_lugar: $("bc-l").value, p_notas: $("bc-n").value, p_abierta: c ? $("bc-ab").checked : true, p_quien: ctx.nombreCompleto });
+    $("bc-ok").disabled = false;
+    if (error) return (msg.textContent = error.message);
+    alGuardar(id);
+  });
+}
+
+async function abrirClaseBv() {
+  const main = $("bv-main");
+  if (bvc.falta) { main.innerHTML = `<div class="soon">Falta ejecutar 27_clase_bienvenida.sql en Supabase.</div>`; return; }
+  if (bvc.clase) return abrirUnaClaseBv(bvc.clase);
+  const hoy = ymd(new Date());
+  const ids = bvc.clases.map((c) => c.id);
+  const [ins, asi] = ids.length ? await Promise.all([
+    sb.from("bv_inscritos").select("clase_id").in("clase_id", ids),
+    sb.from("bv_asistencia").select("clase_id, sesion").in("clase_id", ids),
+  ]) : [{ data: [] }, { data: [] }];
+  const cuenta = (rows, f) => (rows || []).filter(f).length;
+  const card = (c) => `<div class="li"><div><b>${esc(bvNombre(c))}</b>${!c.abierta && c.fecha2 >= hoy ? ' <span class="st">Inscripciones cerradas</span>' : ""}
+      <div class="muted">${esc(bvCuando(c))}</div>
+      <div class="muted">${cuenta(ins.data, (x) => x.clase_id === c.id)} inscritos · día 1: ${cuenta(asi.data, (x) => x.clase_id === c.id && x.sesion === 1)} · día 2: ${cuenta(asi.data, (x) => x.clase_id === c.id && x.sesion === 2)}</div></div>
+    <button class="btn-sec mini ok-ver" data-bvc="${c.id}">${c.fecha1 <= hoy && c.fecha2 >= hoy ? "Pasar lista" : "Abrir"}</button></div>`;
+  const prox = bvc.clases.filter((c) => c.fecha2 >= hoy).reverse(), pasadas = bvc.clases.filter((c) => c.fecha2 < hoy);
+  main.innerHTML = `
+    <div class="panel"><h4>Próximas clases</h4>
+      <div class="hint">«Bienvenido a la familia» es cada dos meses, dos domingos seguidos por la mañana.</div>
+      ${prox.map(card).join("") || '<div class="muted">No hay ninguna clase con fecha. Crea la próxima abajo.</div>'}</div>
+    ${puedeClaseBv() ? `<div class="panel solo-edit"><h4>+ Nueva clase</h4>${bvFormHtml(null)}</div>` : ""}
+    ${pasadas.length ? `<div class="panel"><details><summary><b>Clases anteriores (${pasadas.length})</b></summary>${pasadas.map(card).join("")}</details></div>` : ""}`;
+  main.querySelectorAll("[data-bvc]").forEach((b) => b.addEventListener("click", () => { bvc.clase = +b.dataset.bvc; bvc.dia = null; abrirClaseBv(); }));
+  if ($("bc-ok")) bvFormEventos(null, async (id) => { await cargarClasesBv(); bvc.clase = id; bvc.dia = null; abrirClaseBv(); });
+}
+
+async function abrirUnaClaseBv(id) {
+  const main = $("bv-main"), c = bvc.clases.find((x) => x.id === id);
+  if (!c) { bvc.clase = null; return abrirClaseBv(); }
+  const hoy = ymd(new Date()), edita = puedeClaseBv();
+  if (!bvc.dia) bvc.dia = hoy >= c.fecha2 ? 2 : 1;
+  const esHoy = hoy === c.fecha1 ? 1 : hoy === c.fecha2 ? 2 : 0;
+  main.innerHTML = '<div class="loading">Cargando…</div>';
+  const { data: lista, error } = await sb.rpc("bv_lista", { p_clase: id });
+  if (error) { main.innerHTML = `<div class="soon">${esc(error.message)}</div>`; return; }
+  const dia = bvc.dia, k = "dia" + dia, fechaDia = dia === 1 ? c.fecha1 : c.fecha2;
+  const vinieron = lista.filter((p) => p[k]).length;
+  const completo = (p) => (p.dia1 || p.dia1_otra) && (p.dia2 || p.dia2_otra);
+  const ORIG = { stand: "Stand", bienvenida: "Bienvenida", clase: "Llegó el día" };
+  main.innerHTML = `
+    <button class="btn-sec mini ok-ver" id="bc-volver" style="margin-bottom:12px">‹ Todas las clases</button>
+    <div class="panel"><div class="kclase-h"><h4>${esc(bvNombre(c))}</h4>${edita ? `<button class="btn-sec mini solo-edit" id="bc-ed">Editar</button>` : ""}</div>
+      <div class="muted" style="margin-top:6px">${esc(bvCuando(c))}</div>${c.notas ? `<div class="knota">${esc(c.notas)}</div>` : ""}
+      ${!c.abierta ? '<div class="sts"><span class="st">Inscripciones cerradas</span></div>' : ""}
+      <div class="sts"><span class="st">${lista.length} inscritos</span><span class="st yes">${lista.filter(completo).length} completaron los dos días</span></div>
+      <div id="bc-edbox"></div></div>
+    <div class="panel"><h4>Pasar lista</h4>
+      <div class="seg small" id="bc-dias">${[1, 2].map((d) => `<button class="ok-ver ${d === dia ? "on" : ""}" data-d="${d}">Día ${d} · ${fmtCorta.format(fromYmd(d === 1 ? c.fecha1 : c.fecha2))}${esHoy === d ? " (hoy)" : ""}</button>`).join("")}</div>
+      <div class="hint" id="bc-cnt">${vinieron} de ${lista.length} vinieron el ${esc(fmtTitulo(fechaDia).toLowerCase())}.${edita ? " Toca a cada persona que llegó." : ""}</div>
+      <div id="bc-lista">${lista.map((p) => {
+        const w = waLink(p.telefono), otra = p["dia" + dia + "_otra"];
+        return `<div style="margin-bottom:6px"><button class="att ${p[k] ? "on" : ""}" data-m="${p.persona_id}"><span class="dot2">${p[k] ? "✓" : ""}</span><span>${esc(p.nombre)}
+            <span class="muted" style="font-weight:400;font-size:13px;display:block">${esc(ORIG[p.origen] || "")}${p.igho ? " · IGHO " + esc(p.igho) : ""}${otra ? ` · día ${dia} ya lo hizo en otra clase` : ""}${completo(p) ? " · ✓ completó" : ""}</span></span></button>
+          <div class="row-btns" style="justify-content:flex-end;margin:-2px 0 8px">${w ? `<a class="btn-sec mini wa-mini" href="${w}?text=${encodeURIComponent(bvTexto(c, p.nombre))}" target="_blank" rel="noopener">WhatsApp recordatorio</a>` : '<span class="muted" style="font-size:12px">sin teléfono</span>'}${edita ? `<button class="x solo-edit" data-q="${p.persona_id}" aria-label="Quitar" title="Quitar de la clase">×</button>` : ""}</div></div>`;
+      }).join("") || '<div class="muted">Nadie inscrito todavía.</div>'}</div></div>
+    ${edita ? `<div class="panel solo-edit"><h4>Inscribir a alguien${esHoy ? " o agregar a quien llegó hoy" : ""}</h4>
+      <div id="bc-pend" class="loading">Cargando la lista de Bienvenida…</div>
+      <div class="hint" style="margin-top:14px">Buscar a otra persona (ya en la base o nueva):</div>
+      <input id="bc-q" placeholder="Buscar por nombre o celular" autocomplete="off"><div id="bc-res"></div>
+      <div class="hint" style="margin-top:10px">¿No aparece? Escribe sus datos:</div>
+      <div class="two"><div><input id="bc-nn" placeholder="Nombres" autocomplete="off"></div><div><input id="bc-na" placeholder="Apellidos" autocomplete="off"></div></div>
+      <input id="bc-nt" placeholder="Celular (09…)" inputmode="tel" autocomplete="off">
+      ${esHoy ? `<label class="check" style="margin-top:10px"><input type="checkbox" id="bc-hoy" checked> Está aquí: marcar que vino hoy (día ${esHoy})</label>` : ""}
+      <button class="btn-primary" id="bc-ins">Inscribir</button><div class="ok err" id="bc-imsg"></div></div>
+      <div class="panel solo-edit"><button class="btn-sec" id="bc-del" style="width:100%">Borrar esta clase</button></div>` : ""}`;
+
+  $("bc-volver").addEventListener("click", () => { bvc.clase = null; abrirClaseBv(); });
+  $("bc-dias").querySelectorAll("button").forEach((b) => b.addEventListener("click", () => { bvc.dia = +b.dataset.d; abrirUnaClaseBv(id); }));
+  const recargar = async () => { await cargarClasesBv(); abrirUnaClaseBv(id); };
+  if (!edita) return;
+
+  // Pasar lista: toca para marcar / desmarcar
+  $("bc-lista").querySelectorAll("[data-m]").forEach((b) => b.addEventListener("click", async () => {
+    if (b.disabled) return;
+    const vino = !b.classList.contains("on");
+    if (vino && fechaDia > hoy && !confirm(`El día ${dia} es el ${fmtTitulo(fechaDia).toLowerCase()}. ¿Marcar asistencia de todos modos?`)) return;
+    b.disabled = true; b.classList.toggle("on", vino); b.querySelector(".dot2").textContent = vino ? "✓" : "";
+    const { error } = await sb.rpc("bv_marcar", { p_clase: id, p_persona: b.dataset.m, p_sesion: dia, p_vino: vino, p_quien: ctx.nombreCompleto });
+    b.disabled = false;
+    if (error) { alert(error.message); b.classList.toggle("on", !vino); b.querySelector(".dot2").textContent = !vino ? "✓" : ""; return; }
+    const p = lista.find((x) => x.persona_id === b.dataset.m); if (p) p[k] = vino;
+    const n = lista.filter((x) => x[k]).length;
+    $("bc-cnt").textContent = `${n} de ${lista.length} vinieron el ${fmtTitulo(fechaDia).toLowerCase()}. Toca a cada persona que llegó.`;
+  }));
+  main.querySelectorAll("[data-q]").forEach((b) => b.addEventListener("click", async () => {
+    const p = lista.find((x) => x.persona_id === b.dataset.q);
+    if (!confirm(`¿Quitar a ${p?.nombre || "esta persona"} de la clase? También se borra su asistencia en esta clase.`)) return;
+    const { error } = await sb.rpc("bv_quitar", { p_clase: id, p_persona: b.dataset.q }); if (error) return alert(error.message);
+    recargar();
+  }));
+  $("bc-ed").addEventListener("click", () => {
+    const box = $("bc-edbox"); if (box.innerHTML) return (box.innerHTML = "");
+    box.innerHTML = `<div class="panel" style="margin:12px 0 0;background:var(--surface-2)">${bvFormHtml(c)}</div>`;
+    bvFormEventos(c, recargar);
+  });
+  $("bc-del").addEventListener("click", async () => {
+    if (!confirm(`¿Borrar la ${bvNombre(c).toLowerCase()} (${bvFechas(c)})?\n\nSe borran también sus inscritos y la asistencia. No se puede deshacer.`)) return;
+    const { error } = await sb.rpc("bv_borrar_clase", { p_id: id }); if (error) return alert(error.message);
+    bvc.clase = null; await cargarClasesBv(); abrirClaseBv();
+  });
+
+  // De la lista de Bienvenida: personas nuevas que aún no tienen la clase ni están inscritas aquí
+  const ya = new Set(lista.map((p) => p.persona_id));
+  sb.from("nuevos_seguimiento").select("persona_id, nombres, apellidos, primera_visita").eq("clase_bienvenida", false).order("primera_visita", { ascending: false }).limit(200).then(({ data, error }) => {
+    const box = $("bc-pend"); if (!box) return; box.classList.remove("loading");
+    const pend = (data || []).filter((n) => !ya.has(n.persona_id));
+    if (error || !pend.length) { box.innerHTML = '<div class="muted">Todas las personas nuevas de Bienvenida ya tienen la clase o están inscritas.</div>'; return; }
+    box.innerHTML = `<div class="hint">Personas nuevas de Bienvenida que aún no hacen la clase (${pend.length}):</div>
+      ${pend.map((n) => `<label class="check" style="padding:8px 0"><input type="checkbox" data-pn="${n.persona_id}"> ${esc(n.nombres)} ${esc(n.apellidos || "")} <span class="muted">· desde ${fmtCorta.format(fromYmd(n.primera_visita))}</span></label>`).join("")}
+      <button class="btn-sec" id="bc-pins" style="width:100%;margin-top:8px">Inscribir marcados</button>`;
+    $("bc-pins").addEventListener("click", async () => {
+      const marc = [...box.querySelectorAll("[data-pn]:checked")].map((x) => x.dataset.pn);
+      if (!marc.length) return alert("Marca a las personas que quieres inscribir.");
+      $("bc-pins").disabled = true;
+      const marcarHoy = esHoy && $("bc-hoy")?.checked;
+      for (const pid of marc) {
+        const { error } = await sb.rpc("bv_inscribir", { p_clase: id, p_persona: pid, p_nombres: null, p_apellidos: null, p_telefono: null, p_notas: null, p_origen: "bienvenida", p_quien: ctx.nombreCompleto });
+        if (error) { alert(error.message); break; }
+        if (marcarHoy) await sb.rpc("bv_marcar", { p_clase: id, p_persona: pid, p_sesion: esHoy, p_vino: true, p_quien: ctx.nombreCompleto });
+      }
+      if (esHoy) bvc.dia = esHoy;
+      recargar();
+    });
+  });
+
+  // Buscar o escribir una persona
+  let elegido = null, t;
+  $("bc-q").addEventListener("input", (e) => { elegido = null; clearTimeout(t); t = setTimeout(async () => {
+    const q = e.target.value.trim(); if (q.length < 2) return ($("bc-res").innerHTML = "");
+    const { data, error } = await sb.rpc("bv_buscar", { q });
+    if (error) return ($("bc-res").innerHTML = `<div class="muted err">${esc(error.message)}</div>`);
+    $("bc-res").innerHTML = (data || []).map((p, i) => `<div class="li"><div><b>${esc(p.nombre)}</b><div class="muted">${p.telefono ? esc(p.telefono) : "sin teléfono"}${p.igho ? " · IGHO " + esc(p.igho) : ""}${ya.has(p.id) ? " · ya inscrito/a" : ""}</div></div>
+      ${ya.has(p.id) ? "" : `<button class="btn-sec mini" data-p="${i}">Elegir</button>`}</div>`).join("") || '<div class="muted">No se encontró. Escribe sus datos abajo.</div>';
+    $("bc-res").querySelectorAll("[data-p]").forEach((b) => b.addEventListener("click", () => {
+      const p = data[+b.dataset.p]; elegido = p;
+      $("bc-res").innerHTML = `<div class="li"><b>${esc(p.nombre)}</b><span class="st yes">Elegido/a</span></div>`;
+    }));
+  }, 300); });
+  $("bc-ins").addEventListener("click", async () => {
+    const msg = $("bc-imsg"); msg.textContent = "";
+    const telEsc = $("bc-nt").value.trim(), tel = normalizarTelefono(telEsc);
+    if (!elegido && !$("bc-nn").value.trim()) return (msg.textContent = "Busca a la persona o escribe su nombre.");
+    if (telEsc && tel.length !== 10) return (msg.textContent = "El celular debe tener 10 dígitos (09…).");
+    $("bc-ins").disabled = true;
+    const { data: pid, error } = await sb.rpc("bv_inscribir", { p_clase: id, p_persona: elegido?.id || null, p_nombres: $("bc-nn").value.trim() || null,
+      p_apellidos: $("bc-na").value.trim() || null, p_telefono: tel || null, p_notas: null, p_origen: esHoy ? "clase" : "bienvenida", p_quien: ctx.nombreCompleto });
+    if (!error && esHoy && $("bc-hoy")?.checked) await sb.rpc("bv_marcar", { p_clase: id, p_persona: pid, p_sesion: esHoy, p_vino: true, p_quien: ctx.nombreCompleto });
+    $("bc-ins").disabled = false;
+    if (error) return (msg.textContent = error.message);
+    if (esHoy) bvc.dia = esHoy;
+    recargar();
+  });
 }
 
 // =================== FINANZAS · INGRESOS ===================
@@ -5307,7 +5549,7 @@ async function abrirStand() {
   await cargarCursosFc();
   const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
   const domF = ymd(proximoDomingo());
-  const [o, ins, an, ac, rg, ig_, it_] = await Promise.all([
+  const [o, ins, an, ac, rg, ig_, it_, bc_] = await Promise.all([
     sb.from("fc_ofertas").select("*").eq("abierta", true).order("fecha_inicio", { nullsFirst: false }),
     sb.from("fc_inscripciones").select("nombre, oferta_id, inscrito_por_nombre, creado_en").gte("creado_en", hoy.toISOString()).order("creado_en", { ascending: false }),
     cargarAnuncios(domF),
@@ -5315,13 +5557,16 @@ async function abrirStand() {
     sb.from("stand_registros").select("*").order("creado_en", { ascending: false }),
     sb.rpc("stand_ighos"),
     sb.from("igho_interesados").select("*").gte("creado_en", hoy.toISOString()).order("creado_en", { ascending: false }),
+    sb.from("bv_clases").select("*").eq("abierta", true).gte("fecha2", ymd(hoy)).order("fecha1").limit(1),
   ]);
+  const claseBv = bc_.error ? null : bc_.data?.[0] || null;
   const ighosSt = ig_.error ? [] : ig_.data || [], interesHoy = it_.error ? [] : it_.data || [];
   if (o.error) { body.innerHTML = `<div class="soon">No se pudo cargar. ${esc(o.error.message)}</div>`; return; }
   const ofertas = o.data, acts = ac.error ? [] : ac.data || [], regs = rg.error ? [] : rg.data || [];
   // Todo lo que se puede inscribir: actividades de los anuncios y clases/eventos de Formación
   const opciones_ = [
     ...acts.map((a) => ({ k: "a" + a.id, nombre: a.titulo, tipo: a.tipo === "ninos" ? "ninos" : "personas", act: a, det: a.detalle ? esc(a.detalle).replace(/\n/g, "<br>") : "Actividad de los anuncios" })),
+    ...(claseBv ? [{ k: "bv" + claseBv.id, nombre: "Bienvenido a la familia", tipo: "bv", clase: claseBv, det: `Clase para personas nuevas: ${esc(bvCuando(claseBv))}. Son los dos domingos.` }] : []),
     ...ofertas.map((x) => ({ k: "o" + x.id, nombre: x.nombre, tipo: "oferta", of: x, e: estiloDe(x), det: `${detalleFc(x) || "Sin fecha todavía"}${x.descripcion ? "<br>" + esc(x.descripcion) : ""}` })),
     ...(ighosSt.length ? [{ k: "igho", nombre: "Iglesia de hogar (IGHO)", tipo: "igho", det: "Para quien quiere conocer un IGHO. Su líder recibe un aviso para contactarle." }] : []),
   ];
@@ -5345,6 +5590,8 @@ async function abrirStand() {
   }
   const sel = elegida();
   const regsSel = sel.act ? regs.filter((r) => r.actividad_id === sel.act.id) : [];
+  let bvIns = [];
+  if (sel.tipo === "bv") { const { data } = await sb.rpc("bv_lista", { p_clase: sel.clase.id }); bvIns = (data || []).sort((a, b) => (a.creado_en < b.creado_en ? 1 : -1)); }
   const form = sel.tipo === "igho"
     ? `<div class="panel solo-edit"><h4>2. ¿A qué IGHO?</h4>
         <select id="st-ig"><option value="">Elige el IGHO…</option>${ighosSt.map((g) => `<option value="${g.id}">${esc(g.nombre)}${g.lider ? " · " + esc(g.lider) : ""}${g.ubicacion ? " · " + esc(g.ubicacion) : ""}</option>`).join("")}</select>
@@ -5374,6 +5621,9 @@ async function abrirStand() {
     ? `<div class="panel"><h4>Quieren ir a un IGHO · hoy (${interesHoy.length})</h4>
         ${interesHoy.map((x) => `<div class="li"><div><b>${esc(x.nombre)}</b><div class="muted">${esc(ighosSt.find((g) => g.id === x.igho_id)?.nombre || "")}${x.inscrito_por_nombre ? " · " + esc(x.inscrito_por_nombre) : ""}</div></div>
           <div class="row-btns"><span class="muted">${fmtHora.format(new Date(x.creado_en))}</span><button class="x solo-edit" data-borra-int="${x.id}" aria-label="Borrar inscripción" title="Borrar (prueba o error)">×</button></div></div>`).join("") || '<div class="muted">Nadie todavía.</div>'}</div>`
+    : sel.tipo === "bv"
+    ? `<div class="panel"><h4>Inscritos en la clase (${bvIns.length})</h4>
+        ${bvIns.map((x) => `<div class="li"><div><b>${esc(x.nombre)}</b><div class="muted">${x.origen === "stand" ? "Stand" : "Bienvenida"}${x.inscrito_por ? " · " + esc(x.inscrito_por) : ""}</div></div><span class="muted">${fmtCorta.format(new Date(x.creado_en))}</span></div>`).join("") || '<div class="muted">Nadie todavía.</div>'}</div>`
     : sel.act
     ? `<div class="panel"><div class="kclase-h"><h4>${esc(sel.nombre)} (${regsSel.length})</h4>${puedeCerrar ? `<button class="btn-sec mini solo-edit" id="st-cerrar">Cerrar inscripción</button>` : ""}</div>
         ${regsSel.map((x) => { const w = waLink(x.telefono); return `<div class="li"><div><b>${esc(x.nombre)}</b>${x.fecha_nacimiento ? ` <span class="muted">· ${edadTexto(x.fecha_nacimiento)}</span>` : ""}
@@ -5445,7 +5695,11 @@ async function abrirStand() {
       if (r?.personas) sb.functions.invoke(FUNCION_AVISOS, { body: { accion: "enviar_interes", id: r.aviso } }).catch(() => {});
       return abrirStand().then(() => { $("st-listo").innerHTML = ighoListoHtml(g, nombre, telFinal, r, "el Stand"); $("st-listo").scrollIntoView({ block: "center" }); });
     }
-    if (sel.tipo === "oferta") {
+    if (sel.tipo === "bv") {
+      ({ error } = await sb.rpc("bv_inscribir", { p_clase: sel.clase.id, p_persona: st_.persona?.id || null, p_nombres: $("st-n").value.trim() || null,
+        p_apellidos: $("st-a").value.trim() || null, p_telefono: tel || null, p_notas: $("st-notas").value.trim() || null, p_origen: "stand", p_quien: ctx.nombreCompleto }));
+      nombre = st_.persona?.nombre || `${$("st-n").value.trim()} ${$("st-a").value.trim()}`.trim(); telFinal = st_.persona?.tel || tel;
+    } else if (sel.tipo === "oferta") {
       ({ error } = await sb.rpc("fc_inscribir", { p_oferta: sel.of.id, p_persona: st_.persona?.id || null, p_nombres: $("st-n").value.trim() || null,
         p_apellidos: $("st-a").value.trim() || null, p_telefono: tel || null, p_notas: $("st-notas").value.trim() || null, p_quien: ctx.nombreCompleto }));
       nombre = st_.persona?.nombre || `${$("st-n").value.trim()} ${$("st-a").value.trim()}`.trim(); telFinal = st_.persona?.tel || tel;
@@ -5461,7 +5715,8 @@ async function abrirStand() {
     $("st-ok").disabled = false;
     if (error) return (msg.textContent = error.message);
     const w = waLink(telFinal);
-    const texto = sel.tipo === "oferta"
+    const texto = sel.tipo === "bv" ? bvTexto(sel.clase, nombre).replace("te esperamos en", "quedaste inscrito/a en")
+      : sel.tipo === "oferta"
       ? `Hola ${nombre.split(" ")[0]}, ¡quedaste inscrito/a en «${sel.of.nombre}»!${detalleFc(sel.of) ? ` ${[fechasFc(sel.of), sel.of.horario, sel.of.lugar].filter(Boolean).join(" · ")}.` : ""} Te esperamos. — Arco Ríos`
       : sel.tipo === "ninos" ? `Hola, ${nombre.split(" ")[0]} quedó inscrito/a en «${sel.nombre}». ¡Gracias! — Arco Ríos` : `Hola ${nombre.split(" ")[0]}, quedaste inscrito/a en «${sel.nombre}». ¡Gracias! — Arco Ríos`;
     abrirStand().then(() => {
@@ -6154,7 +6409,7 @@ async function revisarCenso(x) {
 // ===================================================================
 // AVISOS: notificaciones al teléfono + campana dentro de la app
 // ===================================================================
-const VERSION_APP = "23-nov · v11";
+const VERSION_APP = "23-nov · v12";
 const FUNCION_AVISOS = "swift-action"; // Edge Function en Supabase (se muestra como «notificar»)
 const av = { lista: [], noLeidas: 0, timer: null };
 const IR_A = [["", "Avisos"], ["domingo", "Este domingo"], ["igho", "Mi IGHO"], ["kidz", "Kidz"], ["worship", "Arco Worship"], ["formacion", "Formación Cristiana"], ["stand", "Stand de información"]];

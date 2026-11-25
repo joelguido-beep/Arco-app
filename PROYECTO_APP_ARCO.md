@@ -1,6 +1,6 @@
 # App Iglesia Arco Ríos: project summary (to start a new chat)
 
-Attach this file when you start a new chat. The code lives in GitHub: **`joelguido-beep/Arco-app`** (branch `main`, served by GitHub Pages at https://joelguido-beep.github.io/Arco-app/). The Claude GitHub App is installed, so Claude can clone the repo and push changes directly (no need to attach `index.html`). Current version: **23-nov v11** (shown under the title of the Avisos page; constant `VERSION_APP` in index.html; update both on each release).
+Attach this file when you start a new chat. The code lives in GitHub: **`joelguido-beep/Arco-app`** (branch `main`, served by GitHub Pages at https://joelguido-beep.github.io/Arco-app/). The Claude GitHub App is installed, so Claude can clone the repo and push changes directly (no need to attach `index.html`). Current version: **23-nov v12** (shown under the title of the Avisos page; constant `VERSION_APP` in index.html; update both on each release).
 
 ## What it is
 A web app in Spanish for Arco Ríos (Cuenca). It's a single `index.html` file hosted on **GitHub Pages**, and the data lives in **Supabase** (project `lmitwnfvelwbbkjkvmtb`).
@@ -45,6 +45,7 @@ A web app in Spanish for Arco Ríos (Cuenca). It's a single `index.html` file ho
 27. `25_bienvenida_igho.sql`: puede_conectar_igho() (Stand team, Bienvenida, Consejo/admin); stand_ighos(), stand_igho_interes() and borrar_interes_igho() now allow Bienvenida too
 28. `26_admin_borrar.sql`: policy «admin borra» (delete for admin) on every public RLS table except personas, perfiles, usuarios_roles, ajustes_privados, cobertura_consejo, conyuges_consejo; admin_borrar_persona() (deletes if the person appears nowhere else, otherwise deactivates: activo = false, out of their IGHO; refuses if they have an app account or lead an IGHO)
 
+29. `27_clase_bienvenida.sql`: bv_clases (fecha1 / fecha2 = the two Sundays, hora, lugar, abierta), bv_inscritos (origen bienvenida / stand / clase), bv_asistencia (sesion 1 | 2); edita_clase_bv() (Bienvenida + Consejo/admin), inscribe_clase_bv() (+ Stand team); bv_guardar_clase, bv_borrar_clase, bv_inscribir (creates the person if new and adds them to nuevos), bv_quitar, bv_marcar, bv_lista, bv_buscar. Attending day 1 and day 2 (even in different classes) sets nuevos.clase_bienvenida = true + fecha_clase
 ## Roles
 - `admin`, `anciano` (shown as **Miembro del Consejo**), `secretaria`, `finanzas`
 - **Cónyuge del Consejo**: not a rol_t value but a row in `conyuges_consejo` (checkbox in Administración → Editar). Sees every page except Finanzas, Tablero, Reunión del Consejo, Mensajes por WhatsApp and Administración. Pages are read-only («👁 Solo lectura», class `solo-ver`) unless they also have the matching role (e.g. Líder de Kidz edits Kidz). Mi IGHO: all IGHOs readable, editable only their own.
@@ -137,6 +138,12 @@ Kidz with QR: camera check-in/check-out (photo confirmation, allergies, parent n
 ## Avisos delete + PDF reports (23 Nov 2026, v10–v11)
 - v10: admin × on Avisos page (Mis avisos and Avisos enviados).
 - v11: «📄 Informe» button top-right on Anfitriones, Kidz, Bienvenida, Worship, Este domingo (Anuncios), Formación, Stand and Mi IGHO, for that ministry's leaders + Consejo/admin (IGHO: lider_igho, current IGHO). Pick dates (último mes / 3 meses / año / custom) → downloads a PDF (html2pdf.js 0.10.2 from jsDelivr, loaded on first use; fallback opens a print window). Code: INFORMES, botonInforme (called from show()), dialogoInforme, generarInforme, descargarPdf, INF_CSS. Contents: Anfitriones (attendance per Sunday + averages, manteles, team notes); Kidz (per Sunday × class, servers, each child's visits); Bienvenida (new people, how they came, class, IGHO); Worship (each Sunday: team, songs+key, who served; top songs; times each person served; absences); Anuncios (each Sunday's items + announcer); Formación (classes in range, enrolled/completed/withdrew, lists); Stand (activity, class and IGHO sign-ups); IGHO (meetings with who came, each member's attendance, coverage visits, people wanting to join).
+
+## Clase de bienvenida (23 Nov 2026, v12)
+- Bienvenida page now has two tabs: Personas (register + Seguimiento) and «Clase de bienvenida».
+- «Bienvenido a la familia» is every other month, two Sundays in a row (morning). «+ Nueva clase» suggests the date two months after the last class (moved to Sunday); the second Sunday fills itself (+7 days, editable); hora (default 09:00), lugar, notas; Editar can close sign-ups.
+- Sign-ups: checkbox when registering a new person («Inscribir en la clase de bienvenida», on by default), «Clase» button in Seguimiento, «Inscribir marcados» from the Bienvenida list inside the class, search / new person, and the Stand (option «Bienvenido a la familia», with WhatsApp confirmation).
+- Pasar lista: Día 1 / Día 2 switch (opens on today's day), tap each person; people who arrive without signing up are added and marked in one step. Each person shows where they signed up, a WhatsApp reminder button and «✓ completó» once they have both days. The Bienvenida home card shows the next class.
 
 ## Status (23 Nov 2026, end of day)
 - Notifications work on Joel's Android (function `swift-action` deployed with notificar.ts, Verify JWT off).
