@@ -3582,10 +3582,16 @@ const catsIgho = (g) => IG_CATS.filter(([v]) => (g?.categorias || []).includes(v
 // ¿El nombre del IGHO ya es el nombre del líder? Entonces no se repite en la tarjeta
 const nomNorm = (t) => String(t || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 const liderEnNombre = (g) => !!g?.lider && nomNorm(g.nombre).includes(nomNorm(g.lider.split(" ")[0]));
+// Enlaces de Google Maps del IGHO. Si el líder no puso uno, se arma con la dirección (búsqueda en Cuenca)
+function mapasIgho(g) {
+  const m = (g?.mapas || []).filter(Boolean);
+  if (m.length || !g?.direccion) return m;
+  return [`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${g.direccion}, Cuenca, Ecuador`)}`];
+}
 // Mismo texto que reciben las personas desde el Stand y Bienvenida (siempre con el enlace de Google Maps)
 function tarjetaIghoTexto(g) {
   if (!g) return "";
-  const m = g.mapas || [], nom = /^igho\b/i.test(g.nombre || "") ? g.nombre : `IGHO ${g.nombre}`;
+  const m = mapasIgho(g), nom = /^igho\b/i.test(g.nombre || "") ? g.nombre : `IGHO ${g.nombre}`;
   return `🏠 *${nom}* · Arco Ríos`
     + catsIgho(g).map(([, t, e]) => `\n${e} ${t}`).join("")
     + (g.horario ? `\n\n🗓 ${g.horario}` : "") + (g.direccion ? `\n📍 ${g.direccion}` : "")
@@ -3680,7 +3686,7 @@ async function pintarCompartirIgho() {
     <button class="btn-primary ok-ver" id="ig-img" style="margin-top:12px">Enviar la tarjeta (imagen)</button>
     <a class="btn-sec wa-btn" style="width:100%;display:block;margin-top:8px" href="https://wa.me/?text=${encodeURIComponent(texto)}" target="_blank" rel="noopener">Enviar como texto por WhatsApp</a>
     <button class="btn-sec ok-ver" id="ig-copiar" style="width:100%">Copiar el texto</button>
-    <div class="hint" style="margin:10px 0 18px">El texto lleva el día, la dirección${g.mapas?.length ? ", el enlace de Google Maps" : ""} y el contacto del líder. Es el mismo que reciben las personas que el Stand o Bienvenida conectan con tu IGHO.${falta.length ? ` <b>Falta: ${falta.join(", ")}</b> (agrégalo abajo).` : ""}</div>
+    <div class="hint" style="margin:10px 0 18px">El texto lleva el día, la dirección, ${g.mapas?.length ? "el enlace de Google Maps" : g.direccion ? "un enlace de Google Maps armado con la dirección (para el punto exacto, pega el enlace de tu casa abajo en «Editar»)" : "el enlace de Google Maps cuando pongas la dirección"} y el contacto del líder. Es el mismo que reciben las personas que el Stand o Bienvenida conectan con tu IGHO.${falta.length ? ` <b>Falta: ${falta.join(", ")}</b> (agrégalo abajo).` : ""}</div>
     ${lugarIghoHtml(g)}`;
   igConectarVolver();
   conectarLugarIgho();
@@ -7033,7 +7039,7 @@ async function revisarCenso(x) {
 // ===================================================================
 // AVISOS: notificaciones al teléfono + campana dentro de la app
 // ===================================================================
-const VERSION_APP = "25-nov · v16";
+const VERSION_APP = "25-nov · v17";
 const FUNCION_AVISOS = "swift-action"; // Edge Function en Supabase (se muestra como «notificar»)
 const av = { lista: [], noLeidas: 0, timer: null };
 const IR_A = [["", "Página principal"], ["domingo", "Este domingo"], ["anfitriones", "Anfitriones"], ["bienvenida", "Bienvenida"], ["igho", "Mi IGHO"], ["kidz", "Kidz"], ["worship", "Arco Worship"], ["formacion", "Formación Cristiana"], ["stand", "Stand de información"]];
