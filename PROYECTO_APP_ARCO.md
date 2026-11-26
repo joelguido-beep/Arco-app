@@ -1,6 +1,6 @@
 # App Iglesia Arco Ríos: project summary (to start a new chat)
 
-Attach this file when you start a new chat. The code lives in GitHub: **`joelguido-beep/Arco-app`** (branch `main`, served by GitHub Pages at https://joelguido-beep.github.io/Arco-app/). The Claude GitHub App is installed, so Claude can clone the repo and push changes directly (no need to attach `index.html`). **Joel's standing instruction: push every finished update straight to `main` on GitHub automatically, without asking first** (index.html, new SQL files and this summary). Joel still runs the SQL in Supabase himself. Current version: **26-nov v20** (shown under the title of the Avisos page; constant `VERSION_APP` in index.html; update both on each release).
+Attach this file when you start a new chat. The code lives in GitHub: **`joelguido-beep/Arco-app`** (branch `main`, served by GitHub Pages at https://joelguido-beep.github.io/Arco-app/). The Claude GitHub App is installed, so Claude can clone the repo and push changes directly (no need to attach `index.html`). **Joel's standing instruction: push every finished update straight to `main` on GitHub automatically, without asking first** (index.html, new SQL files and this summary). Joel still runs the SQL in Supabase himself. Current version: **26-nov v21** (shown under the title of the Avisos page; constant `VERSION_APP` in index.html; update both on each release).
 
 ## What it is
 A web app in Spanish for Arco Ríos (Cuenca). It's a single `index.html` file hosted on **GitHub Pages**, and the data lives in **Supabase** (project `lmitwnfvelwbbkjkvmtb`).
@@ -8,6 +8,7 @@ A web app in Spanish for Arco Ríos (Cuenca). It's a single `index.html` file ho
 - Publishable key (safe to keep in the app): `sb_publishable_hCMTSR9Rnacl85NXiQpn5Q_L9JlmJ3m`
 - Never put the service_role / secret key in the app.
 - Edge Functions: shown as **notificar** but its URL slug is **`swift-action`** (FUNCION_AVISOS in index.html and the cron URL use swift-action) (code: `notificar.ts`, "Verify JWT" off): sends push notifications (Avisos and the Saturday reminder). VAPID keys create themselves the first time and live in `ajustes_privados` with the cron secret.
+- Edge Function: **`correo`** (code: `correo.ts`, "Verify JWT" off): emails through Resend. Secrets RESEND_API_KEY and CORREO_DE (sender on a domain verified in Resend). Daily cron `correo-diario` 12:00 UTC (7:00 Ecuador) sends the day's calendar reminders and, on Mondays, the Consejo meeting briefing. If Supabase gives it a different URL slug, change FUNCION_CORREO in index.html and the URL in the cron.
 - Edge Function: named **`hyper-api`** in Supabase (code: `admin-usuarios.ts`), with "Verify JWT with legacy secret" turned **off**. Admin actions check the admin role in code; `registro_padre` is public (parents create their own account); `crear_lider_igho` is allowed for admin or the Consejo member who covers that IGHO, and only gives the `lider_igho` role to that IGHO's registered leader.
 
 ## Design (v14: light theme, Arco Ríos palette)
@@ -52,6 +53,8 @@ A web app in Spanish for Arco Ríos (Cuenca). It's a single `index.html` file ho
 31. `29_perfil_foto_igho.sql`: igho_fotos (one small JPEG data URL per IGHO, cropped to the card's left side) + guardar_foto_igho(); igho.categorias ('ninos' = Espacio para niños, 'menores18' = IGHO -18 años) + guardar_categorias_igho(); stand_ighos() also returns categorias; mis_datos() / guardar_mis_datos() (own persona through perfiles); solicitudes_ministerio + solicitar_ministerio() (notifies admins, tipo 'solicitud') + resolver_solicitud() (admin approves as servidor / lider_ministerio → inserts usuarios_roles, notifies the person)
 
 32. `30_sugerencias.sql`: sugerencias_app (who, page › section, text, app version, estado nueva/hecha/descartada, nota_admin) + enviar_sugerencia() (any user; notifies admins, notificaciones.tipo 'sugerencia') + estado_sugerencia() (admin: hecha / descartada / nueva / borrar)
+
+33. `31_calendario_correo.sql`: personas.email + mi_correo/guardar_mi_correo + correos_equipo/guardar_correo_persona (admin/secretaría); cal_eventos (evento / actividad / predica / reunion / otro), cal_recordatorios (clase anunciar / planificar / otro, cuando, envio date, destinos text[]: consejo | lideres_min | min:<codigo> | lideres_igho, personas uuid[], mensaje, enviado_en); consejo_tareas.vence; consejo_reuniones (fecha, tipo Consejo / Consejo ampliado / No hay reunión, hora, lugar, notas, resumen_enviado_en); consejo_config (usual day/time/type, resumen_lunes); consejo_agenda (categoria tarea / decision / reporte, reunion_fecha, estado pendiente / tratado / descartado); correos_enviados; correo_destinatarios() (service_role), contar_destinatarios(), sin_correo(); cron `correo-diario`
 
 ## Roles
 - `admin`, `anciano` (shown as **Miembro del Consejo**), `secretaria`, `finanzas`
@@ -191,6 +194,15 @@ Kidz with QR: camera check-in/check-out (photo confirmation, allergies, parent n
 ## Dark mode fix (26 Nov 2026, v20)
 - Este domingo: the Predica / Encargado espiritual / Supervisor logístico boxes in the blue header were light text on a light box (unreadable, worst in dark mode). `.hero .chip` is now a see-through light layer with a thin outline and light text, readable in both themes.
 
+## Calendar, email reminders, Consejo agenda (26 Nov 2026, v21)
+- Tablero → **Calendario**: month grid (Mon–Sun, colored by type; Sunday preachers from programa_domingo shown in italics), Próximos list and «Correos que van a salir». Tap a day or «+ Nuevo»: title, type, ministry, date/time, until, place, responsible / who preaches, description.
+- Each event can have several email reminders: «Para anunciar: el miércoles antes de los 2 domingos» (default; e.g. event 16 Dec → announced 6 and 13 Dec → email Wed 2 Dec 7:00), 1 / 2 weeks before, planning 1 / 1.5 / 2 / 3 months before (option «Que salga el miércoles»), or a fixed date. Recipients: Consejo, all ministry leaders, IGHO leaders, leaders of one ministry, and individual people; shows who has an email and who doesn't. «Enviar ya» per reminder. Moving the event date moves its unsent reminders.
+- Reunión del Consejo → new first tab **Agenda**: next meeting (from consejo_reuniones or the usual schedule; type Consejo / Consejo ampliado / No hay reunión, editable), add items as Tarea / Decisión / Reporte (who presents, detail, which meeting), list grouped by category, ✓ Tratado / ✓ Decidido (asks what was decided → saved in Decisiones), «A la siguiente», «Ya no aplica». Right side: Monday email (preview, send now, test to me), usual schedule, pendientes that fall due, calendar (to announce this Sunday, next 3 weeks).
+- Pendientes now have an optional «Vence» date (also in the edit prompts).
+- Monday 7:00 email to the Consejo: meeting type/date/place/notes, Decisiones, Reportes, Tareas (+ pendientes due), what to announce this Sunday, next 6 weeks of the calendar, who preaches, reminders going out that week. Skipped when the week is «No hay reunión»; sent once per meeting.
+- Emails: Mi perfil has «Correo electrónico»; Administración → **Correos** lists the Consejo and leaders with an email box each (filter «Sin correo»). If a user logs in with a real email, that one is used when the persona has none.
+- Dark mode: links («Cambiar», «Cerrar»…) are light blue now.
+
 ## Status (23 Nov 2026, end of day)
 - Notifications work on Joel's Android (function `swift-action` deployed with notificar.ts, Verify JWT off).
 - To confirm: `21_censo_rellenar.sql` and `22_stand_igho.sql` run in Supabase; cron job `recordatorio-siervos` points to `/functions/v1/swift-action` (check: `select command from cron.job where jobname = 'recordatorio-siervos';`).
@@ -201,6 +213,7 @@ Kidz with QR: camera check-in/check-out (photo confirmation, allergies, parent n
 - Supabase SQL editor tip: run each file in a New query with the whole file pasted; temp tables don't survive between statements there.
 
 ## Pending
+- Email setup (v21): create a Resend account, verify a domain, add secrets RESEND_API_KEY and CORREO_DE, deploy `correo.ts` as function `correo` (Verify JWT off), run `31_calendario_correo.sql`, then Agenda → «Enviarme un correo de prueba». Fill in emails (Administración → Correos) and the usual meeting schedule (Agenda → Horario habitual).
 - Test notifications on an iPhone (Safari → Agregar a pantalla de inicio first); check the first Saturday reminder (Supabase → Edge Functions → swift-action → Logs, Saturday 20:00)
 - Decide: should Consejo spouses see Reunión del Consejo? (now hidden)
 - Decide: add a privacy check to the census link (last 4 phone digits or birth year before showing someone's data)

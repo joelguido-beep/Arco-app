@@ -498,6 +498,44 @@
   .tb-panel input, .tb-panel select, .tb-panel textarea { background: var(--bg); }
   @media (max-width: 1100px) { .cs-row, .acta-busca { grid-template-columns: 1fr; } .cs-t { grid-template-columns: 34px 1fr; } .cs-acc { grid-column: 2; } }
   @media print { .cs-tabs, .cs-add, .cs-acc, .chk { display: none !important; } mark { background: none; font-weight: 700; } .acta { break-inside: auto; } }
+  .cs-row { grid-template-columns: 2fr 1fr 150px 150px auto; } .cs-vence { color: var(--habanero); font-weight: 600; }
+  /* ---------- Agenda del Consejo ---------- */
+  .ag-it { grid-template-columns: 86px 1fr auto; } .cs-acc { flex-wrap: wrap; justify-content: flex-end; }
+  .ag-cat { font-size: 11px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; padding: 5px 6px; border-radius: 4px; text-align: center; margin-top: 2px; }
+  .ag-cat.c-tarea { background: var(--aster); color: var(--depths); } .ag-cat.c-decision { background: var(--royal); color: var(--luster); } .ag-cat.c-reporte { background: var(--tan); color: var(--depths); }
+  .ag-h { color: var(--ink-2); font-size: 13px !important; text-transform: uppercase; letter-spacing: .5px; margin: 16px 0 0 !important; }
+  .acr-row { display: flex; gap: 8px; margin-top: 6px; } .acr-row input { margin: 0; } .acr-row .btn-sec { margin: 0; }
+  .ag-form { margin-top: 14px; border-top: 1px solid var(--line); padding-top: 6px; }
+  .tb-panel .seg.small { margin-bottom: 10px; }
+  .chk-l { display: flex; align-items: center; gap: 8px; font-weight: 400; margin: 10px 0; } .chk-l input { width: auto; margin: 0; }
+  .ag-vista { width: min(680px, 100%); max-height: 92vh; display: flex; flex-direction: column; }
+  .ag-vista iframe { width: 100%; flex: 1; min-height: 60vh; border: 1px solid var(--line); background: #F4F1EC; margin-top: 10px; }
+  /* ---------- Calendario ---------- */
+  .cal-g { grid-template-columns: minmax(0, 1.6fr) minmax(320px, 1fr); }
+  .cal-nav { display: flex; align-items: center; gap: 8px; } .cal-nav h3 { min-width: 200px; text-align: center; } .cal-nav .tb-pill { padding: 8px 14px; }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 3px; }
+  .cal-dh { font-size: 12px; color: var(--ink-2); text-transform: uppercase; letter-spacing: .5px; padding: 4px 6px; }
+  .cal-d { background: var(--bg); min-height: 96px; padding: 5px; cursor: pointer; border: 1px solid transparent; overflow: hidden; }
+  .cal-d.fuera { opacity: .45; } .cal-d.hoy .cal-n { background: var(--royal); color: var(--luster); }
+  .cal-d.sel { border-color: var(--habanero); } .cal-d:hover { border-color: var(--line); }
+  .cal-n { font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; padding: 1px 6px; border-radius: 4px; margin-bottom: 3px; }
+  .cal-rec { color: var(--habanero); font-size: 12px; }
+  .cal-ev { font-size: 12px; line-height: 1.25; padding: 3px 5px; margin-top: 2px; border-radius: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .cal-ev span { opacity: .8; } .cal-ev.fijo { opacity: .75; font-style: italic; }
+  .t-evento { background: var(--royal); color: var(--luster); } .t-actividad { background: var(--aster); color: var(--depths); }
+  .t-predica { background: var(--habanero); color: var(--depths); } .t-reunion { background: var(--depths); color: var(--luster); } .t-otro { background: var(--tan); color: var(--depths); }
+  .cal-ley { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 12px; font-size: 13px; color: var(--ink-2); }
+  .cal-ley i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+  .cal-pt { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 7px; vertical-align: 0; }
+  .cal-li { cursor: pointer; } .cal-li:hover b { text-decoration: underline; }
+  .cal-rn { border: 1px solid var(--line); border-left: 4px solid var(--habanero); padding: 12px 14px; margin-top: 10px; }
+  .cal-sale { margin: 8px 0 4px; font-size: 14px; }
+  .cal-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .cal-chip { width: auto; margin: 0; padding: 7px 11px; font-size: 13px; border-radius: 16px; background: var(--bg); color: var(--ink); box-shadow: inset 0 0 0 1px var(--line); border: 0; }
+  .cal-chip.on { background: var(--royal); color: var(--luster); box-shadow: none; } .cal-chip button { background: none; border: 0; color: inherit; width: auto; margin: 0 0 0 4px; padding: 0; font-size: 14px; }
+  .cal-cuenta { font-size: 13px; margin-top: 8px; }
+  @media (max-width: 1100px) { .cal-g { grid-template-columns: 1fr; } .cal-d { min-height: 64px; } .cal-ev span { display: none; } .ag-it { grid-template-columns: 78px 1fr; } }
+  @media (max-width: 600px) { .cal-ev { font-size: 10px; padding: 2px 3px; } .cal-nav h3 { min-width: 0; font-size: 17px; } }
 
   /* ----- Formación: los 5 cursos ----- */
   .c-wa { background: var(--tan); } .c-wa .desc { color: var(--ink-dark); }
@@ -726,6 +764,8 @@
   html[data-tema="oscuro"] .att.ig-amarillo:not(.on), html[data-tema="oscuro"] .att.ig-rojo:not(.on) { color: #111144; }
   html[data-tema="oscuro"] .att.ig-amarillo:not(.on) .muted, html[data-tema="oscuro"] .att.ig-rojo:not(.on) .muted { color: #3B3F6B; }
   html[data-tema="oscuro"] .ig-mi .name-btn.ig-amarillo, html[data-tema="oscuro"] .ig-mi .name-btn.ig-rojo { color: #111144; }
+  html[data-tema="oscuro"] .link, html[data-tema="oscuro"] .song-links a, html[data-tema="oscuro"] .cs-resp { color: #9BACD8; }
+  html[data-tema="oscuro"] .t-reunion, html[data-tema="oscuro"] .ag-cat.c-decision { box-shadow: inset 0 0 0 1px #4A55A0; }
   html[data-tema="oscuro"] .wa-mini { background: #252B6B; color: #C9D3F0; }
   html[data-tema="oscuro"] .brand-mark img { filter: brightness(0) invert(1); }
   html[data-tema="oscuro"] input::placeholder, html[data-tema="oscuro"] textarea::placeholder { color: #7F87B5; }
@@ -904,7 +944,7 @@
   </section>
   <section id="v-admin" class="hidden"><div class="top"><button class="back" data-go="home" aria-label="Volver"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button></div>
     <div class="page-title">Administración</div><div class="hello-sub" id="ad-sub">Acceso a la app, roles y familias</div>
-    <div class="tabs scroll" id="ad-tabs"><button data-tab="usuarios" class="on">Con acceso</button><button data-tab="dar">Dar acceso</button><button data-tab="familias">Familias</button><button data-tab="censo">Censo</button><button data-tab="solicitudes">Solicitudes</button><button data-tab="sugerencias">Sugerencias</button><button data-tab="borrar">Borrar datos</button></div>
+    <div class="tabs scroll" id="ad-tabs"><button data-tab="usuarios" class="on">Con acceso</button><button data-tab="dar">Dar acceso</button><button data-tab="familias">Familias</button><button data-tab="censo">Censo</button><button data-tab="solicitudes">Solicitudes</button><button data-tab="sugerencias">Sugerencias</button><button data-tab="correos">Correos</button><button data-tab="borrar">Borrar datos</button></div>
     <div id="ad-body"></div></section>
 
   <section id="v-formacion" class="hidden"><div class="top"><button class="back" data-go="home" aria-label="Volver"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button></div>
@@ -1247,7 +1287,7 @@ const SECCIONES = [
     ve: (r) => r.esAncianoOAdmin || r.conyuge || r.roles.has("lider_igho") },
   { id: "resumen", titulo: "Resumen", desc: "Estadísticas de toda la iglesia.", color: "c-sand", tag: "Consejo",
     ve: (r) => r.esAncianoOAdmin || r.conyuge },
-  { id: "consejo", titulo: "Reunión del Consejo", desc: "Pendientes, decisiones y el acta para buscar lo que se acordó.", color: "c-peach", tag: "Consejo",
+  { id: "consejo", titulo: "Reunión del Consejo", desc: "Agenda (tareas, decisiones, reportes), pendientes y el acta.", color: "c-peach", tag: "Consejo",
     ve: (r) => r.esAncianoOAdmin },
   { id: "tablero", titulo: "Tablero del Consejo", desc: "Para la computadora: gráficos, filtros, multiplicar IGHO e imprimir.", color: "c-orange", tag: "Computadora",
     ve: (r) => r.esAncianoOAdmin },
@@ -2745,7 +2785,7 @@ function ponerTema(t) {
 async function abrirPerfil() {
   const body = $("pf-body");
   body.innerHTML = '<div class="loading">Cargando…</div>';
-  const [md, sol] = await Promise.all([sb.rpc("mis_datos"), sb.from("solicitudes_ministerio").select("*").eq("user_id", ctx.user.id).order("creado_en", { ascending: false })]);
+  const [md, sol, mc] = await Promise.all([sb.rpc("mis_datos"), sb.from("solicitudes_ministerio").select("*").eq("user_id", ctx.user.id).order("creado_en", { ascending: false }), sb.rpc("mi_correo")]);
   const yo = md.data?.[0] || null, usuario = (ctx.user.email || "").replace(`@${DOMINIO}`, "");
   const mins = MIN_ROLES.filter(([c]) => !ctx.ministerios.has(c));
   const ESTADO = { pendiente: "En revisión", aprobada: "✓ Aprobada", rechazada: "No aprobada" };
@@ -2757,6 +2797,8 @@ async function abrirPerfil() {
         : `<div class="two"><div><label>Nombres</label><input id="pf-n" value="${esc(yo.nombres || "")}"></div><div><label>Apellidos</label><input id="pf-a" value="${esc(yo.apellidos || "")}"></div></div>
           <label>Celular</label><input id="pf-t" type="tel" inputmode="tel" value="${esc(yo.telefono || "")}" placeholder="09…">
           <label>Fecha de nacimiento</label><input id="pf-f" type="date" max="${ymd(new Date())}" value="${esc(yo.fecha_nacimiento || "")}">
+          ${mc.error ? "" : `<label>Correo electrónico</label><input id="pf-e" type="email" inputmode="email" autocomplete="email" value="${esc(mc.data || "")}" placeholder="tu@correo.com">
+          ${ctx.roles.has("anciano") || ctx.roles.has("admin") || ctx.roles.has("lider_ministerio") ? '<div class="hint" style="margin:-4px 0 8px">Aquí te llegan los recordatorios del calendario y el resumen de la reunión del Consejo.</div>' : ""}`}
           <button class="btn-primary" id="pf-ok">Guardar mis datos</button>`}
       <div class="ok" id="pf-msg"></div></div>
     <div class="panel"><h4>Apariencia</h4>
@@ -2779,7 +2821,10 @@ async function abrirPerfil() {
     if (!$("pf-n").value.trim()) { msg.classList.add("err"); return (msg.textContent = "Escribe tu nombre."); }
     if (telEsc && tel.length !== 10) { msg.classList.add("err"); return (msg.textContent = "El celular debe tener 10 dígitos (09…)."); }
     $("pf-ok").disabled = true;
-    const { error } = await sb.rpc("guardar_mis_datos", { p_nombres: $("pf-n").value, p_apellidos: $("pf-a").value, p_telefono: tel, p_fecha_nacimiento: $("pf-f").value || null });
+    const mail = $("pf-e")?.value.trim() || "";
+    if (mail && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(mail)) { $("pf-ok").disabled = false; msg.classList.add("err"); return (msg.textContent = "Ese correo no parece válido."); }
+    let { error } = await sb.rpc("guardar_mis_datos", { p_nombres: $("pf-n").value, p_apellidos: $("pf-a").value, p_telefono: tel, p_fecha_nacimiento: $("pf-f").value || null });
+    if (!error && $("pf-e")) ({ error } = await sb.rpc("guardar_mi_correo", { p_email: mail }));
     $("pf-ok").disabled = false;
     if (error) { msg.classList.add("err"); return (msg.textContent = error.message); }
     ctx.nombre = $("pf-n").value.trim().split(" ")[0];
@@ -2877,6 +2922,37 @@ function dialogoSugerencia(view) {
 }
 // ---- Administración → Sugerencias ----
 const sg = { filtro: "nueva" };
+// ---- Administración → Correos: el correo del Consejo y de los líderes (para recordatorios y el resumen del lunes) ----
+const acr = { soloSin: false };
+async function adCorreos() {
+  const body = $("ad-body");
+  body.innerHTML = '<div class="loading">Cargando…</div>';
+  const { data, error } = await sb.rpc("correos_equipo");
+  if (error) { body.innerHTML = `<div class="soon">${esc(error.message)}${/correos_equipo/.test(error.message) ? "<br>Falta ejecutar 31_calendario_correo.sql." : ""}</div>`; return; }
+  const sin = data.filter((x) => !x.email && !x.email_cuenta).length;
+  const lista = data.filter((x) => !acr.soloSin || (!x.email && !x.email_cuenta));
+  const rol = (r) => (r || "").replace(/(Líder|Siervo) ([a-z_]+)/g, (m, a, c) => `${a} de ${MIN_NOMBRE[c] || c}`);
+  body.innerHTML = `<div class="panel"><h4>Correos del equipo</h4>
+      <div class="hint">El Consejo y los líderes reciben aquí los recordatorios del calendario y el resumen de la reunión. Cada uno también puede escribir el suyo en Mi perfil. ${sin ? `<b class="err">${sin} sin correo.</b>` : "Todos tienen correo."}</div>
+      <div class="seg small" id="acr-f"><button class="${acr.soloSin ? "" : "on"}" data-f="0">Todos (${data.length})</button><button class="${acr.soloSin ? "on" : ""}" data-f="1">Sin correo (${sin})</button></div>
+      ${lista.map((x) => `<div class="li acr-li"><div style="flex:1;min-width:0"><b>${esc(x.nombre)}</b><div class="muted">${esc(rol(x.roles))}${!x.email && x.email_cuenta ? ` · usa el de su cuenta: ${esc(x.email_cuenta)}` : ""}</div>
+          <div class="acr-row"><input type="email" inputmode="email" value="${esc(x.email || "")}" placeholder="${esc(x.email_cuenta || "correo@…")}" data-p="${x.persona_id}"><button class="btn-sec mini" data-g="${x.persona_id}">Guardar</button></div></div></div>`).join("") || '<div class="muted">Nadie aquí.</div>'}</div>`;
+  body.querySelectorAll("#acr-f [data-f]").forEach((b) => b.addEventListener("click", () => { acr.soloSin = b.dataset.f === "1"; adCorreos(); }));
+  body.querySelectorAll("[data-g]").forEach((b) => {
+    const inp = body.querySelector(`input[data-p="${b.dataset.g}"]`);
+    const guardar = async () => {
+      const v = inp.value.trim();
+      if (v && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v)) return alert("Ese correo no parece válido.");
+      b.disabled = true;
+      const { error } = await sb.rpc("guardar_correo_persona", { p_persona: b.dataset.g, p_email: v });
+      b.disabled = false; if (error) return alert(error.message);
+      b.textContent = "✓"; setTimeout(() => (b.textContent = "Guardar"), 1500);
+    };
+    b.addEventListener("click", guardar);
+    inp.addEventListener("keydown", (e) => e.key === "Enter" && guardar());
+  });
+}
+
 async function adSugerencias() {
   const body = $("ad-body");
   body.innerHTML = '<div class="loading">Cargando…</div>';
@@ -3974,6 +4050,7 @@ async function abrirAdmin(tab) {
   if (ad.tab === "borrar") return adBorrar();
   if (ad.tab === "solicitudes") return adSolicitudes();
   if (ad.tab === "sugerencias") return adSugerencias();
+  if (ad.tab === "correos") return adCorreos();
   if (ad.tab === "usuarios") return pintarUsuarios();
   return pintarDarAcceso();
 }
@@ -5359,7 +5436,7 @@ async function todas(qf) {
 
 const TB_MENU = [
   ["tablero", "Tablero del Consejo"], ["asistencia", "Asistencia"], ["ighos", "IGHO y cobertura"], ["familias", "Personas y familias"],
-  ["nuevos", "Nuevos"], ["kidz", "Kidz"], ["worship", "Worship"], ["consejo", "Reunión del Consejo"], ["finanzas", "Finanzas", "candado"],
+  ["nuevos", "Nuevos"], ["kidz", "Kidz"], ["worship", "Worship"], ["calendario", "Calendario"], ["consejo", "Reunión del Consejo"], ["finanzas", "Finanzas", "candado"],
 ];
 
 async function abrirTablero(seccion) {
@@ -5527,10 +5604,10 @@ function pintarSeccion() {
   $("tb-sub").textContent = `Arco Ríos · ${fmtCorta.format(fromYmd(tb.desde))} – ${fmtCorta.format(fromYmd(tb.hasta))}${tb.cob !== "todos" ? " · cobertura de " + (tb.d.consejo.find((x) => x.user_id === tb.cob)?.nombre || "") : ""} · actualizado ${fmtHora.format(tb.d.cargado)}`;
   const s = tb.seccion;
   $("tb-h1").textContent = TB_MENU.find((m) => m[0] === s)?.[1] || "Tablero del Consejo";
-  $("tb-filtros").classList.toggle("hidden", s === "consejo");
-  const f = { tablero: secResumen, asistencia: secAsistencia, ighos: secIghos, familias: secFamilias, nuevos: secNuevos, kidz: secKidz, consejo: secConsejo, finanzas: () => { $("tb-main").innerHTML = '<div id="fz-tb" style="max-width:760px"></div>'; abrirFinanzas($("fz-tb")); } }[s];
+  $("tb-filtros").classList.toggle("hidden", s === "consejo" || s === "calendario");
+  const f = { tablero: secResumen, asistencia: secAsistencia, ighos: secIghos, familias: secFamilias, nuevos: secNuevos, kidz: secKidz, calendario: secCalendario, consejo: secConsejo, finanzas: () => { $("tb-main").innerHTML = '<div id="fz-tb" style="max-width:760px"></div>'; abrirFinanzas($("fz-tb")); } }[s];
   f(c);
-  if (s === "consejo") return;   // la Reunión del Consejo maneja sus propios botones
+  if (s === "consejo" || s === "calendario") return;   // manejan sus propios botones
   $("tb-main").querySelectorAll("[data-ir]").forEach((b) => b.addEventListener("click", () => abrirTablero(b.dataset.ir)));
   $("tb-main").querySelectorAll("[data-igho]").forEach((b) => b.addEventListener("click", (e) => { if (e.target.closest("input")) return; tb.igho = b.dataset.igho; abrirTablero("ighos"); }));
 }
@@ -6726,7 +6803,7 @@ async function resumenFormacionHtml() {
 // ===================================================================
 // REUNIÓN DEL CONSEJO: pendientes, decisiones y acta (dentro del Tablero)
 // ===================================================================
-const cs = { tab: "pendientes", filtro: "pendientes", q: "", aq: "", ad: "", ah: "", d: null };
+const cs = { tab: "agenda", ag: null, filtro: "pendientes", q: "", aq: "", ad: "", ah: "", d: null };
 const fmtActa = new Intl.DateTimeFormat("es-EC", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
 const tituloActa = (f) => { const s = fmtActa.format(fromYmd(f)); return s[0].toUpperCase() + s.slice(1); };
 // Buscar sin importar tildes ni mayúsculas, y resaltar lo encontrado
@@ -6755,10 +6832,10 @@ async function secConsejo() {
   }
   const pend = cs.d.tareas.filter((t) => !t.completado && !t.descartada_en).length;
   main.innerHTML = `<div class="tb-filtros cs-tabs" style="justify-content:flex-start;margin-bottom:16px">
-      ${[["pendientes", `Pendientes (${pend})`], ["decisiones", "Decisiones"], ["acta", "Acta"]].map(([k, t]) => `<button class="tb-pill ${cs.tab === k ? "on" : ""}" data-cs="${k}">${t}</button>`).join("")}</div>
+      ${[["agenda", "Agenda"], ["pendientes", `Pendientes (${pend})`], ["decisiones", "Decisiones"], ["acta", "Acta"]].map(([k, t]) => `<button class="tb-pill ${cs.tab === k ? "on" : ""}" data-cs="${k}">${t}</button>`).join("")}</div>
     <div id="cs-body"></div>`;
   main.querySelectorAll("[data-cs]").forEach((b) => b.addEventListener("click", () => { cs.tab = b.dataset.cs; secConsejo(); }));
-  ({ pendientes: csPendientes, decisiones: csDecisiones, acta: csActa })[cs.tab]();
+  ({ agenda: csAgenda, pendientes: csPendientes, decisiones: csDecisiones, acta: csActa })[cs.tab]();
 }
 const recargarConsejo = async () => { await cargarConsejo(); secConsejo(); };
 
@@ -6770,14 +6847,15 @@ function csPendientes() {
   $("cs-body").innerHTML = `
     <div class="tb-panel cs-add"><h3 style="margin-bottom:12px">Nuevo pendiente</h3>
       <div class="cs-row"><input id="cs-desc" placeholder="¿Qué hay que hacer?" autocomplete="off"><input id="cs-resp" placeholder="Responsables" autocomplete="off">
-        <input type="date" id="cs-f" value="${hoy}"><button class="btn-primary tb-btn" id="cs-add">Agregar</button></div></div>
+        <input type="date" id="cs-f" value="${hoy}" title="Añadido"><input type="date" id="cs-v" title="Vence (opcional)"><button class="btn-primary tb-btn" id="cs-add">Agregar</button></div>
+      <div class="hint" style="margin:6px 0 0">Primera fecha: cuándo se añadió. Segunda (opcional): cuándo vence; aparece en la agenda y en el correo del lunes.</div></div>
     <div class="tb-panel"><div class="tb-ph"><div class="tb-filtros" style="justify-content:flex-start">
         ${[["pendientes", "Pendientes"], ["completadas", "Completados"], ["descartadas", "Ya no aplican"], ["todas", "Todos"]].map(([k, t]) => `<button class="tb-pill ${cs.filtro === k ? "on" : ""}" data-fil="${k}">${t}</button>`).join("")}</div>
         <input id="cs-q" class="cs-q" placeholder="Buscar en pendientes y notas" value="${esc(cs.q)}" autocomplete="off"></div>
       <div class="cs-list">${lista.map((t) => { const dias = diasEntre(t.fecha, hoy); return `<div class="cs-t ${t.completado ? "hecha" : ""} ${t.descartada_en ? "desc" : ""}">
         <button class="chk" data-chk="${t.id}" aria-label="${t.completado ? "Reabrir" : "Completar"}">${t.completado ? "✓" : ""}</button>
         <div class="cs-main"><div class="cs-d" data-edit="${t.id}" title="Toca para corregir">${marcar(t.descripcion, re)}</div>
-          <div class="muted">${t.responsables ? `<b class="cs-resp">${marcar(t.responsables, re)}</b> · ` : ""}añadido ${fmtCorta.format(fromYmd(t.fecha))}${!t.completado && !t.descartada_en && dias > 30 ? ` · <span class="err">hace ${dias} días</span>` : ""}${t.completado ? ` · completado ${t.completado_en ? fmtCorta.format(fromYmd(t.completado_en)) : "(fecha no registrada)"}` : ""}${t.descartada_en ? ` · ya no aplica desde ${fmtCorta.format(fromYmd(t.descartada_en))}` : ""}</div>
+          <div class="muted">${t.responsables ? `<b class="cs-resp">${marcar(t.responsables, re)}</b> · ` : ""}añadido ${fmtCorta.format(fromYmd(t.fecha))}${t.vence && !t.completado && !t.descartada_en ? ` · <span class="${t.vence < hoy ? "err" : "cs-vence"}">${t.vence < hoy ? "venció" : "vence"} ${fmtCorta.format(fromYmd(t.vence))}</span>` : ""}${!t.completado && !t.descartada_en && dias > 30 ? ` · <span class="err">hace ${dias} días</span>` : ""}${t.completado ? ` · completado ${t.completado_en ? fmtCorta.format(fromYmd(t.completado_en)) : "(fecha no registrada)"}` : ""}${t.descartada_en ? ` · ya no aplica desde ${fmtCorta.format(fromYmd(t.descartada_en))}` : ""}</div>
           ${notasDe(t.id).map((n) => `<div class="cs-nota"><span>${fmtCorta.format(fromYmd(n.fecha))}</span> ${marcar(n.texto, re)}</div>`).join("")}
           <div class="cs-nn hidden" data-nn="${t.id}"><input placeholder="Nota o avance (Enter para guardar)" autocomplete="off"></div></div>
         <div class="cs-acc"><button class="btn-sec mini" data-nota="${t.id}">+ Nota</button>
@@ -6786,7 +6864,7 @@ function csPendientes() {
   const upd = async (id, row) => { const { error } = await sb.from("consejo_tareas").update(row).eq("id", id); if (error) return alert(error.message); recargarConsejo(); };
   $("cs-add").addEventListener("click", async () => {
     const d = $("cs-desc").value.trim(); if (!d) return $("cs-desc").focus();
-    const { error } = await sb.from("consejo_tareas").insert({ descripcion: d, responsables: $("cs-resp").value.trim() || null, fecha: $("cs-f").value || hoy, creado_por_nombre: ctx.nombreCompleto });
+    const { error } = await sb.from("consejo_tareas").insert({ descripcion: d, responsables: $("cs-resp").value.trim() || null, fecha: $("cs-f").value || hoy, vence: $("cs-v").value || null, creado_por_nombre: ctx.nombreCompleto });
     if (error) return alert(error.message);
     recargarConsejo().then(() => $("cs-desc")?.focus());
   });
@@ -6801,7 +6879,10 @@ function csPendientes() {
     const t = cs.d.tareas.find((x) => x.id === +el.dataset.edit);
     const d = prompt("Corregir el pendiente:", t.descripcion); if (d === null || !d.trim()) return;
     const r = prompt("Responsables:", t.responsables || ""); if (r === null) return;
-    upd(t.id, { descripcion: d.trim(), responsables: r.trim() || null });
+    let v = prompt("Vence (día/mes/año, ej. 15/12/2026; vacío = sin fecha):", t.vence ? t.vence.split("-").reverse().join("/") : ""); if (v === null) return;
+    v = v.trim(); const mv = v.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if (v && !mv) return alert("Escribe la fecha como día/mes/año, por ejemplo 15/12/2026.");
+    upd(t.id, { descripcion: d.trim(), responsables: r.trim() || null, vence: mv ? `${mv[3]}-${mv[2].padStart(2, "0")}-${mv[1].padStart(2, "0")}` : null });
   }));
   $("cs-body").querySelectorAll("[data-nota]").forEach((b) => b.addEventListener("click", () => {
     const box = $("cs-body").querySelector(`[data-nn="${b.dataset.nota}"]`); box.classList.toggle("hidden"); box.querySelector("input").focus();
@@ -6873,6 +6954,465 @@ function csActa() {
   $("ca-q").addEventListener("input", (e) => { cs.aq = e.target.value; clearTimeout(tq); tq = setTimeout(() => { const p = e.target.selectionStart; csActa(); $("ca-q").focus(); $("ca-q").setSelectionRange(p, p); }, 300); });
   $("ca-d").addEventListener("change", (e) => { cs.ad = e.target.value; csActa(); });
   $("ca-h").addEventListener("change", (e) => { cs.ah = e.target.value; csActa(); });
+}
+
+
+// ---- Reunión del Consejo → Agenda: qué se trata en la próxima reunión (Tarea / Decisión / Reporte) ----
+const AG_CAT = [["tarea", "Tarea"], ["decision", "Decisión"], ["reporte", "Reporte"]];
+const AG_CAT_N = Object.fromEntries(AG_CAT);
+const AG_TIPOS = [["Consejo", "Consejo"], ["Consejo ampliado", "Consejo ampliado"], ["No hay reunión", "No hay reunión esta semana"]];
+const DIAS_SEM = [["1", "Lunes"], ["2", "Martes"], ["3", "Miércoles"], ["4", "Jueves"], ["5", "Viernes"], ["6", "Sábado"], ["0", "Domingo"]];
+const ag = { cat: "tarea", ver: "pendiente", editaReu: false, editaCfg: false };
+
+async function cargarAgenda() {
+  const hoy = ymd(new Date());
+  const [a, r, c, e] = await Promise.all([
+    sb.from("consejo_agenda").select("*").order("creado_en"),
+    sb.from("consejo_reuniones").select("*").gte("fecha", sumarDias(hoy, -60)).order("fecha"),
+    sb.from("consejo_config").select("*").eq("id", 1).maybeSingle(),
+    sb.from("cal_eventos").select("id, titulo, tipo, fecha, hora, responsable").gte("fecha", hoy).lte("fecha", sumarDias(hoy, 21)).order("fecha"),
+  ]);
+  const err = a.error || r.error || c.error; if (err) throw err;
+  cs.ag = { items: a.data || [], reuniones: r.data || [], cfg: c.data || {}, eventos: e.data || [] };
+}
+// Próxima reunión: la que está agendada desde hoy, o la del horario habitual
+function proximaReunion() {
+  const hoy = ymd(new Date()), d = cs.ag;
+  const r = d.reuniones.find((x) => x.fecha >= hoy);
+  let f = null;
+  if (d.cfg.dia_semana != null) { f = hoy; while (fromYmd(f).getDay() !== d.cfg.dia_semana) f = sumarDias(f, 1); }
+  if (r && (!f || r.fecha <= f)) return { ...r, agendada: true };
+  if (f) return { fecha: f, tipo: d.cfg.tipo || "Consejo", hora: d.cfg.hora, lugar: d.cfg.lugar, notas: null, agendada: false };
+  return r ? { ...r, agendada: true } : null;
+}
+
+async function csAgenda() {
+  const body = $("cs-body");
+  if (!cs.ag) {
+    body.innerHTML = '<div class="loading">Cargando…</div>';
+    try { await cargarAgenda(); } catch (e) { body.innerHTML = `<div class="soon">No se pudo cargar. ${esc(e.message)}<br><br>¿Ya se ejecutó 31_calendario_correo.sql?</div>`; return; }
+  }
+  const hoy = ymd(new Date()), d = cs.ag, reu = proximaReunion();
+  const hasta = reu?.fecha || sumarDias(hoy, 7);
+  const lista = d.items.filter((a) => a.estado === ag.ver && (ag.ver !== "pendiente" || !a.reunion_fecha || a.reunion_fecha <= hasta));
+  const despues = ag.ver === "pendiente" ? d.items.filter((a) => a.estado === "pendiente" && a.reunion_fecha && a.reunion_fecha > hasta) : [];
+  const vencen = cs.d.tareas.filter((t) => !t.completado && !t.descartada_en && t.vence && t.vence <= hasta).sort((a, b) => (a.vence < b.vence ? -1 : 1));
+  const dom = (() => { let x = hoy; while (fromYmd(x).getDay() !== 0) x = sumarDias(x, 1); return x; })();
+  const anunciar = d.eventos.filter((e) => domingosAntes(e.fecha).includes(dom));
+  const cfg = d.cfg, diaCfg = cfg.dia_semana != null ? DIAS_SEM.find(([v]) => +v === cfg.dia_semana)?.[1] : null;
+  const item = (a) => `<div class="cs-t ag-it ${a.estado !== "pendiente" ? "hecha" : ""}">
+      <span class="ag-cat c-${a.categoria}">${AG_CAT_N[a.categoria]}</span>
+      <div class="cs-main"><div class="cs-d">${esc(a.titulo)}</div>
+        <div class="muted">${a.quien ? `<b class="cs-resp">${esc(a.quien)}</b> · ` : ""}${a.reunion_fecha ? "para el " + fmtCorta.format(fromYmd(a.reunion_fecha)) : "próxima reunión"} · ${esc(a.creado_por_nombre || "")}${a.tratado_en ? ` · ${a.estado === "tratado" ? "tratado" : "ya no aplica"} ${fmtCorta.format(fromYmd(a.tratado_en))}` : ""}</div>
+        ${a.detalle ? `<div class="cs-nota">${esc(a.detalle).replace(/\n/g, "<br>")}</div>` : ""}</div>
+      <div class="cs-acc">${a.estado === "pendiente"
+        ? `<button class="btn-sec mini" data-ag-ok="${a.id}">${a.categoria === "decision" ? "✓ Decidido" : "✓ Tratado"}</button><button class="btn-sec mini" data-ag-sig="${a.id}">A la siguiente</button><button class="btn-sec mini" data-ag-no="${a.id}">Ya no aplica</button>`
+        : `<button class="btn-sec mini" data-ag-re="${a.id}">Volver a la agenda</button>`}</div></div>`;
+  body.innerHTML = `<div class="tb-g2">
+    <div>
+      <div class="tb-panel cs-add">
+        <div class="tb-ph"><h3>${reu ? `${esc(reu.tipo)} · ${largo(reu.fecha)}${reu.hora ? ", " + reu.hora.slice(0, 5) : ""}` : "Próxima reunión: sin fecha"}</h3>
+          <button class="link" id="ag-er">${ag.editaReu ? "Cerrar" : "Cambiar"}</button></div>
+        <div class="muted">${reu?.lugar ? esc(reu.lugar) + " · " : ""}${reu ? (reu.agendada ? "Agendada" : "Según el horario habitual") : "Pon el horario habitual o agenda la reunión."}${reu?.resumen_enviado_en ? ` · ✉ resumen enviado ${fmtCorta.format(new Date(reu.resumen_enviado_en))}` : ""}</div>
+        ${reu?.notas ? `<div class="cs-nota" style="margin-top:8px">${esc(reu.notas)}</div>` : ""}
+        ${ag.editaReu ? `<div class="ag-form">
+          <div class="two"><div><label>Fecha</label><input type="date" id="ar-f" value="${esc(reu?.fecha || hoy)}"></div><div><label>Tipo de reunión</label><select id="ar-t">${opciones(AG_TIPOS, reu?.tipo || "Consejo")}</select></div></div>
+          <div class="two"><div><label>Hora</label><input type="time" id="ar-h" value="${esc((reu?.hora || "").slice(0, 5))}"></div><div><label>Lugar</label><input id="ar-l" value="${esc(reu?.lugar || "")}" autocomplete="off"></div></div>
+          <label>Notas para el correo (opcional)</label><textarea id="ar-n" rows="2">${esc(reu?.notas || "")}</textarea>
+          <button class="btn-primary tb-btn" id="ar-ok">Guardar esta reunión</button><div class="ok" id="ar-msg"></div></div>` : ""}
+      </div>
+      <div class="tb-panel cs-add"><h3 style="margin-bottom:12px">Agregar a la agenda</h3>
+        <div class="seg small" id="ag-cat">${AG_CAT.map(([k, t]) => `<button type="button" class="${ag.cat === k ? "on" : ""}" data-c="${k}">${t}</button>`).join("")}</div>
+        <input id="ag-t" placeholder="${{ tarea: "Ej.: Revisar el avance de la serie de Navidad", decision: "Ej.: ¿Hacemos bautizos en enero?", reporte: "Ej.: Reporte de Kidz del trimestre" }[ag.cat]}" autocomplete="off">
+        <div class="two"><div><input id="ag-q" placeholder="Quién lo presenta (opcional)" autocomplete="off"></div>
+          <div><select id="ag-f">${opciones([["", "Próxima reunión"], ...d.reuniones.filter((x) => x.fecha > (reu?.fecha || hoy) && x.tipo !== "No hay reunión").map((x) => [x.fecha, `${x.tipo} · ${fmtCorta.format(fromYmd(x.fecha))}`])], "")}</select></div></div>
+        <textarea id="ag-d" rows="2" placeholder="Detalle (opcional)"></textarea>
+        <button class="btn-primary tb-btn" id="ag-add">Agregar</button><div class="ok" id="ag-msg"></div></div>
+      <div class="tb-panel"><div class="tb-ph"><div class="tb-filtros" style="justify-content:flex-start">
+          ${[["pendiente", "Para tratar"], ["tratado", "Tratados"], ["descartado", "Ya no aplican"]].map(([k, t]) => `<button class="tb-pill ${ag.ver === k ? "on" : ""}" data-ver="${k}">${t}</button>`).join("")}</div></div>
+        ${ag.ver === "pendiente"
+          ? AG_CAT.map(([k, t]) => { const xs = lista.filter((a) => a.categoria === k); return `<h4 class="ag-h">${{ tarea: "Tareas", decision: "Decisiones", reporte: "Reportes" }[k]} (${xs.length})</h4>${xs.map(item).join("") || '<div class="muted" style="padding:6px 0 12px">Nada todavía.</div>'}`; }).join("")
+            + (despues.length ? `<h4 class="ag-h">Para reuniones más adelante (${despues.length})</h4>${despues.map(item).join("")}` : "")
+          : lista.slice().reverse().map(item).join("") || '<div class="muted">Nada aquí.</div>'}</div>
+    </div>
+    <div>
+      <div class="tb-panel cs-add"><h3 style="margin-bottom:8px">Correo del lunes</h3>
+        <div class="hint">Cada lunes a las 7:00 le llega al Consejo: tipo de reunión, decisiones, reportes y tareas de la agenda, pendientes que vencen y lo que viene en el calendario.</div>
+        <button class="btn-sec" id="ag-vista" style="width:100%">Ver cómo queda el correo</button>
+        <button class="btn-sec" id="ag-env" style="width:100%;margin-top:8px">Enviarlo ahora al Consejo</button>
+        <button class="btn-sec" id="ag-prueba" style="width:100%;margin-top:8px">Enviarme un correo de prueba</button><div class="ok" id="ag-cmsg"></div>
+        <div class="tb-ph" style="margin:16px 0 4px"><h4>Horario habitual</h4><button class="link" id="ag-ec">${ag.editaCfg ? "Cerrar" : "Cambiar"}</button></div>
+        <div class="muted">${diaCfg ? `${diaCfg}${cfg.hora ? " " + cfg.hora.slice(0, 5) : ""} · ${esc(cfg.tipo || "Consejo")}${cfg.lugar ? " · " + esc(cfg.lugar) : ""}` : "Sin horario habitual"} · resumen del lunes ${cfg.resumen_lunes === false ? "apagado" : "encendido"}</div>
+        ${ag.editaCfg ? `<div class="ag-form"><div class="two"><div><label>Día</label><select id="ac-d">${opciones([["", "—"], ...DIAS_SEM], cfg.dia_semana != null ? String(cfg.dia_semana) : "")}</select></div>
+            <div><label>Hora</label><input type="time" id="ac-h" value="${esc((cfg.hora || "").slice(0, 5))}"></div></div>
+          <div class="two"><div><label>Tipo</label><select id="ac-t">${opciones(AG_TIPOS.slice(0, 2), cfg.tipo || "Consejo")}</select></div><div><label>Lugar</label><input id="ac-l" value="${esc(cfg.lugar || "")}" autocomplete="off"></div></div>
+          <label class="chk-l"><input type="checkbox" id="ac-r" ${cfg.resumen_lunes === false ? "" : "checked"}> Enviar el resumen cada lunes</label>
+          <button class="btn-primary tb-btn" id="ac-ok">Guardar horario</button><div class="ok" id="ac-msg"></div></div>` : ""}
+      </div>
+      <div class="tb-panel cs-add"><h3 style="margin-bottom:8px">Pendientes que vencen (${vencen.length})</h3>
+        ${vencen.map((t) => `<div class="li"><div><b>${esc(t.descripcion)}</b><div class="muted">${t.responsables ? esc(t.responsables) + " · " : ""}<span class="${t.vence < hoy ? "err" : ""}">${t.vence < hoy ? "venció" : "vence"} ${fmtCorta.format(fromYmd(t.vence))}</span></div></div></div>`).join("")
+          || '<div class="muted">Ninguno vence antes de la reunión. Pon «Vence» al crear un pendiente.</div>'}</div>
+      <div class="tb-panel"><h3 style="margin-bottom:8px">Del calendario</h3>
+        ${anunciar.length ? `<h4>Anunciar este domingo</h4>${anunciar.map((e) => `<div class="li"><span><b>${esc(e.titulo)}</b></span><span class="muted">${fmtCorta.format(fromYmd(e.fecha))}</span></div>`).join("")}` : ""}
+        <h4 style="margin-top:10px">Próximas 3 semanas</h4>
+        ${d.eventos.map((e) => `<div class="li"><span><span class="cal-pt t-${e.tipo}"></span>${esc(e.titulo)}${e.responsable ? ` <span class="muted">· ${esc(e.responsable)}</span>` : ""}</span><span class="muted">${fmtCorta.format(fromYmd(e.fecha))}</span></div>`).join("") || '<div class="muted">Nada agendado.</div>'}
+        <button class="link" id="ag-cal" style="margin-top:10px">Abrir el calendario →</button></div>
+    </div></div>`;
+
+  const recargar = async () => { await cargarAgenda(); csAgenda(); };
+  const upd = async (id, row) => { const { error } = await sb.from("consejo_agenda").update(row).eq("id", id); if (error) return alert(error.message); recargar(); };
+  $("ag-er").addEventListener("click", () => { ag.editaReu = !ag.editaReu; csAgenda(); });
+  $("ag-ec").addEventListener("click", () => { ag.editaCfg = !ag.editaCfg; csAgenda(); });
+  $("ag-cal").addEventListener("click", () => abrirTablero("calendario"));
+  body.querySelectorAll("#ag-cat [data-c]").forEach((b) => b.addEventListener("click", () => {
+    ag.cat = b.dataset.c; const t = $("ag-t").value, q = $("ag-q").value, dd = $("ag-d").value; csAgenda(); $("ag-t").value = t; $("ag-q").value = q; $("ag-d").value = dd; $("ag-t").focus();
+  }));
+  body.querySelectorAll("[data-ver]").forEach((b) => b.addEventListener("click", () => { ag.ver = b.dataset.ver; csAgenda(); }));
+  $("ag-add").addEventListener("click", async () => {
+    const t = $("ag-t").value.trim(); if (!t) return $("ag-t").focus();
+    const { error } = await sb.from("consejo_agenda").insert({ titulo: t, categoria: ag.cat, quien: $("ag-q").value.trim() || null, detalle: $("ag-d").value.trim() || null,
+      reunion_fecha: $("ag-f").value || null, creado_por_nombre: ctx.nombreCompleto });
+    if (error) { $("ag-msg").classList.add("err"); return ($("ag-msg").textContent = error.message); }
+    recargar().then(() => $("ag-t")?.focus());
+  });
+  $("ag-t").addEventListener("keydown", (e) => e.key === "Enter" && $("ag-add").click());
+  body.querySelectorAll("[data-ag-ok]").forEach((b) => b.addEventListener("click", async () => {
+    const a = d.items.find((x) => x.id === +b.dataset.agOk);
+    if (a.categoria === "decision") {
+      const txt = prompt(`¿Qué se decidió sobre «${a.titulo}»? Queda en Decisiones y en el acta.\n(Deja vacío para solo marcarlo como tratado.)`, "");
+      if (txt === null) return;
+      if (txt.trim()) {
+        const { error } = await sb.from("consejo_decisiones").insert({ fecha: hoy, reunion: reu?.tipo === "Consejo ampliado" ? "Consejo ampliado" : "Consejo", tema: a.titulo.slice(0, 80), texto: txt.trim(), autor_nombre: ctx.nombreCompleto });
+        if (error) return alert(error.message);
+        await cargarConsejo();
+      }
+    }
+    upd(a.id, { estado: "tratado", tratado_en: hoy });
+  }));
+  body.querySelectorAll("[data-ag-no]").forEach((b) => b.addEventListener("click", () => upd(+b.dataset.agNo, { estado: "descartado", tratado_en: hoy })));
+  body.querySelectorAll("[data-ag-re]").forEach((b) => b.addEventListener("click", () => upd(+b.dataset.agRe, { estado: "pendiente", tratado_en: null })));
+  body.querySelectorAll("[data-ag-sig]").forEach((b) => b.addEventListener("click", () => {
+    // Pasa a la reunión siguiente: la siguiente agendada o una semana después
+    const sig = d.reuniones.find((x) => x.fecha > hasta && x.tipo !== "No hay reunión")?.fecha || sumarDias(hasta, 7);
+    upd(+b.dataset.agSig, { reunion_fecha: sig });
+  }));
+  $("ar-ok")?.addEventListener("click", async () => {
+    const f = $("ar-f").value; if (!f) return;
+    const { error } = await sb.from("consejo_reuniones").upsert({ fecha: f, tipo: $("ar-t").value, hora: $("ar-h").value || null, lugar: $("ar-l").value.trim() || null, notas: $("ar-n").value.trim() || null }, { onConflict: "fecha" });
+    if (error) { $("ar-msg").classList.add("err"); return ($("ar-msg").textContent = error.message); }
+    ag.editaReu = false; recargar();
+  });
+  $("ac-ok")?.addEventListener("click", async () => {
+    const dsem = $("ac-d").value;
+    const { error } = await sb.from("consejo_config").update({ dia_semana: dsem === "" ? null : +dsem, hora: $("ac-h").value || null, tipo: $("ac-t").value, lugar: $("ac-l").value.trim() || null, resumen_lunes: $("ac-r").checked }).eq("id", 1);
+    if (error) { $("ac-msg").classList.add("err"); return ($("ac-msg").textContent = error.message); }
+    ag.editaCfg = false; recargar();
+  });
+  const cmsg = $("ag-cmsg"), aviso = (t, err) => { cmsg.classList.toggle("err", !!err); cmsg.textContent = t; };
+  $("ag-vista").addEventListener("click", async () => {
+    aviso("Armando el correo…");
+    try {
+      const r = await llamarCorreo({ accion: "vista_resumen" }); aviso("");
+      const dlg = document.createElement("div"); dlg.className = "dlg";
+      dlg.innerHTML = `<div class="dlg-in ag-vista"><h4>${r.sinReunion ? "Esta semana no hay reunión: el lunes no sale correo." : esc(r.asunto)}</h4>
+        <div class="hint">Le llega a: ${esc((r.para || []).join(", ") || "nadie (el Consejo no tiene correos guardados)")}</div>
+        ${r.html ? `<iframe title="Vista del correo" sandbox></iframe>` : ""}<button class="btn-sec" style="width:100%;margin-top:10px" id="av-x">Cerrar</button></div>`;
+      document.body.appendChild(dlg);
+      if (r.html) dlg.querySelector("iframe").srcdoc = r.html;
+      const cerrar = () => dlg.remove();
+      dlg.addEventListener("click", (e) => { if (e.target === dlg) cerrar(); }); dlg.querySelector("#av-x").addEventListener("click", cerrar);
+    } catch (e) { aviso(e.message, true); }
+  });
+  $("ag-env").addEventListener("click", async () => {
+    if (!confirm("¿Enviar ahora el resumen de la reunión a todo el Consejo?")) return;
+    aviso("Enviando…");
+    try { const r = await llamarCorreo({ accion: "enviar_resumen" }); aviso(r.nota || `✓ Enviado a ${r.enviados} persona(s).`); recargar(); } catch (e) { aviso(e.message, true); }
+  });
+  $("ag-prueba").addEventListener("click", async () => {
+    aviso("Enviando…");
+    try { const r = await llamarCorreo({ accion: "prueba" }); aviso(`✓ Enviado a ${r.a}. Revisa tu correo (y la carpeta de spam).`); } catch (e) { aviso(e.message, true); }
+  });
+}
+
+// ===================================================================
+// CALENDARIO (Tablero → Calendario): eventos, prédicas y recordatorios por correo
+// ===================================================================
+const FUNCION_CORREO = "correo"; // Edge Function en Supabase (correo.ts)
+async function llamarCorreo(body) {
+  const { data, error } = await sb.functions.invoke(FUNCION_CORREO, { body });
+  if (error) {
+    let m = error.message;
+    try { const j = await error.context.json(); if (j?.error) m = j.error; } catch (_) {}
+    if (/Failed to send|not found|404/i.test(m)) m = "La función «correo» no está instalada todavía en Supabase.";
+    throw new Error(m);
+  }
+  if (data?.error) throw new Error(data.error);
+  return data;
+}
+const CAL_TIPOS = [["evento", "Evento"], ["actividad", "Actividad"], ["predica", "Prédica"], ["reunion", "Reunión"], ["otro", "Otro"]];
+const CAL_TIPO = Object.fromEntries(CAL_TIPOS);
+const CAL_CUANDO = [
+  ["miercoles2", "Para anunciar: el miércoles antes de los 2 domingos"],
+  ["1s", "1 semana antes"], ["2s", "2 semanas antes"],
+  ["p4", "Para planificar: 1 mes antes"], ["p6", "Para planificar: 6 semanas antes"], ["p8", "Para planificar: 2 meses antes"], ["p12", "Para planificar: 3 meses antes"],
+  ["fecha", "Otra fecha…"],
+];
+const CAL_DEST = [["consejo", "Consejo"], ["lideres_min", "Todos los líderes de ministerio"], ["lideres_igho", "Líderes de IGHO"]];
+const fmtCalLargo = new Intl.DateTimeFormat("es-EC", { weekday: "long", day: "numeric", month: "long" });
+const fmtMes = new Intl.DateTimeFormat("es-EC", { month: "long", year: "numeric" });
+const capi = (s) => (s ? s[0].toUpperCase() + s.slice(1) : s);
+const largo = (f) => capi(fmtCalLargo.format(fromYmd(f)));
+// Los dos domingos antes del evento
+function domingosAntes(f) { let d = sumarDias(f, -1); while (fromYmd(d).getDay() !== 0) d = sumarDias(d, -1); return [sumarDias(d, -7), d]; }
+// Día de envío según la opción elegida; «miércoles» mueve al miércoles anterior (o el mismo día)
+function fechaEnvio(evFecha, cuando, otra, enMiercoles) {
+  let f;
+  if (cuando === "miercoles2") return sumarDias(domingosAntes(evFecha)[0], -4);
+  if (cuando === "fecha") return otra || null;
+  const sem = { "1s": 1, "2s": 2, p4: 4, p6: 6, p8: 8, p12: 13 }[cuando] || 1;
+  f = sumarDias(evFecha, -7 * sem);
+  if (enMiercoles) while (fromYmd(f).getDay() !== 3) f = sumarDias(f, -1);
+  return f;
+}
+const claseDe = (cuando) => (cuando === "miercoles2" || cuando === "1s" || cuando === "2s" ? "anunciar" : cuando.startsWith("p") ? "planificar" : "otro");
+const destTexto = (r) => [...(r.destinos || []).map((d) => d.startsWith("min:") ? "Líderes de " + (MIN_NOMBRE[d.slice(4)] || d.slice(4)) : (Object.fromEntries(CAL_DEST)[d] || d)),
+  ...(r.personasNombres || []), ...((r.personas || []).length && !(r.personasNombres || []).length ? [`${r.personas.length} persona(s)`] : [])].join(", ") || "nadie";
+
+const cal = { mes: null, d: null, ed: null, sel: null };
+
+async function cargarCalendario() {
+  const desde = sumarDias(ymd(new Date()), -400);
+  const [e, r, p] = await Promise.all([
+    todas(() => sb.from("cal_eventos").select("*").gte("fecha", desde).order("fecha").order("hora", { nullsFirst: true })),
+    todas(() => sb.from("cal_recordatorios").select("*").order("envio")),
+    sb.from("programa_domingo").select("fecha, predicador").gte("fecha", desde).order("fecha"),
+  ]);
+  cal.d = { eventos: e, recs: r, predicas: (p.data || []).filter((x) => x.predicador) };
+}
+
+async function secCalendario() {
+  const main = $("tb-main");
+  if (!cal.mes) cal.mes = ymd(new Date()).slice(0, 7);
+  if (!cal.d) {
+    main.innerHTML = '<div class="loading">Cargando el calendario…</div>';
+    try { await cargarCalendario(); } catch (e) { main.innerHTML = `<div class="soon">No se pudo cargar. ${esc(e.message)}<br><br>¿Ya se ejecutó 31_calendario_correo.sql?</div>`; return; }
+  }
+  main.innerHTML = `<div class="tb-g2 cal-g"><div class="tb-panel" id="cal-mes"></div><div class="tb-panel" id="cal-lado"></div></div>`;
+  pintarMes();
+  cal.ed ? pintarEditorEvento() : pintarProximos();
+}
+const recargarCal = async () => { await cargarCalendario(); secCalendario(); };
+
+function pintarMes() {
+  const hoy = ymd(new Date());
+  const [y, m] = cal.mes.split("-").map(Number);
+  const primero = new Date(y, m - 1, 1), ini = sumarDias(ymd(primero), -((primero.getDay() + 6) % 7));   // semanas de lunes a domingo
+  const dias = []; for (let i = 0; i < 42; i++) dias.push(sumarDias(ini, i));
+  while (dias.length > 35 && dias[35].slice(0, 7) !== cal.mes) dias.splice(35);
+  const evDe = (f) => cal.d.eventos.filter((e) => e.fecha === f || (e.fecha_fin && e.fecha < f && e.fecha_fin >= f));
+  const predDe = (f) => cal.d.predicas.find((p) => p.fecha === f);
+  const recDe = (f) => cal.d.recs.filter((r) => r.envio === f && !r.enviado_en);
+  const [ay, am] = m === 1 ? [y - 1, 12] : [y, m - 1], [sy, sm] = m === 12 ? [y + 1, 1] : [y, m + 1];
+  const mesTxt = (a, b) => `${a}-${String(b).padStart(2, "0")}`;
+  $("cal-mes").innerHTML = `<div class="tb-ph"><div class="cal-nav"><button class="tb-pill" data-mes="${mesTxt(ay, am)}" aria-label="Mes anterior">‹</button>
+      <h3>${capi(fmtMes.format(primero))}</h3><button class="tb-pill" data-mes="${mesTxt(sy, sm)}" aria-label="Mes siguiente">›</button>
+      ${cal.mes !== hoy.slice(0, 7) ? `<button class="tb-pill" data-mes="${hoy.slice(0, 7)}">Hoy</button>` : ""}</div>
+      <button class="btn-primary tb-btn" id="cal-nuevo">+ Nuevo</button></div>
+    <div class="cal-grid">${["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"].map((d) => `<div class="cal-dh">${d}</div>`).join("")}
+      ${dias.map((f) => { const p = predDe(f), rs = recDe(f); return `<div class="cal-d ${f.slice(0, 7) !== cal.mes ? "fuera" : ""} ${f === hoy ? "hoy" : ""} ${f === cal.sel ? "sel" : ""}" data-dia="${f}">
+        <div class="cal-n">${fromYmd(f).getDate()}${rs.length ? `<span class="cal-rec" title="${rs.length} recordatorio(s) salen este día">✉</span>` : ""}</div>
+        ${p && !evDe(f).some((e) => e.tipo === "predica") ? `<div class="cal-ev t-predica fijo" title="Del programa del domingo">${esc(p.predicador)}</div>` : ""}
+        ${evDe(f).map((e) => `<div class="cal-ev t-${e.tipo}" data-ev="${e.id}">${e.hora ? `<span>${e.hora.slice(0, 5)}</span> ` : ""}${esc(e.titulo)}</div>`).join("")}</div>`; }).join("")}</div>
+    <div class="cal-ley">${CAL_TIPOS.map(([k, t]) => `<span><i class="t-${k}"></i>${t}</span>`).join("")}<span>✉ sale un recordatorio</span></div>`;
+  $("cal-mes").querySelectorAll("[data-mes]").forEach((b) => b.addEventListener("click", () => { cal.mes = b.dataset.mes; pintarMes(); }));
+  $("cal-nuevo").addEventListener("click", () => abrirEvento(null, cal.sel && cal.sel >= hoy ? cal.sel : hoy));
+  $("cal-mes").querySelectorAll("[data-dia]").forEach((c) => c.addEventListener("click", (e) => {
+    const ev = e.target.closest("[data-ev]");
+    if (ev) return abrirEvento(+ev.dataset.ev);
+    cal.sel = c.dataset.dia; pintarMes();
+    if (!cal.ed) pintarProximos();
+  }));
+}
+
+function pintarProximos() {
+  const hoy = ymd(new Date());
+  const lado = $("cal-lado");
+  if (cal.sel) {
+    const evs = cal.d.eventos.filter((e) => e.fecha === cal.sel || (e.fecha_fin && e.fecha <= cal.sel && e.fecha_fin >= cal.sel));
+    const p = cal.d.predicas.find((x) => x.fecha === cal.sel);
+    lado.innerHTML = `<div class="tb-ph"><h3>${largo(cal.sel)}</h3><button class="link" id="cal-x">Ver próximos</button></div>
+      ${p ? `<div class="muted" style="margin-bottom:10px">Predica (programa del domingo): <b>${esc(p.predicador)}</b></div>` : ""}
+      ${evs.map(filaEvento).join("") || '<div class="muted">Nada este día.</div>'}
+      <button class="btn-primary" id="cal-add-dia" style="margin-top:14px">+ Agregar este día</button>`;
+    $("cal-x").addEventListener("click", () => { cal.sel = null; pintarMes(); pintarProximos(); });
+    $("cal-add-dia").addEventListener("click", () => abrirEvento(null, cal.sel));
+  } else {
+    const prox = cal.d.eventos.filter((e) => (e.fecha_fin || e.fecha) >= hoy).slice(0, 25);
+    const salen = cal.d.recs.filter((r) => !r.enviado_en && r.envio >= hoy).slice(0, 10);
+    const ev = new Map(cal.d.eventos.map((e) => [e.id, e]));
+    lado.innerHTML = `<h3 style="margin-bottom:12px">Próximos</h3>
+      ${prox.map(filaEvento).join("") || '<div class="muted">No hay nada agendado. Toca «+ Nuevo» o un día del calendario.</div>'}
+      <h4 style="margin-top:22px">Correos que van a salir</h4>
+      ${salen.map((r) => `<div class="li cal-li" data-ev="${r.evento_id}"><div><b>${esc(ev.get(r.evento_id)?.titulo || "")}</b><div class="muted">${capi(fmtCalLargo.format(fromYmd(r.envio)))} · ${r.clase === "anunciar" ? "Anunciar" : r.clase === "planificar" ? "Planificar" : "Recordatorio"} · ${esc(destTexto(r))}</div></div></div>`).join("") || '<div class="muted">Ninguno programado.</div>'}`;
+  }
+  lado.querySelectorAll("[data-ev]").forEach((b) => b.addEventListener("click", () => abrirEvento(+b.dataset.ev)));
+}
+function filaEvento(e) {
+  const recs = cal.d.recs.filter((r) => r.evento_id === e.id), pend = recs.filter((r) => !r.enviado_en).length;
+  return `<div class="li cal-li" data-ev="${e.id}"><div><span class="cal-pt t-${e.tipo}"></span><b>${esc(e.titulo)}</b>
+    <div class="muted">${capi(fmtCalLargo.format(fromYmd(e.fecha)))}${e.hora ? " · " + e.hora.slice(0, 5) : ""}${e.fecha_fin && e.fecha_fin !== e.fecha ? " al " + fmtCorta.format(fromYmd(e.fecha_fin)) : ""}${e.lugar ? " · " + esc(e.lugar) : ""}${e.responsable ? " · " + esc(e.responsable) : ""}</div></div>
+    <span class="muted">${recs.length ? `✉ ${pend ? pend + " por salir" : "enviados"}` : ""}</span></div>`;
+}
+
+async function abrirEvento(id, fecha) {
+  const e = id ? cal.d.eventos.find((x) => x.id === id) : null;
+  cal.ed = e ? { ...e, recsNuevos: [] } : { id: null, titulo: "", tipo: "evento", fecha: fecha || ymd(new Date()), hora: "", fecha_fin: "", lugar: "", ministerio: "", responsable: "", descripcion: "",
+    recsNuevos: [{ cuando: "miercoles2", destinos: ["consejo"], personas: [], personasNombres: [], mensaje: "", otra: "", enMiercoles: true }] };
+  if (cal.ed.fecha) { cal.sel = cal.ed.fecha; cal.mes = cal.ed.fecha.slice(0, 7); }
+  await secCalendario();
+  if (innerWidth < 1100) $("cal-lado")?.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function leerEditor() {
+  const ed = cal.ed; if (!$("ce-t")) return ed;
+  Object.assign(ed, { titulo: $("ce-t").value, tipo: $("ce-tipo").value, fecha: $("ce-f").value, hora: $("ce-h").value, fecha_fin: $("ce-ff").value,
+    lugar: $("ce-l").value, responsable: $("ce-r").value, ministerio: $("ce-min").value, descripcion: $("ce-d").value });
+  return ed;
+}
+
+function pintarEditorEvento() {
+  const ed = cal.ed, lado = $("cal-lado"), hoy = ymd(new Date());
+  const guardados = ed.id ? cal.d.recs.filter((r) => r.evento_id === ed.id) : [];
+  const recNuevoHtml = (r, i) => {
+    const envio = ed.fecha ? fechaEnvio(ed.fecha, r.cuando, r.otra, r.enMiercoles) : null;
+    const [d1, d2] = ed.fecha ? domingosAntes(ed.fecha) : [];
+    return `<div class="cal-rn" data-rn="${i}">
+      <div class="kclase-h"><b>Nuevo recordatorio</b><button class="x" data-rn-x="${i}" aria-label="Quitar">×</button></div>
+      <label>¿Cuándo sale?</label><select data-k="cuando">${opciones(CAL_CUANDO, r.cuando)}</select>
+      ${r.cuando === "fecha" ? `<input type="date" data-k="otra" value="${esc(r.otra || "")}">` : ""}
+      ${["1s", "2s", "p4", "p6", "p8", "p12"].includes(r.cuando) ? `<label class="chk-l"><input type="checkbox" data-k="enMiercoles" ${r.enMiercoles ? "checked" : ""}> Que salga el miércoles en la mañana</label>` : ""}
+      <div class="cal-sale ${envio && envio < hoy ? "err" : ""}">${envio ? `✉ Sale el <b>${largo(envio)}</b>, 7:00${envio < hoy ? " (esa fecha ya pasó: saldrá mañana a las 7:00)" : ""}` : "Elige la fecha del evento"}
+        ${r.cuando === "miercoles2" && d1 ? `<br><span class="muted">Para anunciarlo los domingos ${fmtCorta.format(fromYmd(d1))} y ${fmtCorta.format(fromYmd(d2))}.</span>` : ""}</div>
+      <label>¿A quién?</label>
+      <div class="cal-chips">${CAL_DEST.map(([k, t]) => `<button type="button" class="cal-chip ${r.destinos.includes(k) ? "on" : ""}" data-dest="${k}">${t}</button>`).join("")}</div>
+      <div class="cal-chips" style="margin-top:6px">${MIN_ROLES.map(([c, t]) => `<button type="button" class="cal-chip ${r.destinos.includes("min:" + c) ? "on" : ""}" data-dest="min:${c}">Líderes de ${esc(t)}</button>`).join("")}</div>
+      <input data-k="buscar" placeholder="+ Agregar a una persona (buscar por nombre)" autocomplete="off" style="margin-top:8px"><div class="cal-res"></div>
+      ${r.personas.length ? `<div class="cal-chips">${r.personas.map((p, j) => `<span class="cal-chip on">${esc(r.personasNombres[j] || "")} <button type="button" data-qp="${j}" aria-label="Quitar">×</button></span>`).join("")}</div>` : ""}
+      <div class="cal-cuenta muted" data-cuenta></div>
+      <label>Mensaje (opcional)</label><textarea data-k="mensaje" rows="2" placeholder="Ej.: Andrés, inclúyelo en los anuncios. Worship: preparar canción especial.">${esc(r.mensaje || "")}</textarea></div>`;
+  };
+  lado.innerHTML = `<div class="tb-ph"><h3>${ed.id ? "Editar" : "Nuevo en el calendario"}</h3><button class="link" id="ce-cancel">Cerrar</button></div>
+    <label>Título</label><input id="ce-t" value="${esc(ed.titulo)}" placeholder="Ej.: Bautizos, Retiro de matrimonios, Serie: Romanos" autocomplete="off">
+    <div class="two"><div><label>Tipo</label><select id="ce-tipo">${opciones(CAL_TIPOS, ed.tipo)}</select></div>
+      <div><label>Ministerio (opcional)</label><select id="ce-min">${opciones([["", "—"], ...MIN_ROLES], ed.ministerio || "")}</select></div></div>
+    <div class="two"><div><label>Fecha</label><input type="date" id="ce-f" value="${esc(ed.fecha || "")}"></div><div><label>Hora</label><input type="time" id="ce-h" value="${esc((ed.hora || "").slice(0, 5))}"></div></div>
+    <div class="two"><div><label>Hasta (si dura varios días)</label><input type="date" id="ce-ff" value="${esc(ed.fecha_fin || "")}"></div><div><label>Lugar</label><input id="ce-l" value="${esc(ed.lugar || "")}" autocomplete="off"></div></div>
+    <label id="ce-r-l">${ed.tipo === "predica" ? "Quién predica" : "Responsable"}</label><input id="ce-r" value="${esc(ed.responsable || "")}" autocomplete="off">
+    <label>Descripción</label><textarea id="ce-d" rows="3">${esc(ed.descripcion || "")}</textarea>
+    <h4 style="margin-top:20px">Recordatorios por correo</h4>
+    ${guardados.map((r) => `<div class="li"><div><b>${capi(fmtCalLargo.format(fromYmd(r.envio)))}</b> · ${r.clase === "anunciar" ? "Anunciar" : r.clase === "planificar" ? "Planificar" : "Recordatorio"}
+        <div class="muted">${esc(destTexto(r))}${r.mensaje ? " · «" + esc(r.mensaje.slice(0, 60)) + "»" : ""}</div>
+        <div class="muted ${r.error ? "err" : ""}">${r.enviado_en ? `✓ Enviado ${fmtCorta.format(new Date(r.enviado_en))} a ${r.enviados || 0}` : "Por salir"}${r.error ? " · " + esc(r.error) : ""}</div></div>
+      <div class="row-btns">${r.enviado_en ? "" : `<button class="btn-sec mini" data-rs="${r.id}">Enviar ya</button>`}<button class="x" data-rx="${r.id}" aria-label="Borrar">×</button></div></div>`).join("")}
+    ${ed.recsNuevos.map(recNuevoHtml).join("")}
+    <button class="btn-sec" id="ce-rec" style="width:100%;margin-top:8px">+ Agregar recordatorio</button>
+    <button class="btn-primary" id="ce-ok" style="margin-top:16px">Guardar</button><div class="ok" id="ce-msg"></div>
+    ${ed.id ? `<button class="btn-sec" id="ce-del" style="width:100%;margin-top:8px">Borrar del calendario</button>` : ""}`;
+
+  $("ce-cancel").addEventListener("click", () => { cal.ed = null; secCalendario(); });
+  $("ce-tipo").addEventListener("change", (e) => ($("ce-r-l").textContent = e.target.value === "predica" ? "Quién predica" : "Responsable"));
+  $("ce-f").addEventListener("change", () => { leerEditor(); pintarEditorEvento(); });
+  $("ce-rec").addEventListener("click", () => {
+    leerEditor();
+    ed.recsNuevos.push({ cuando: ed.recsNuevos.length || guardados.length ? "p4" : "miercoles2", destinos: ["consejo", ...(ed.ministerio ? ["min:" + ed.ministerio] : [])], personas: [], personasNombres: [], mensaje: "", otra: "", enMiercoles: true });
+    pintarEditorEvento();
+  });
+  // Recordatorios nuevos
+  lado.querySelectorAll("[data-rn]").forEach((box) => {
+    const r = ed.recsNuevos[+box.dataset.rn];
+    const contar = async () => {
+      const c = box.querySelector("[data-cuenta]");
+      const [n, s] = await Promise.all([sb.rpc("contar_destinatarios", { p_destinos: r.destinos, p_personas: r.personas }), sb.rpc("sin_correo", { p_destinos: r.destinos })]);
+      if (n.error) return (c.textContent = n.error.message);
+      const k = n.data?.[0]?.con_correo || 0, sin = (s.data || []).map((x) => x.nombre);
+      c.innerHTML = `${k} persona(s) con correo${n.data?.[0]?.nombres ? ": " + esc(n.data[0].nombres) : ""}.${sin.length ? ` <span class="err">Sin correo: ${esc(sin.join(", "))}.</span>` : ""}`;
+    };
+    contar();
+    box.querySelector("[data-rn-x]").addEventListener("click", () => { leerEditor(); ed.recsNuevos.splice(+box.dataset.rn, 1); pintarEditorEvento(); });
+    box.querySelectorAll("[data-k]").forEach((inp) => {
+      const k = inp.dataset.k;
+      if (k === "buscar") return;
+      inp.addEventListener(inp.tagName === "SELECT" || inp.type === "checkbox" || inp.type === "date" ? "change" : "input", () => {
+        r[k] = inp.type === "checkbox" ? inp.checked : inp.value;
+        if (k !== "mensaje") { leerEditor(); pintarEditorEvento(); }
+      });
+    });
+    box.querySelectorAll("[data-dest]").forEach((b) => b.addEventListener("click", () => {
+      const d = b.dataset.dest; r.destinos = r.destinos.includes(d) ? r.destinos.filter((x) => x !== d) : [...r.destinos, d];
+      b.classList.toggle("on"); contar();
+    }));
+    box.querySelectorAll("[data-qp]").forEach((b) => b.addEventListener("click", () => { r.personas.splice(+b.dataset.qp, 1); r.personasNombres.splice(+b.dataset.qp, 1); leerEditor(); pintarEditorEvento(); }));
+    let t; const q = box.querySelector('[data-k="buscar"]'), res = box.querySelector(".cal-res");
+    q.addEventListener("input", () => { clearTimeout(t); t = setTimeout(async () => {
+      const v = q.value.trim(); if (v.length < 2) return (res.innerHTML = "");
+      const { data, error } = await sb.rpc("fc_buscar_personas", { q: v });
+      if (error) return (res.innerHTML = `<div class="muted err">${esc(error.message)}</div>`);
+      res.innerHTML = (data || []).slice(0, 8).map((p, i) => `<div class="li"><span>${esc(p.nombre)}${p.igho ? ` <span class="muted">· ${esc(p.igho)}</span>` : ""}</span><button type="button" class="btn-sec mini" data-pp="${i}">Agregar</button></div>`).join("") || '<div class="muted">No se encontró.</div>';
+      res.querySelectorAll("[data-pp]").forEach((b) => b.addEventListener("click", () => {
+        const p = data[+b.dataset.pp]; if (!r.personas.includes(p.id)) { r.personas.push(p.id); r.personasNombres.push(p.nombre); }
+        leerEditor(); pintarEditorEvento();
+      }));
+    }, 300); });
+  });
+  // Recordatorios guardados
+  lado.querySelectorAll("[data-rx]").forEach((b) => b.addEventListener("click", async () => {
+    if (!confirm("¿Borrar este recordatorio?")) return;
+    leerEditor();
+    const { error } = await sb.from("cal_recordatorios").delete().eq("id", +b.dataset.rx); if (error) return alert(error.message);
+    await cargarCalendario(); pintarEditorEvento();
+  }));
+  lado.querySelectorAll("[data-rs]").forEach((b) => b.addEventListener("click", async () => {
+    if (!confirm("¿Enviar este recordatorio ahora?")) return;
+    b.disabled = true; b.textContent = "Enviando…"; leerEditor();
+    try { const r = await llamarCorreo({ accion: "enviar_recordatorio", id: +b.dataset.rs }); alert(`✓ Enviado a ${r.enviados} persona(s).`); }
+    catch (e) { alert("No se pudo: " + e.message); }
+    await cargarCalendario(); pintarEditorEvento();
+  }));
+  $("ce-del")?.addEventListener("click", async () => {
+    if (!confirm("¿Borrar este evento y sus recordatorios?")) return;
+    const { error } = await sb.from("cal_eventos").delete().eq("id", ed.id); if (error) return alert(error.message);
+    cal.ed = null; recargarCal();
+  });
+  $("ce-ok").addEventListener("click", async () => {
+    leerEditor();
+    const msg = $("ce-msg"); msg.classList.add("err");
+    if (!ed.titulo.trim()) return (msg.textContent = "Escribe el título.");
+    if (!ed.fecha) return (msg.textContent = "Elige la fecha.");
+    if (ed.fecha_fin && ed.fecha_fin < ed.fecha) return (msg.textContent = "«Hasta» no puede ser antes de la fecha.");
+    for (const r of ed.recsNuevos) {
+      if (!fechaEnvio(ed.fecha, r.cuando, r.otra, r.enMiercoles)) return (msg.textContent = "Elige la fecha del recordatorio.");
+      if (!r.destinos.length && !r.personas.length) return (msg.textContent = "Elige a quién le llega cada recordatorio.");
+    }
+    $("ce-ok").disabled = true;
+    const row = { titulo: ed.titulo.trim(), tipo: ed.tipo, fecha: ed.fecha, hora: ed.hora || null, fecha_fin: ed.fecha_fin || null, lugar: ed.lugar.trim() || null,
+      ministerio: ed.ministerio || null, responsable: ed.responsable.trim() || null, descripcion: ed.descripcion.trim() || null };
+    const q = ed.id ? sb.from("cal_eventos").update(row).eq("id", ed.id).select("id").single()
+                    : sb.from("cal_eventos").insert({ ...row, creado_por_nombre: ctx.nombreCompleto }).select("id").single();
+    const { data, error } = await q;
+    if (error) { $("ce-ok").disabled = false; return (msg.textContent = error.message); }
+    if (ed.recsNuevos.length) {
+      const { error: e2 } = await sb.from("cal_recordatorios").insert(ed.recsNuevos.map((r) => ({ evento_id: data.id, clase: claseDe(r.cuando), cuando: r.cuando,
+        envio: fechaEnvio(ed.fecha, r.cuando, r.otra, r.enMiercoles), destinos: r.destinos, personas: r.personas, mensaje: r.mensaje.trim() || null })));
+      if (e2) { $("ce-ok").disabled = false; return (msg.textContent = "Se guardó el evento, pero no los recordatorios: " + e2.message); }
+    }
+    // Si cambió la fecha del evento, los recordatorios del «miércoles antes» que no han salido se mueven con él
+    if (ed.id) {
+      const viejo = cal.d.eventos.find((x) => x.id === ed.id);
+      if (viejo && viejo.fecha !== ed.fecha) for (const r of cal.d.recs.filter((x) => x.evento_id === ed.id && !x.enviado_en && x.cuando && x.cuando !== "fecha"))
+        await sb.from("cal_recordatorios").update({ envio: fechaEnvio(ed.fecha, r.cuando, null, true) }).eq("id", r.id);
+    }
+    cal.ed = null; recargarCal();
+  });
 }
 
 // ===================================================================
@@ -7175,7 +7715,7 @@ async function revisarCenso(x) {
 // ===================================================================
 // AVISOS: notificaciones al teléfono + campana dentro de la app
 // ===================================================================
-const VERSION_APP = "26-nov · v20";
+const VERSION_APP = "26-nov · v21";
 const FUNCION_AVISOS = "swift-action"; // Edge Function en Supabase (se muestra como «notificar»)
 const av = { lista: [], noLeidas: 0, timer: null };
 const IR_A = [["", "Página principal"], ["domingo", "Este domingo"], ["anfitriones", "Anfitriones"], ["bienvenida", "Bienvenida"], ["igho", "Mi IGHO"], ["kidz", "Kidz"], ["worship", "Arco Worship"], ["formacion", "Formación Cristiana"], ["stand", "Stand de información"]];
