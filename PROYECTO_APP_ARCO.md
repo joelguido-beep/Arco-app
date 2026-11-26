@@ -1,6 +1,6 @@
 # App Iglesia Arco Ríos: project summary (to start a new chat)
 
-Attach this file when you start a new chat. The code lives in GitHub: **`joelguido-beep/Arco-app`** (branch `main`, served by GitHub Pages at https://joelguido-beep.github.io/Arco-app/). The Claude GitHub App is installed, so Claude can clone the repo and push changes directly (no need to attach `index.html`). **Joel's standing instruction: push every finished update straight to `main` on GitHub automatically, without asking first** (index.html, new SQL files and this summary). Joel still runs the SQL in Supabase himself. Current version: **25-nov v19** (shown under the title of the Avisos page; constant `VERSION_APP` in index.html; update both on each release).
+Attach this file when you start a new chat. The code lives in GitHub: **`joelguido-beep/Arco-app`** (branch `main`, served by GitHub Pages at https://joelguido-beep.github.io/Arco-app/). The Claude GitHub App is installed, so Claude can clone the repo and push changes directly (no need to attach `index.html`). **Joel's standing instruction: push every finished update straight to `main` on GitHub automatically, without asking first** (index.html, new SQL files and this summary). Joel still runs the SQL in Supabase himself. Current version: **26-nov v20** (shown under the title of the Avisos page; constant `VERSION_APP` in index.html; update both on each release).
 
 ## What it is
 A web app in Spanish for Arco Ríos (Cuenca). It's a single `index.html` file hosted on **GitHub Pages**, and the data lives in **Supabase** (project `lmitwnfvelwbbkjkvmtb`).
@@ -187,6 +187,9 @@ Kidz with QR: camera check-in/check-out (photo confirmation, allergies, parent n
 ## Suggestions button for testers (25 Nov 2026, v19)
 - Every page (except login/census) has an orange «💬 Sugerir» button at the top right (round icon on home). It records the page and section (e.g. «Mi IGHO › Asistencia»), the user and the app version. Admins get a bell notice; Administración → Sugerencias lists them (Nuevas / Hechas / Descartadas / Todas; ✓ Hecha, Descartar, ↺, ×). notificar.ts also pushes tipo 'sugerencia' (after redeploy).
 - topDer(top): right-side group in each page header (Informe and Sugerir live there).
+
+## Dark mode fix (26 Nov 2026, v20)
+- Este domingo: the Predica / Encargado espiritual / Supervisor logístico boxes in the blue header were light text on a light box (unreadable, worst in dark mode). `.hero .chip` is now a see-through light layer with a thin outline and light text, readable in both themes.
 
 ## Status (23 Nov 2026, end of day)
 - Notifications work on Joel's Android (function `swift-action` deployed with notificar.ts, Verify JWT off).

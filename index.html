@@ -662,6 +662,8 @@
   .c-orange .pc-tiles div, .c-sky .pc-tiles div, .c-lilac .pc-tiles div { background: rgba(255,255,255,.12); }
   .pc-col { background: rgba(17,17,68,.18); } .c-orange .pc-col, .c-sky .pc-col, .c-lilac .pc-col { background: rgba(244,241,236,.3); }
   .chip { background: rgba(255,255,255,.65); }
+  .hero .chip { background: rgba(244,241,236,.14); color: #F4F1EC; box-shadow: inset 0 0 0 1px rgba(244,241,236,.22); }
+  .hero .chip span { color: rgba(244,241,236,.8); }
   /* Acento Habañero: lo que pide atención */
   .ig-avisos, .anun.mio, .sr-pasa { border-color: var(--habanero) !important; }
   .av-item.nueva { border-left-color: var(--habanero); }
@@ -7173,7 +7175,7 @@ async function revisarCenso(x) {
 // ===================================================================
 // AVISOS: notificaciones al teléfono + campana dentro de la app
 // ===================================================================
-const VERSION_APP = "25-nov · v19";
+const VERSION_APP = "26-nov · v20";
 const FUNCION_AVISOS = "swift-action"; // Edge Function en Supabase (se muestra como «notificar»)
 const av = { lista: [], noLeidas: 0, timer: null };
 const IR_A = [["", "Página principal"], ["domingo", "Este domingo"], ["anfitriones", "Anfitriones"], ["bienvenida", "Bienvenida"], ["igho", "Mi IGHO"], ["kidz", "Kidz"], ["worship", "Arco Worship"], ["formacion", "Formación Cristiana"], ["stand", "Stand de información"]];
